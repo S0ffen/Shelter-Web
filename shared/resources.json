@@ -1,0 +1,194 @@
+[
+  {
+    "id": "wood-01",
+    "type": "wood",
+    "x": -15,
+    "z": -8
+  },
+  {
+    "id": "iron-01",
+    "type": "iron",
+    "x": -10,
+    "z": -15
+  },
+  {
+    "id": "wood-02",
+    "type": "wood",
+    "x": -14.5,
+    "z": 6
+  },
+  {
+    "id": "iron-02",
+    "type": "iron",
+    "x": -8.5,
+    "z": 15
+  },
+  {
+    "id": "wood-03",
+    "type": "wood",
+    "x": -12,
+    "z": 16
+  },
+  {
+    "id": "iron-03",
+    "type": "iron",
+    "x": 12,
+    "z": 15
+  },
+  {
+    "id": "wood-04",
+    "type": "wood",
+    "x": 17.5,
+    "z": 7
+  },
+  {
+    "id": "iron-04",
+    "type": "iron",
+    "x": 7,
+    "z": -15
+  },
+  {
+    "id": "wood-old-town-01",
+    "type": "wood",
+    "x": -32,
+    "z": 14
+  },
+  {
+    "id": "wood-old-town-02",
+    "type": "wood",
+    "x": -22,
+    "z": 24
+  },
+  {
+    "id": "wood-slums-01",
+    "type": "wood",
+    "x": -32,
+    "z": -1
+  },
+  {
+    "id": "wood-slums-02",
+    "type": "wood",
+    "x": -38,
+    "z": -15
+  },
+  {
+    "id": "iron-slums-01",
+    "type": "iron",
+    "x": -25,
+    "z": -15
+  },
+  {
+    "id": "wood-market-01",
+    "type": "wood",
+    "x": -3.5,
+    "z": 29
+  },
+  {
+    "id": "iron-market-01",
+    "type": "iron",
+    "x": 5,
+    "z": 28
+  },
+  {
+    "id": "wood-gate-01",
+    "type": "wood",
+    "x": -2,
+    "z": -25
+  },
+  {
+    "id": "iron-gate-01",
+    "type": "iron",
+    "x": 4,
+    "z": -38
+  },
+  {
+    "id": "iron-forge-01",
+    "type": "iron",
+    "x": 30,
+    "z": -3
+  },
+  {
+    "id": "iron-forge-02",
+    "type": "iron",
+    "x": 28,
+    "z": 3
+  },
+  {
+    "id": "iron-forge-03",
+    "type": "iron",
+    "x": 32,
+    "z": -9
+  },
+  {
+    "id": "iron-forge-04",
+    "type": "iron",
+    "x": 41,
+    "z": -9
+  },
+  {
+    "id": "iron-mines-01",
+    "type": "iron",
+    "x": 31,
+    "z": -27
+  },
+  {
+    "id": "iron-mines-02",
+    "type": "iron",
+    "x": 34,
+    "z": -31
+  },
+  {
+    "id": "iron-mines-03",
+    "type": "iron",
+    "x": 30,
+    "z": -34
+  },
+  {
+    "id": "iron-mines-04",
+    "type": "iron",
+    "x": 42,
+    "z": -30
+  },
+  {
+    "id": "iron-mines-05",
+    "type": "iron",
+    "x": 18,
+    "z": -37
+  },
+  {
+    "id": "wood-forest-01",
+    "type": "wood",
+    "x": -32,
+    "z": -28
+  },
+  {
+    "id": "wood-forest-02",
+    "type": "wood",
+    "x": -35,
+    "z": -34
+  },
+  {
+    "id": "wood-forest-03",
+    "type": "wood",
+    "x": -28,
+    "z": -37
+  },
+  {
+    "id": "wood-forest-04",
+    "type": "wood",
+    "x": -33,
+    "z": -40
+  },
+  {
+    "id": "wood-forest-05",
+    "type": "wood",
+    "x": -28,
+    "z": -26
+  },
+  {
+    "id": "wood-forest-06",
+    "type": "wood",
+    "x": -37,
+    "z": -20
+  }
+]

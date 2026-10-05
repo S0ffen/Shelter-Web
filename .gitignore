@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.vite/
+*.log
+client/test-results/
+server/bin/
+server/obj/
+server/Data/
+server/test-results/
+*.db
+*.db-shm
+*.db-wal
+

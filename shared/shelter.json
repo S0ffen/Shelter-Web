@@ -1,0 +1,10 @@
+{
+  "bounds": { "minX": -12.5, "maxX": 15.5, "minZ": -13, "maxZ": 13 },
+  "hall": { "x": 1.5, "z": 4, "width": 8, "depth": 7, "height": 4.2, "doorWidth": 3 },
+  "wallThickness": 0.5,
+  "gateWidth": 5,
+  "sideGateZ": -4,
+  "generatorOutput": 40,
+  "towerDemand": 10,
+  "storehouseDemand": 5
+}

@@ -1,0 +1,11 @@
+{
+  "dayDuration": 150,
+  "nightMinimumDuration": 45,
+  "baseWaveSize": 8,
+  "waveGrowth": 4,
+  "maxWaveSize": 64,
+  "spawnInterval": 2,
+  "maxAliveZombies": 24,
+  "dayPatrolCount": 4,
+  "patrolRespawnInterval": 20
+}
