@@ -1,4 +1,5 @@
 import { Color3, CreateBox, CreateCylinder, CreateSphere, Scene, StandardMaterial, TransformNode } from '../rendering/babylon';
+import { surfaceMaterial } from '../rendering/SurfaceMaterials';
 import type { Mesh } from '../rendering/babylon';
 import type { ResourceNode } from './ResourceNode';
 import { ResourceType } from './ResourceType';
@@ -9,8 +10,7 @@ export class ResourceView {
   private readonly views = new Map<string, NodeView>();
 
   constructor(scene: Scene, nodes: readonly ResourceNode[]) {
-    const wood = new StandardMaterial('resource-wood', scene);
-    wood.diffuseColor = Color3.FromHexString('#866b43');
+    const wood = surfaceMaterial(scene, 'wood');
     const iron = new StandardMaterial('resource-iron', scene);
     iron.diffuseColor = Color3.FromHexString('#444946');
     iron.specularColor = Color3.Black();
@@ -27,6 +27,7 @@ export class ResourceView {
       const finish = (mesh: Mesh, mat: StandardMaterial): void => {
         mesh.parent = visual;
         mesh.material = mat;
+        mesh.receiveShadows = true;
         mesh.isPickable = false;
       };
       if (node.resourceType === ResourceType.Wood) {

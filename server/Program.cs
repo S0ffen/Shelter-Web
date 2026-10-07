@@ -16,8 +16,8 @@ var settingsPath = Path.Combine(AppContext.BaseDirectory, "survival.json");
 var settings = JsonDocument.Parse(File.ReadAllText(settingsPath)).RootElement.Clone();
 var shelter = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "shelter.json"))).RootElement.Clone();
 
-app.MapGet("/api/health", () => Results.Ok(new { status = "ok", database = "sqlite", schemaVersion = 1, checkpointVersion = 2 }));
-app.MapGet("/api/config", () => Results.Ok(new { version = 2, survival = settings, shelter }));
+app.MapGet("/api/health", () => Results.Ok(new { status = "ok", database = "sqlite", schemaVersion = 2, checkpointVersion = CheckpointValidator.Version }));
+app.MapGet("/api/config", () => Results.Ok(new { version = CheckpointValidator.Version, encounters = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "encounters.json"))).RootElement.Clone(), world = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "world.json"))).RootElement.Clone(), nightModifiers = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "night-modifiers.json"))).RootElement.Clone(), skills = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "skills.json"))).RootElement.Clone(), buildings = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "buildings.json"))).RootElement.Clone(), survival = settings, corruption = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "corruption.json"))).RootElement.Clone(), economy = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "economy.json"))).RootElement.Clone(), shelter, zombies = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "zombies.json"))).RootElement.Clone(), combat = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "combat.json"))).RootElement.Clone(), defense = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "defense.json"))).RootElement.Clone() }));
 app.MapGet("/api/checkpoint", () => store.Load() is { } json
     ? Results.Content(json, "application/json") : Results.NoContent());
 app.MapPut("/api/checkpoint", (JsonElement checkpoint) =>
@@ -30,7 +30,7 @@ app.MapPut("/api/checkpoint", (JsonElement checkpoint) =>
 app.MapPost("/api/runs", (RunResult result) =>
 {
     if (!Guid.TryParse(result.RunId, out _) || result.Day is < 1 or > 100000 || result.Kills is < 0 or > 100000000 ||
-        !double.IsFinite(result.Elapsed) || result.Elapsed is < 0 or > 1e9) return Results.BadRequest(new { error = "Invalid run result" });
+        !new[] { "won", "lost" }.Contains(result.Outcome) || !double.IsFinite(result.Elapsed) || result.Elapsed is < 0 or > 1e9) return Results.BadRequest(new { error = "Invalid run result" });
     store.Record(result);
     return Results.Ok(new { recorded = true });
 });

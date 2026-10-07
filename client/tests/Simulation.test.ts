@@ -1,3 +1,4 @@
+import { SHELTER_HALL } from '../src/world/ShelterLayout';
 import { describe, expect, it } from 'vitest';
 import { CONFIG } from '../src/domain/config';
 import { Simulation } from '../src/domain/Simulation';
@@ -14,7 +15,7 @@ describe('survival gameplay', () => {
     const sim = new Simulation({ seed: 1 });
     advance(sim, 10);
     expect(sim.zombies).toHaveLength(0);
-    expect(sim.cycle.secondsRemaining).toBe(150);
+    expect(sim.cycle.secondsRemaining).toBe(180);
     sim.start();
     expect(sim.livingZombies).toHaveLength(4);
     expect(sim.livingZombies.every(zombie => zombie.mode === 'patrol')).toBe(true);
@@ -24,7 +25,7 @@ describe('survival gameplay', () => {
     advance(sim, 20);
     expect(sim.zombies.map(zombie => zombie.position)).toEqual(positions);
     expect(sim.elapsed).toBeCloseTo(1);
-    expect(sim.cycle.secondsRemaining).toBeCloseTo(149);
+    expect(sim.cycle.secondsRemaining).toBeCloseTo(179);
     sim.start();
     expect(sim.livingZombies).toHaveLength(4);
   });
@@ -32,6 +33,7 @@ describe('survival gameplay', () => {
   it('routes a siege zombie to Shelter and loses when the base is destroyed', () => {
     const sim = isolated();
     sim.start();
+    sim.player.position = { x: -40, z: -40 };
     const enemy = new Zombie('siege');
     sim.zombies.push(enemy);
     advance(sim, 80);
@@ -88,8 +90,8 @@ describe('survival gameplay', () => {
     sim.attack(enemy.id);
     expect(enemy.hp).toBe(100);
     advance(sim, 0.7);
-    enemy.position = { x: -1.5, z: 4 };
-    sim.player.position = { x: -3.5, z: 4 };
+    enemy.position = { x: SHELTER_HALL.x-SHELTER_HALL.width/2+1, z: 4 };
+    sim.player.position = { x: SHELTER_HALL.x-SHELTER_HALL.width/2-1, z: 4 };
     expect(hasLineOfSight(sim.player.position, enemy.position)).toBe(false);
     sim.attack(enemy.id);
     expect(enemy.hp).toBe(100);

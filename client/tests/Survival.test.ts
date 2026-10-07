@@ -19,15 +19,13 @@ describe('day, night and random hordes', () => {
     for (const zombie of sim.livingZombies) expect(isBlocked(zombie.position, 0.34, sim.obstacles)).toBe(false);
   });
 
-  it('waits for both the queued spawns and living enemies before dawn, then grows the next wave', () => {
-    const cycle = new SurvivalCycle({ ...SURVIVAL_SETTINGS, dayDuration: 1, nightMinimumDuration: 1 });
+  it('ends the night on schedule, drops the pending queue and grows the next wave', () => {
+    const cycle = new SurvivalCycle({ ...SURVIVAL_SETTINGS, dayDuration: 1, nightDuration: 1 });
     expect(cycle.update(1, 2)).toBe('night-started');
     expect(cycle.state.waveSize).toBe(8);
     expect(cycle.state.pendingSpawns).toBe(6);
-    expect(cycle.update(10, 0)).toBeNull();
-    cycle.state.pendingSpawns = 0;
-    expect(cycle.update(1, 1)).toBeNull();
-    expect(cycle.update(1, 0)).toBe('day-started');
+    expect(cycle.update(1, 2)).toBe('day-started');
+    expect(cycle.state.pendingSpawns).toBe(0);
     expect(cycle.state.day).toBe(2);
     expect(cycle.update(1, 0)).toBe('night-started');
     expect(cycle.state.waveSize).toBe(12);
@@ -38,7 +36,7 @@ describe('day, night and random hordes', () => {
   });
 
   it('limits active enemies, retains the remaining queue, and pauses spawns', () => {
-    const sim = new Simulation({ seed: 2, settings: { dayDuration: 0.1, dayPatrolCount: 0, spawnInterval: 0.1, maxAliveZombies: 2 } });
+    const sim = new Simulation({ seed: 2, settings: { dayDuration: 0.1, dayPatrolCount: 0, spawnInterval: 0.1, maxAliveZombies: 2, miniWaveCount: 1 } });
     sim.start();
     for (let i = 0; i < 60; i++) sim.update(1 / 30);
     expect(sim.cycle.state.period).toBe('night');
@@ -51,7 +49,7 @@ describe('day, night and random hordes', () => {
     expect(sim.livingZombies).toHaveLength(2);
   });
 
-  it('supports early night near Shelter and preserves harvested objects and buildings across days', () => {
+  it('supports early night near Shelter and respawns harvested objects and preserves buildings across days', () => {
     const sim = new Simulation({ settings: { dayPatrolCount: 0 } });
     sim.start();
     sim.player.position = { x: -31, z: 14 };
@@ -60,18 +58,18 @@ describe('day, night and random hordes', () => {
     sim.resourceManager.add('wood', 100); sim.resourceManager.add('iron', 50);
     const node = sim.resourceNodes[0];
     node.damage(1000);
-    sim.buildingSystem.buildings.push(new Building('fixture-generator', 'arcane-core', { x: 10, z: 10 }, 0));
+    sim.buildingSystem.buildings.push(new Building('fixture-generator', 'arcane-core', { x: 16, z: 12 }, 0));
     expect(sim.placeBuilding('storehouse', { x: -4, z: -7 }, 0).ok).toBe(true);
     expect(sim.beginNight()).toBe(true);
     sim.update(1 / 30);
     expect(sim.cycle.state.period).toBe('night');
     sim.zombies.forEach(zombie => zombie.damage(1000));
     sim.cycle.state.pendingSpawns = 0;
-    sim.cycle.state.periodElapsed = 45;
+    sim.cycle.state.periodElapsed = sim.cycle.settings.nightDuration;
     sim.update(1 / 30);
     expect(sim.cycle.state.day).toBe(2);
     expect(sim.phase).toBe('playing');
-    expect(sim.resourceNodes[0].isDestroyed).toBe(true);
+    expect(sim.resourceNodes[0].isDestroyed).toBe(false);
     expect(sim.buildingSystem.buildings).toHaveLength(2);
     expect(sim.resourceManager.capacity.wood).toBe(150);
     expect(sim.resources.wood).toBe(70);

@@ -13,7 +13,7 @@ export class HordeView {
     for (const [id, view] of this.views) if (!ids.has(id)) { view.dispose(); this.views.delete(id); }
     for (const enemy of enemies) {
       let view = this.views.get(enemy.id);
-      if (!view) { view = new ZombieView(this.scene, enemy.id); this.views.set(enemy.id, view); }
+      if (!view) { view = new ZombieView(this.scene, enemy.id, enemy.kind); this.views.set(enemy.id, view); }
       view.update(enemy, player, alpha, dt, time);
     }
   }

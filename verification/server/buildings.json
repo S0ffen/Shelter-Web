@@ -1,0 +1,5 @@
+{
+  "storehouse": { "label": "Storehouse", "cost": { "wood": 30, "iron": 10 }, "width": 2.8, "depth": 2.2, "height": 2.2, "maxHp": 160 },
+  "arcane-core": { "label": "Generator Arcane", "cost": { "wood": 20, "iron": 15 }, "width": 1.8, "depth": 1.8, "height": 2.4, "maxHp": 200 },
+  "magic-tower": { "label": "Magic Tower", "cost": { "wood": 20, "iron": 15 }, "width": 1.6, "depth": 1.6, "height": 3.2, "maxHp": 240 }
+}

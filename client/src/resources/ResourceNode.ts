@@ -14,10 +14,10 @@ export class ResourceNode {
   readonly reward: readonly HarvestThreshold[];
   private currentHealth: number;
 
-  constructor(readonly id: string, readonly resourceType: ResourceType, readonly position: Position) {
+  constructor(readonly id: string, readonly resourceType: ResourceType, readonly position: Position, readonly rewardMultiplier = 1) {
     this.definition = RESOURCE_DEFINITIONS[resourceType];
     this.maxHealth = this.currentHealth = this.definition.maxHealth;
-    this.reward = this.definition.reward;
+    this.reward = this.definition.reward.map(step => ({ ...step, amount: step.amount * rewardMultiplier }));
   }
 
   get health(): number { return this.currentHealth; }
@@ -39,6 +39,8 @@ export class ResourceNode {
     return { damage, reward, destroyed: nextHealth === 0 };
   }
 
+  respawn(): void { this.currentHealth = this.maxHealth; }
+
   damage(amount: number): HarvestHit {
     const hit = this.previewDamage(amount);
     this.currentHealth -= hit.damage;
@@ -48,5 +50,5 @@ export class ResourceNode {
 
 /** Fixed, authored placements shared with the checkpoint server. */
 export function createResourceNodes(): ResourceNode[] {
-  return placements.map(node => new ResourceNode(node.id, node.type as ResourceType, { x: node.x, z: node.z }));
+  return placements.map(node => new ResourceNode(node.id, node.type as ResourceType, { x: node.x, z: node.z }, 'rewardMultiplier' in node ? Number(node.rewardMultiplier) : 1));
 }

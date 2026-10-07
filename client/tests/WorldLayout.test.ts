@@ -1,3 +1,5 @@
+import { MAP_REFERENCE, referenceToWorld, referenceFloorOpen } from '../src/world/WorldLayout';
+import encounters from '../../shared/encounters.json';
 import { describe, expect, it } from 'vitest';
 import { CONFIG } from '../src/domain/config';
 import type { Position } from '../src/domain/types';
@@ -29,9 +31,12 @@ function reachablePositions(extra: Footprint[]): Position[] {
 }
 
 describe('authored exploration map', () => {
-  it('places thirty-two wood/iron nodes outside ruins, base walls and other nodes', () => {
+  it('preserves every walkable pixel and building hole from the supplied image',()=>{
+    for(let y=0;y<MAP_REFERENCE.height;y++)for(let x=0;x<MAP_REFERENCE.width;x++) expect(referenceFloorOpen(referenceToWorld(x,y)),`${x},${y}`).toBe(MAP_REFERENCE.walkableRows[y].some(([a,b])=>x>=a&&x<b));
+  });
+  it('places forty-eight wood/iron nodes outside ruins, base walls and other nodes', () => {
     const nodes = createResourceNodes();
-    expect(nodes).toHaveLength(32);
+    expect(nodes).toHaveLength(48);
     expect(new Set(nodes.map(node => node.id)).size).toBe(nodes.length);
     for (const [index, node] of nodes.entries()) {
       expect(CITY_BLOCKS.some(block => overlaps(node.footprint, block)), node.id).toBe(false);
@@ -39,7 +44,7 @@ describe('authored exploration map', () => {
     }
   });
 
-  it('connects all ten districts and every harvest target to the Shelter streets', () => {
+  it('connects all reference districts and every harvest target to the Shelter streets', () => {
     const nodes = createResourceNodes();
     const reachable = reachablePositions(nodes.map(node => node.footprint));
     for (const sector of SECTORS) {
@@ -50,9 +55,7 @@ describe('authored exploration map', () => {
       expect(reachable.some(position => node.distanceFrom(position) <= 2 &&
         hasLineOfSight(position, node.position, otherNodes)), node.id).toBe(true);
     }
-    // The market has accessible streets on both sides, rather than a single dead-end entrance.
-    for (const exit of [{ x: -20, z: 32 }, { x: 20, z: 32 }, { x: 0, z: 23 }]) {
-      expect(reachable.some(point => point.x === exit.x && point.z === exit.z), JSON.stringify(exit)).toBe(true);
-    }
+    for (const spec of [encounters.ravager,encounters.forgeGuardian,encounters.graveGuardian,encounters.finalBoss]) expect(reachable.some(p=>Math.hypot(p.x-spec.position.x,p.z-spec.position.z)<2),spec.kind).toBe(true);
+
   });
 });

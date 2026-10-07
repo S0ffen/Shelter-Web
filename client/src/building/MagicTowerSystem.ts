@@ -19,6 +19,9 @@ export interface MagicProjectile {
 export class MagicTowerSystem {
   readonly towers = new Map<string, TowerState>();
   readonly projectiles: MagicProjectile[] = [];
+  damageMultiplier = 1;
+  speedMultiplier = 1;
+  demand = CONFIG.power.towerDemand as number;
   private scanCountdown = 0;
   private nextProjectileId = 1;
   restoreNextId(): void { this.nextProjectileId = Math.max(0, ...this.projectiles.map(projectile => projectile.id)) + 1; }
@@ -37,8 +40,8 @@ export class MagicTowerSystem {
         tower = { buildingId: building.id, targetId: null, yaw: building.rotation, cooldown: 0, powered: false };
         this.towers.set(building.id, tower);
       }
-      tower.powered = allocatedPower + CONFIG.power.towerDemand <= generatedPower;
-      if (tower.powered) allocatedPower += CONFIG.power.towerDemand;
+      tower.powered = allocatedPower + this.demand <= generatedPower;
+      if (tower.powered) allocatedPower += this.demand;
       tower.cooldown = Math.max(0, tower.cooldown - dt);
       const obstacles = [...buildings.filter(other => other.id !== building.id).map(other => other.footprint), ...resourceObstacles];
       const visible = (enemy: Zombie): boolean => enemy.alive && distance(building.position, enemy.position) <= CONFIG.tower.range &&
@@ -51,7 +54,7 @@ export class MagicTowerSystem {
       if (!tower.powered || !target || !visible(target)) { tower.targetId = null; continue; }
       tower.yaw = Math.atan2(target.position.x - building.position.x, target.position.z - building.position.z);
       if (tower.cooldown > 0) continue;
-      tower.cooldown = CONFIG.tower.cooldown;
+      tower.cooldown = CONFIG.tower.cooldown / this.speedMultiplier;
       this.projectiles.push({
         id: this.nextProjectileId++, sourceId: building.id, targetId: target.id, lifetime: CONFIG.tower.projectileLifetime,
         position: { x: building.position.x + Math.sin(tower.yaw) * 0.5, y: 2.9, z: building.position.z + Math.cos(tower.yaw) * 0.5 },
@@ -71,7 +74,7 @@ export class MagicTowerSystem {
       const obstacles = [...buildings.filter(building => building.id !== projectile.sourceId).map(building => building.footprint), ...resourceObstacles];
       if (!hasLineOfSight(projectile.position, next, obstacles)) { this.projectiles.splice(i, 1); continue; }
       projectile.position = next;
-      if (d <= step + 0.3) { damage(target.id, CONFIG.tower.damage); this.projectiles.splice(i, 1); }
+      if (d <= step + 0.3) { damage(target.id, Math.round(CONFIG.tower.damage * this.damageMultiplier)); this.projectiles.splice(i, 1); }
     }
   }
 }

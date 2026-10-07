@@ -1,0 +1,18 @@
+[
+  {
+    "sourceArchive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\cstrike.nar",
+    "sourceEntry": "/cstrike/sound/shelter/zsh_resouceget.wav",
+    "asset": "client\\src\\assets\\audio\\resource-get.wav",
+    "bytesIdentical": true,
+    "sha256": "0c369e2c32b6dfc4a838e7e0122e2ef87f26120e91f1403dba2eca0dfcf36103",
+    "bytes": 28184
+  },
+  {
+    "sourceArchive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\cstrike.nar",
+    "sourceEntry": "/cstrike/sound/weapons/axe_hitwall.wav",
+    "asset": "client\\src\\assets\\audio\\harvest-hit.wav",
+    "bytesIdentical": true,
+    "sha256": "88987614387eb602753d3ee75f6098195e40a125e74027e79e0f9bd0ffb24df8",
+    "bytes": 19853
+  }
+]

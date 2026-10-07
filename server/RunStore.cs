@@ -2,7 +2,7 @@ using Microsoft.Data.Sqlite;
 
 namespace FantasyShelter.Server;
 
-public sealed record RunResult(string RunId, int Day, int Kills, double Elapsed);
+public sealed record RunResult(string RunId, int Day, int Kills, double Elapsed, string Outcome = "lost");
 
 /// <summary>Prototype persistence boundary. No simulation state lives in SQL transactions.</summary>
 public sealed class RunStore
@@ -29,9 +29,14 @@ public sealed class RunStore
             CREATE TABLE IF NOT EXISTS SchemaInfo (Version INTEGER PRIMARY KEY);
             INSERT OR IGNORE INTO SchemaInfo VALUES (1);
             CREATE TABLE IF NOT EXISTS Checkpoints (Slot INTEGER PRIMARY KEY CHECK (Slot=1), Json TEXT NOT NULL, UpdatedAt TEXT NOT NULL);
-            CREATE TABLE IF NOT EXISTS Runs (RunId TEXT PRIMARY KEY, Day INTEGER NOT NULL, Kills INTEGER NOT NULL, Elapsed REAL NOT NULL, FinishedAt TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS Runs (RunId TEXT PRIMARY KEY, Day INTEGER NOT NULL, Kills INTEGER NOT NULL, Elapsed REAL NOT NULL, FinishedAt TEXT NOT NULL, Outcome TEXT NOT NULL DEFAULT 'lost');
             """;
         command.ExecuteNonQuery();
+        using var columns = connection.CreateCommand(); columns.CommandText = "PRAGMA table_info(Runs)";
+        bool hasOutcome;
+        using (var reader = columns.ExecuteReader()) { var names = new List<string>(); while (reader.Read()) names.Add(reader.GetString(1)); hasOutcome = names.Contains("Outcome"); }
+        if (!hasOutcome) { command.CommandText = "ALTER TABLE Runs ADD COLUMN Outcome TEXT NOT NULL DEFAULT 'lost'"; command.ExecuteNonQuery(); }
+        command.CommandText = "INSERT OR IGNORE INTO SchemaInfo VALUES (2)"; command.ExecuteNonQuery();
     }
     public string? Load()
     {
@@ -53,11 +58,12 @@ public sealed class RunStore
     {
         using var connection = Open();
         using var command = connection.CreateCommand();
-        command.CommandText = "INSERT OR IGNORE INTO Runs (RunId, Day, Kills, Elapsed, FinishedAt) VALUES ($id, $day, $kills, $elapsed, $time)";
+        command.CommandText = "INSERT OR IGNORE INTO Runs (RunId, Day, Kills, Elapsed, FinishedAt, Outcome) VALUES ($id, $day, $kills, $elapsed, $time, $outcome)";
         command.Parameters.AddWithValue("$id", result.RunId);
         command.Parameters.AddWithValue("$day", result.Day);
         command.Parameters.AddWithValue("$kills", result.Kills);
         command.Parameters.AddWithValue("$elapsed", result.Elapsed);
+        command.Parameters.AddWithValue("$outcome", result.Outcome);
         command.Parameters.AddWithValue("$time", DateTimeOffset.UtcNow.ToString("O"));
         command.ExecuteNonQuery();
     }
@@ -65,10 +71,10 @@ public sealed class RunStore
     {
         using var connection = Open();
         using var command = connection.CreateCommand();
-        command.CommandText = "SELECT RunId, Day, Kills, Elapsed FROM Runs ORDER BY FinishedAt DESC LIMIT 20";
+        command.CommandText = "SELECT RunId, Day, Kills, Elapsed, Outcome FROM Runs ORDER BY FinishedAt DESC LIMIT 20";
         using var reader = command.ExecuteReader();
         var results = new List<RunResult>();
-        while (reader.Read()) results.Add(new(reader.GetString(0), reader.GetInt32(1), reader.GetInt32(2), reader.GetDouble(3)));
+        while (reader.Read()) results.Add(new(reader.GetString(0), reader.GetInt32(1), reader.GetInt32(2), reader.GetDouble(3), reader.GetString(4)));
         return results;
     }
 }

@@ -1,0 +1,61 @@
+{
+  "nightSpeedMultiplier": 1.65,
+  "types": {
+    "normal": {
+      "label": "Nieumarły",
+      "hp": 100,
+      "speed": 1.65,
+      "damage": 10,
+      "shelterDamage": 18,
+      "attackCooldown": 1.2
+    },
+    "fast": {
+      "label": "Biegacz",
+      "hp": 70,
+      "speed": 2.65,
+      "damage": 8,
+      "shelterDamage": 14,
+      "attackCooldown": 0.8
+    },
+    "tank": {
+      "label": "Pancerny",
+      "hp": 300,
+      "speed": 1.15,
+      "damage": 22,
+      "shelterDamage": 35,
+      "attackCooldown": 1.6
+    },
+    "guardian": {
+      "label": "Strażnik Kuźni",
+      "hp": 1800,
+      "speed": 2.8,
+      "damage": 28,
+      "shelterDamage": 0,
+      "attackCooldown": 2.6
+    },
+    "overlord": {
+      "label": "Władca Klątwy",
+      "hp": 16000,
+      "speed": 5.2,
+      "damage": 45,
+      "shelterDamage": 0,
+      "attackCooldown": 1.9
+    },
+    "warden": {
+      "label": "Strażnik Katakumb",
+      "hp": 2100,
+      "speed": 2.6,
+      "damage": 28,
+      "shelterDamage": 0,
+      "attackCooldown": 2.6
+    },
+    "ravager": {
+      "hp": 4500,
+      "speed": 5.9,
+      "damage": 32,
+      "shelterDamage": 0,
+      "attackCooldown": 1.25,
+      "label": "Rozszalały Kolos"
+    }
+  }
+}

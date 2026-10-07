@@ -7,12 +7,15 @@ export class PlayerController {
   readonly camera: UniversalCamera;
   private readonly body: Mesh;
   moving = false;
+  private shakeRemaining = 0;
+  private shakeStrength = 0;
+  shake(strength = .035): void { this.shakeRemaining = .2; this.shakeStrength = strength; }
 
   constructor(scene: Scene, private readonly input: Pick<InputManager, 'consumeLook' | 'down'>) {
     this.camera = new UniversalCamera('player-camera', Vector3.Zero(), scene);
     this.camera.inputs.clear();
     this.camera.minZ = 0.05;
-    this.camera.maxZ = 180;
+    this.camera.maxZ = 550;
     this.camera.fov = 1.18;
     this.body = CreateBox('player-collider', { size: 1 }, scene);
     this.body.isVisible = false;
@@ -28,7 +31,7 @@ export class PlayerController {
     this.moving = false;
   }
 
-  update(dt: number, player: Player): void {
+  update(dt: number, player: Player, speed: number = CONFIG.player.speed): void {
     const look = this.input.consumeLook();
     this.camera.rotation.y += look.x * 0.0022;
     this.camera.rotation.x = Math.max(-1.45, Math.min(1.45, this.camera.rotation.x + look.y * 0.0022));
@@ -38,7 +41,7 @@ export class PlayerController {
     this.moving = length > 0;
     if (length > 0) {
       const yaw = this.camera.rotation.y;
-      const step = CONFIG.player.speed * dt / length;
+      const step = speed * dt / length;
       this.body.moveWithCollisions(new Vector3(
         (Math.sin(yaw) * forward + Math.cos(yaw) * strafe) * step,
         0,
@@ -46,7 +49,9 @@ export class PlayerController {
       ));
     }
     this.body.position.y = 0.85;
-    this.camera.position.set(this.body.position.x, 1.7, this.body.position.z);
+    this.shakeRemaining = Math.max(0, this.shakeRemaining - dt);
+    const shake = this.shakeRemaining / .2 * this.shakeStrength;
+    this.camera.position.set(this.body.position.x + Math.sin(this.shakeRemaining * 120) * shake, 1.7 + Math.cos(this.shakeRemaining * 95) * shake, this.body.position.z);
     player.position = { x: this.body.position.x, z: this.body.position.z };
     player.yaw = this.camera.rotation.y;
   }

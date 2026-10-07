@@ -10,10 +10,10 @@ describe('milestone 6 Magic Tower', () => {
     sim.start();
     sim.resourceManager.add('wood', 100);
     sim.resourceManager.add('iron', 50);
-    sim.placeBuilding('arcane-core', { x: -4, z: -7 }, 0);
-    sim.player.position = { x: -6, z: -4 };
-    sim.placeBuilding('magic-tower', { x: -4, z: -1 }, 0);
-    const enemy = new Zombie('tower-target', { x: -6, z: 0 });
+    (sim.player.position = { x: -10, z: -13 }, sim.placeBuilding('arcane-core', { x: -13, z: -13 }, 0));
+    sim.player.position = { x: -15, z: 3 };
+    sim.placeBuilding('magic-tower', { x: -13, z: 6 }, 0);
+    const enemy = new Zombie('tower-target', { x: -13, z: 3 });
     sim.zombies.push(enemy);
     sim.update(1 / 30);
     expect(sim.towerSystem.projectiles).toHaveLength(1);
@@ -31,11 +31,11 @@ describe('milestone 6 Magic Tower', () => {
 
   it('selects the nearest living visible target, honours power, and respects walls and range', () => {
     const system = new MagicTowerSystem();
-    const building = new Building('tower', 'magic-tower', { x: -3, z: -3 }, 0);
+    const building = new Building('tower', 'magic-tower', { x: -7, z: -8 }, 0);
     const near = new Zombie('near');
-    near.position = { x: -6, z: 0 };
+    near.position = { x: -6, z: -6 };
     const far = new Zombie('far');
-    far.position = { x: -6, z: 5 };
+    far.position = { x: -6, z: -2 };
     system.update(1 / 30, [building], [far, near], 0, () => {});
     expect(system.projectiles).toHaveLength(0);
     for (let i = 0; i < 7; i++) system.update(1 / 30, [building], [far, near], 50, () => {});

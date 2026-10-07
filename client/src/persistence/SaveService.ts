@@ -1,7 +1,7 @@
-import { parseRun } from './RunSnapshot';
+import { parseRun, SAVE_VERSION } from './RunSnapshot';
 import type { RunSnapshot } from './RunSnapshot';
 
-const KEY = 'fantasy-shelter.run.v2';
+const KEY = `fantasy-shelter.run.v${SAVE_VERSION}`;
 const API = import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:5080';
 
 /** Local fallback plus serialized SQLite writes; the latest checkpoint never races an older write. */
@@ -13,7 +13,7 @@ export class SaveService {
   constructor() {
     try {
       this.local = parseRun(JSON.parse(localStorage.getItem(KEY) ?? 'null'));
-      this.incompatibleSave = !this.local && localStorage.getItem('fantasy-shelter.run.v1') !== null;
+      this.incompatibleSave = !this.local && Array.from({ length: SAVE_VERSION - 1 }, (_, i) => `fantasy-shelter.run.v${i + 1}`).some(key => localStorage.getItem(key) !== null);
     } catch { /* Corrupt storage is ignored. */ }
   }
   get latest(): RunSnapshot | null { return this.local ? structuredClone(this.local) : null; }
@@ -26,7 +26,7 @@ export class SaveService {
       if (response.status === 200) {
         const raw = await response.json();
         const remote = parseRun(raw);
-        if (raw?.version === 1) this.incompatibleSave = true;
+        if (Number.isInteger(raw?.version) && raw.version < SAVE_VERSION) this.incompatibleSave = true;
         if (remote && (!this.local || Date.parse(remote.savedAt) > Date.parse(this.local.savedAt))) this.remember(remote);
       }
     } catch { this.online = false; }
@@ -51,7 +51,7 @@ export class SaveService {
     this.queue = operation;
     return operation;
   }
-  async recordResult(snapshot: { runId: string; day: number; kills: number; elapsed: number }): Promise<void> {
+  async recordResult(snapshot: { runId: string; day: number; kills: number; elapsed: number; outcome?: 'won' | 'lost' }): Promise<void> {
     try {
       const response = await fetch(API + '/api/runs', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(snapshot), signal: AbortSignal.timeout(2500) });
       this.online = response.ok;

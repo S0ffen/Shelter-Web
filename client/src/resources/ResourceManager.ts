@@ -4,7 +4,8 @@ import { CONFIG } from '../domain/config';
 
 export class ResourceManager {
   readonly counts: ResourceCounts = { wood: 0, iron: 0 };
-  readonly capacity: ResourceCounts = { ...CONFIG.resources.capacity };
+  readonly capacity: ResourceCounts;
+  constructor(capacity: ResourceCounts = CONFIG.resources.capacity) { this.capacity = { ...capacity }; }
 
   canAccept(kind: ResourceKind, amount: number): boolean {
     return Number.isFinite(amount) && amount >= 0 && this.counts[kind] + amount <= this.capacity[kind];

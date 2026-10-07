@@ -1,145 +1,192 @@
 # Fantasy Shelter
 
-Przeglądarkowy FPS survivalowy w klimacie dark fantasy, inspirowany przygotowywaniem bazy i obroną przed hordami w Shelter. Ukończone etapy **1–6, 6.5, 7 i 8**, z serwerem zapisu **ASP.NET Core + SQLite**.
+Przeglądarkowy FPS survivalowy dark fantasy, inspirowany New Zombie Shelter. Po 12 etapach zgodności wdrożono kolejną poprawkę: ręczny depozyt, Psyche, większe drzewka, szybsze tempo i trudniejszego bossa. Gracz sam wybiera inwestycje i moment walki z bossem; nie ma dziennych questów.
 
-Aktualny stan: [STATUS_PROJEKTU.md](STATUS_PROJEKTU.md). Specyfikacje: [MVP](fantasy_shelter_mvp.md), [eksploracja i harvesting](fantasy_shelter_next_milestone.md). Parametry poniżej dotyczą tego prototypu.
-
-## Rozgrywka
-
-1. Rozpoczynasz dzień przy Shelterze. Masz **150 sekund** na zbieranie, eksplorację i budowanie. Cztery patrole krążą po ruinach i atakują pobliskiego gracza; ubytki patroli są uzupełniane co 20 sekund.
-2. Noc zaczyna oblężenie. Pierwsza fala liczy **8 przeciwników**, następne rosną o 4, do 64. Żywe patrole wchodzą w skład fali. Kolejni zombie pojawiają się co 2 sekundy, przy limicie 24 żywych jednocześnie.
-3. Spawny losują pozycje w dziesięciu obszarach miasta, co najmniej 10 m od gracza, z dostępną trasą do Shelteru. Zombie omijają ruiny, źródła surowców i konstrukcje. Wieże wybierają cele z całej hordy.
-4. Noc trwa co najmniej **45 sekund** i kończy się dopiero po wyczerpaniu kolejki spawnu oraz zabiciu wszystkich przeciwników. Zegar na zero nie kończy aktywnego oblężenia.
-5. Następny dzień zachowuje HP, zasoby, konstrukcje i wyczerpane złoża. Zabicie pojedynczego zombie nie kończy próby. Śmierć gracza lub zniszczenie Shelteru oznacza przegraną.
-
-Oświetlenie i mgła płynnie przechodzą między dniem, zmierzchem i nocą. HUD pokazuje dzień, czas, żywych zombie, oczekujące spawny oraz zabójstwa. **N przy Shelterze** rozpoczyna noc wcześniej. Pauza zatrzymuje zegar, AI i spawny; restart tworzy nową próbę.
+Stan: [STATUS_PROJEKTU.md](STATUS_PROJEKTU.md). Wcześniejsze specyfikacje: [MVP](fantasy_shelter_mvp.md), [harvesting i eksploracja](fantasy_shelter_next_milestone.md). Poniżej aktualne zasady.
 
 ## Uruchomienie
 
-Klient wymaga Node.js 22.12+ i npm; serwer — .NET SDK 8. Uruchom w dwóch terminalach.
+Wymagania: Node.js 22.12+ i npm, .NET SDK 8. Otwórz dwa terminale w katalogu projektu.
 
-~~~powershell
-# Terminal 1, katalog główny projektu
+```powershell
+# Terminal 1
 dotnet restore server/FantasyShelter.Server.csproj
-dotnet run --project server/FantasyShelter.Server.csproj --no-launch-profile
-~~~
+dotnet run --project server/FantasyShelter.Server.csproj --no-launch-profile --urls http://127.0.0.1:5080
+```
 
-~~~powershell
+```powershell
 # Terminal 2
 cd client
 npm install
 npm run dev
-~~~
+```
 
-Gra: **http://127.0.0.1:5173/**. API: **http://127.0.0.1:5080/api/health**. Baza `server/Data/shelter.db` powstaje automatycznie; nie trzeba podpinać zewnętrznej bazy. Klient działa również bez serwera, zapisując w localStorage przeglądarki.
+Gra: [http://127.0.0.1:5173/](http://127.0.0.1:5173/). API: [stan serwera](http://127.0.0.1:5080/api/health). SQLite tworzy się automatycznie w `server/Data/shelter.db`. Bez API klient zapisuje w localStorage.
 
-Graj w desktopowym Chrome lub Edge z WebGL. „Wejdź do ruin” przechwytuje kursor i rozpoczyna próbę. Przeglądarka Codex może blokować pointer lock; wtedy otwórz adres w zwykłej przeglądarce.
+Graj w desktopowym Chrome/Edge z WebGL i przechwytywaniem kursora. Po zmianie serwera uruchom go ponownie. Checkpoint **v13** wymaga nowego runu przy przejściu z v1–v11; stare lokalne klucze pozostają zachowane.
 
-## Sterowanie
+## HUD i rytm runu
 
-| Sterowanie | Działanie |
+**Górny centralny panel** pokazuje bank Wood/Iron, Arcane Power, dzień/noc z ikoną i numerem dnia oraz wszystkie zabójstwa. Mała liczba nad materiałem to pojemność, duża to stan w Shelterze. Dla mocy mała oznacza całkowitą moc, duża wolną. Pod panelem jest timer do końca fazy.
+
+**Dolny panel** pokazuje ikonę i pasek Psyche oraz Wood/Iron przy sobie. HP gracza i rdzenia mają osobne wskaźniki. Strzałka oraz odległość pomagają wrócić do bazy.
+
+Wyprawa → harvesting do plecaka → powrót → E przy urządzeniu DEPOSIT → budowanie/rozwój → obrona nocna → świt → dalsza eksploracja → samodzielnie wybrana próba walki z bossem.
+
+Dzień trwa **180 s**, noc **90 s**. Ostrzeżenia występują 60/30/10 s przed nocą. Światło i mgła zmieniają się wraz z fazą. Noc ma cztery rosnące mini-fale z krótkimi przerwami. Pierwsza liczy 8 przeciwników; kolejne rosną o 4, do 64. Limit żywych wynosi 24. Regularne zombie nocą przyspieszają ×1,65. O świcie pozostałe jednostki oblężenia wycofują się bez naliczenia zabójstw.
+
+Każdy świt odradza wszystkie źródła i dodaje punkt rozwoju, zachowując pozostały stan runu. Co piątą noc **Blood Moon** zwiększa falę o 50%, zmienia światło na czerwone i dodaje ostrzeżenia. Dzień ma cztery patrole, uzupełniane co 20 s. Pauza zatrzymuje symulację.
+
+## Ekonomia i Psyche
+
+| Zapas | Pojemność początkowa | Rozszerzenie |
+| --- | ---: | --- |
+| Wood / Iron w Shelterze | 100 / 50 | +50 / +25 na Storehouse |
+| Wood / Iron przy sobie | 30 / 20 | Beginner / Advance Harvest: do 60 / 38 |
+
+Harvesting trafia wyłącznie do plecaka. Wewnątrz Shelteru stoi metalowy depozyt, przypominający lodówkę. Podejdź, wyceluj i naciśnij **E**, aby oddać tyle każdego materiału, ile mieści bank. Samo wejście do bazy niczego nie oddaje. Nadmiar zostaje przy graczu. Budowa, rozbudowa i naprawy korzystają wyłącznie z banku. Jeżeli pełna nagroda z uderzenia nie mieści się w plecaku, trafienie jest blokowane i materiały pozostają w źródle.
+
+Psyche zaczyna od pełnego paska. Poza bazą spada o **1/s**, wewnątrz regeneruje się o **4/s**. Przy pustym pasku: pulsująca winieta, ruch wolniejszy o 20%, **5 HP co 3 s**. Powrót przerywa obrażenia. Endurance spowalnia utratę o 15/25/35%. W kodzie stan klątwy nadal przechowuje się jako corruption (0 = pełne Psyche, 100 = puste). Wszystkie wartości znajdują się w `shared/corruption.json`.
+
+**Arcane jest mocą infrastruktury.** Generator dostarcza 40, wieża rezerwuje 10, magazyn 5. Nie zbierasz Arcane i nie zużywasz go przy strzałach. Zniszczenie generatora może wyłączyć wieże; odbudowa przywraca moc.
+
+## Baza i obrona
+
+Otwarty plac 54 × 55 m, dziedziniec 38 × 36 m, cztery bramy 8 m. Shelter: dostępne wnętrze 12 × 10 m, drzwi 4,4 m, sześć otwartych okien. **Centralny słup jest celem oblężenia**; zombie muszą do niego dotrzeć.
+
+Budujesz wyłącznie w bazie. Generatory wymagają jednego z sześciu stanowisk. Magazyny i wieże ustawiasz swobodnie, zachowując wejścia i trasy. Nieudana budowa nie pobiera materiałów.
+
+| Konstrukcja | Koszt Wood / Iron | HP | Efekt |
+| --- | ---: | ---: | --- |
+| Storehouse | 30 / 10 | 160 | +50 / +25 pojemności, 5 mocy |
+| Generator Arcane | 20 / 15 | 200 | +40 mocy |
+| Magic Tower | 20 / 15 | 240 | 10 mocy, zasięg 12 m, 25 obrażeń co 1,2 s |
+
+Zombie mogą niszczyć konstrukcje. Utrata magazynu zmniejsza pojemność i usuwa zapasy ponad nowy limit. LPM w trafiony uszkodzony rdzeń/konstrukcję naprawia do 25 HP za 2 Wood + 1 Iron, zasięg 3 m, raz na 1,5 s; Engineer Crafting i Construction Master zwiększają skuteczność, a perki Engineer skracają cooldown. PPM nie naprawia.
+
+| Poziom rdzenia | HP | Pancerz | Koszt Wood / Iron |
+| --- | ---: | ---: | ---: |
+| 1 | 300 | 0% | Start |
+| 2 | 500 | 10% | 50 / 25 |
+| 3 | 750 | 20% | 80 / 40 |
+
+F we wnętrzu ulepsza tylko za dnia. Ulepszenie zachowuje wcześniej zadane uszkodzenia. Improve Blueprint obniża koszty budowy i rozbudowy o 5/10/15%, zaokrąglając materiały w górę.
+
+## Combat / Survival / Engineer
+
+**3 punkty na start, +1 za każdy kolejny dzień.** N otwiera menu również z pauzy. Punkty rozdzielasz w dowolnym miejscu i porze runu. Menu zatrzymuje symulację. Każda ranga kosztuje punkt. Wyższe poziomy wymagają 3/6/9 wydanych punktów w danej ścieżce, a rozwinięte mastery również poprzedniego perka na maksymalnej randze.
+
+**33 perki, cztery poziomy na każdą ścieżkę**, z rangami i specjalizacją. Broń palną, bombardowanie i materiały pierwowzoru dostosowano do istniejącego miecza, magii i budynków.
+
+| Ścieżka | Tier | Perk | Rangi | Efekt |
+| --- | ---: | --- | ---: | --- |
+| COMBAT | 1 | Beginner Weapon Mastery | 3 | Obrażenia miecza +8 / 16 / 24% |
+| COMBAT | 1 | Battle Tempo | 3 | Szybkość ataków +5 / 10 / 15% |
+| COMBAT | 1 | Health Up | 3 | Maksymalne HP +10 / 20 / 30% |
+| COMBAT | 2 | Intermediate Weapon Mastery | 3 | Dalsze +10 / 20 / 30% obrażeń miecza |
+| COMBAT | 2 | Combat Crafting | 1 | Wzmocnione ostrze: +15% obrażeń i +0,4 m zasięgu |
+| COMBAT | 2 | Armor Enhancement | 3 | Redukcja obrażeń od wrogów o 8 / 16 / 24% |
+| COMBAT | 3 | Advanced Weapon Mastery | 3 | Dalsze +15 / 30 / 45% obrażeń miecza |
+| COMBAT | 3 | Combat Master | 2 | Przy niskim HP: osłona na 4 / 5 s, odnowienie 90 s |
+| COMBAT | 3 | Special Weapon Mastery | 3 | Mocny atak: dodatkowe +20 / 40 / 60% obrażeń |
+| COMBAT | 4 | Bombing Request · Arcane Barrage | 1 | 5: magiczny ostrzał wokół celownika, odnowienie 90 s |
+| COMBAT | 4 | Stats Up | 1 | +20% HP, +15% obrażeń, +5% ruchu |
+| SURVIVAL | 1 | Beginner Harvest | 3 | Plecak +5/10/15 Wood i +3/6/9 Iron; harvesting +10/20/30%; ranga 3: +1 nagrody |
+| SURVIVAL | 1 | Speed Up | 3 | Ruch szybszy o 5 / 10 / 20% |
+| SURVIVAL | 1 | Explorer | 3 | Wskazuje pobliskie Wood / również Iron / również zombie |
+| SURVIVAL | 2 | Advance Harvest | 3 | Dodatkowa pojemność +5/10/15 Wood i +3/6/9 Iron; +1/1/2 nagrody |
+| SURVIVAL | 2 | Campfire | 1 | Ognisko wewnątrz Shelteru przywraca 2 HP/s i Psyche |
+| SURVIVAL | 2 | Survival Crafting | 1 | Narzędzie: +25% obrażeń źródeł i +1 m zasięgu |
+| SURVIVAL | 3 | Hunter | 3 | Trafienie mieczem spowalnia przeciwnika o 10/20/30% na 2 s |
+| SURVIVAL | 3 | Endurance | 3 | Psyche wyczerpuje się o 15/25/35% wolniej; regeneracja przy Psyche >50% |
+| SURVIVAL | 3 | Scavenger | 3 | 10/20/30% szans na materiał do plecaka z zabitego zombie |
+| SURVIVAL | 4 | Cloak | 1 | 6: ukrycie na 15 s, pierwszy cios ×2; odnowienie 90 s |
+| SURVIVAL | 4 | Resource Transporting | 1 | E pozwala zdalnie oddać pełny plecak do banku Shelteru |
+| ENGINEER | 1 | Auto Repair | 3 | Podczas bezruchu: pobliska infrastruktura odzyskuje 1/3/5% HP/s (2 Wood + 1 Iron/s) |
+| ENGINEER | 1 | Beginner Engineer | 3 | HP konstrukcji +10/20/30%; szybsze naprawy |
+| ENGINEER | 1 | Improve Blueprint | 3 | Budowa i rozbudowa tańsze o 5 / 10 / 15% |
+| ENGINEER | 2 | Engineer Crafting | 1 | Młot: +30% napraw i +20% szybkości napraw |
+| ENGINEER | 2 | Intermediate Engineer | 3 | Dalsze +10/20/30% HP i +5/10/15% wydajności generatorów |
+| ENGINEER | 2 | Electrical Engineering | 3 | Wieże i magazyny potrzebują o 10/20/30% mniej mocy |
+| ENGINEER | 3 | Recycle | 3 | X: rozbiórka trafionej konstrukcji, zwrot 25/50/75% ceny |
+| ENGINEER | 3 | Expert Engineer | 3 | Dalsze +10/20/30% HP konstrukcji i obrażeń wież |
+| ENGINEER | 3 | Construction Master | 3 | Szybkość wież +5/10/15%; naprawy +10/20/30% przy Psyche >50% |
+| ENGINEER | 4 | Wrecking Team | 1 | 7: wybuch runy, 800 obrażeń wokół celu; odnowienie 90 s |
+| ENGINEER | 4 | Turret Tower Moving | 1 | V na wieży: przenieś ją przez podgląd budowania bez opłat |
+
+Cloak przerywa każde uderzenie oraz otrzymane obrażenia. Naprawa automatyczna wymaga bezruchu, zasięgu i zasobów banku. Zdalny transport jest ręczną akcją E po odblokowaniu perka, wymaga pełnego Wood albo Iron w plecaku. Przenoszenie wieży: V na pobliskiej wieży, następnie zwykły podgląd, LPM potwierdza; HP i cooldown pozostają.
+
+Referencje: [gameplay City of Damned](https://www.youtube.com/watch?v=w5bPBMt6yJ4), [poradnik społeczności Nexon](https://csonline.nexon.com/Community/Strategy/View/1347?cp=1&sw=llAcceleraterll). Efekty i balans są adaptacją do tej gry.
+
+## Mapa i cel końcowy
+
+Miasto odtwarza dostarczony layout City of Damned. Rozmiar około **309 × 310 m**, skala 1,2 m/piksel. Kształt ulic, placów, zaułków i brył wynika z `reference-assets/layout.png`; model 3D oraz kolizje używają tej samej maski. Shelter znajduje się przy żółtym oznaczeniu na południu. 48 źródeł Wood/Iron rozmieszczono na dostępnych ulicach z miejscem na harvesting. Źródła odradzają się każdego dnia.
+
+- Czerwony punkt w środku: **Rozszalały Kolos**, 4500 HP, 5,9 m/s, 32 obrażenia, szybki pościg i walka wręcz. Nie rzuca zaklęć ani kręgów na ziemi.
+- Pomarańczowe punkty: **Strażnik Katakumb** na zachodzie (2100 HP) i **Strażnik Kuźni** na wschodzie (1800 HP). Pokonanie odblokowuje bogate źródła w ich okolicy; strażnicy nie odradzają się przy świcie.
+- Niebieski punkt: **Władca Klątwy** na północnym wschodzie, 16000 HP i 20% redukcji obrażeń. Wejście zamyka cztery granice areny; bramy blokują gracza, zombie i linię strzału. Boss uderza wręcz, szarżuje z prędkością 14 m/s i zadaje 55 obrażeń przy trafieniu. Kierunek szarży jest zapamiętywany przed ruszeniem, co pozwala wykonać uskok. Przywołuje do 6 Biegaczy; poniżej połowy HP przyspiesza. Pieczęć areny chroni Psyche podczas walki. Nie resetuje HP podczas Cloak i nie ma zaklęć oznaczających ziemię.
+
+Dowolny dzień wyprawy. Pokonanie końcowego bossa przy żywym graczu i rdzeniu daje **RUN COMPLETED**, **DAY REACHED**, **ZOMBIES KILLED**. Pozostali bossowie nie kończą runu. Śmierć gracza lub słupa oznacza przegraną.
+
+## Sterowanie i feedback
+
+| Klawisz | Działanie |
 | --- | --- |
 | WASD / mysz | Ruch / rozglądanie |
-| LPM | Miecz lub zbieranie z obiektu w celowniku; zasięg 3 m |
-| B | Włącz/wyłącz budowanie |
+| LPM | Szybki atak 34 / 0,65 s, harvesting lub naprawa trafionego obiektu |
+| PPM | Mocny atak 80 / 1,4 s; wspólny cooldown z LPM |
+| B | Budowanie |
 | 1 / 2 / 3 | Storehouse / Generator Arcane / Magic Tower |
 | Q | Obrót podglądu o 90° |
-| LPM podczas budowania | Postaw konstrukcję w zasięgu 6 m |
-| PPM podczas budowania | Anuluj i wróć do miecza |
-| N przy Shelterze | Rozpocznij noc wcześniej |
-| Escape | Pauza i zwolnienie kursora |
+| LPM / PPM w budowaniu | Postaw w zasięgu 6 m / anuluj |
+| N | Drzewka w dowolnym miejscu, również w pauzie |
+| E | Oddanie materiałów przy DEPOSIT |
+| 5 / 6 / 7 | Arcane Barrage / Cloak / Wrecking Team po odblokowaniu |
+| X / V | Recycle / przenoszenie wieży po odblokowaniu |
+| F we wnętrzu | Rozbudowa rdzenia za dnia |
+| Escape | Pauza / zamknięcie drzewek |
 | R | Nowa próba |
-| „Zapisz próbę” w pauzie | Zapis ręczny |
-| „Wznów zapis” w menu | Wczytaj checkpoint |
 
-Utrata aktywnej karty lub fokusu zatrzymuje rozgrywkę i anuluje podgląd budowania. Nie ma jeszcze skoku, sprintu ani ciężkiego ataku.
+Utrata fokusu zatrzymuje grę. Nie ma jeszcze skoku/sprintu. Trafienia mają hit marker, flash, audio i wstrząs kamery przy mocnym ataku. Harvesting: drzazgi/iskry, floating text i mocniejszy rozpad. Wieże: magiczne pociski, trail, audio i efekty trafienia. Rdzeń reaguje w HUD; niskie HP wywołuje **SHELTER CRITICAL**.
 
-## Mapa i surowce
+## Zapis i architektura
 
-Ręcznie zaprojektowane miasto **96 × 98 m**, bez ekranów ładowania: Schronienie, Cmentarz, Stare Miasto, Rynek, Świątynia, Slumsy, Kuźnia, Las, Brama i Kopalnie. Dzielnica jest widoczna w HUD. Uliczki, place, zaułki i charakterystyczne budowle pomagają w orientacji.
+Checkpoint **v13** zachowuje bank/plecak, Skażenie, perki, HP konstrukcji, źródła, zombie i przygotowanie ataków bossów, dzień/noc, cooldowny, pociski, losowość, strażników i wynik active/won/lost. Autosave: rozpoczęcie/wznowienie, 20 s, pauza, świt, perki, strażnik i zakończenie. Jest jeden slot; zakończony run zapisuje stan terminalny i nie wraca do życia po odświeżeniu. Historia obejmuje zwycięstwa i przegrane.
 
-Źródła mają HP i są zbierane mieczem: 34 obrażenia co 0,65 s. Skieruj celownik na obiekt, przy niskich złożach spójrz w dół. Żelazo ma postać nieregularnych ciemnych skał z żyłami rudy. Arcane jest wyłącznie mocą infrastruktury; nie ma zbieralnych kryształów.
+ASP.NET Core 8 + SQLite waliduje i przechowuje zapis. Schemat **v2** automatycznie dodaje Outcome do wyników i zachowuje wcześniejsze dane. Symulacja pozostaje w kliencie. Multiplayer i autorytatywna symulacja są dalszym etapem. Szczegóły: [server/README.md](server/README.md).
 
-| Źródło | HP | Nagrody przy HP | Liczba | Cała pula |
-| --- | ---: | --- | ---: | ---: |
-| Powalony pień | 100 | 75 / 50 / 25: po 3 Wood; 0: 5 Wood | 16 | 224 Wood |
-| Złoże żelaza | 160 | 120 / 80 / 40 / 0: po 2 Iron | 16 | 128 Iron |
+TypeScript + Babylon.js + Vite, HUD HTML/CSS, bez Reacta. Domena oddzielona od renderera. Symulacja 30 Hz, decyzje AI i dobór celu wież 5 Hz. Nawigacja uwzględnia aktualne przeszkody. Modele pozostają prototypowe; współdzielone tekstury proceduralne 512 px mają mapy normalnych i cienie. Audio łączy próbkę zbierania z efektami walki i komunikatów Web Audio; ambient i muzyka są wyłączone.
 
-
-Każdy próg przyznaje nagrodę raz. Zniszczony obiekt znika i zwalnia kolizję. **Źródła nie odradzają się wraz z nowym dniem**; przywraca je nowa próba. Mapa i materiały są stałe, pozycje zombie są losowane.
-
-Początkowe limity: **100 Wood / 50 Iron**. Jeśli cała nagroda z uderzenia nie mieści się w magazynie, trafienie jest blokowane; HP i materiał pozostają zachowane. Wydaj zasoby lub zbuduj Storehouse.
-
-## Budowanie i obrona
-
-Baza ma dziedziniec **28 × 26 m**, cztery bramy w niskim murze oraz dostępny Shelter **8 × 7 m** z wejściem szerokości 3 m. Możesz wejść i wyjść bez interakcji. Po obu bokach jest dziesięć sugerowanych stanowisk wież; można też wybierać inne poprawne miejsca na dziedzińcu. Budowanie wymaga, aby gracz i cały obrys konstrukcji znajdowali się na terenie bazy. Wnętrze Shelteru, drzwi i przejścia między bramami pozostają wolne. Strzałka HUD wskazuje kierunek oraz odległość do wejścia, a wysoki świetlny znacznik ułatwia znalezienie bazy w mieście.
-
-Układ bazy i zasada mocy odwołują się do obejrzanych fragmentów [City of Damned — Zombie Shelter Co-op](https://www.youtube.com/watch?v=w5bPBMt6yJ4), z zachowaniem fantastycznego stylu projektu.
-
-
-| Konstrukcja | Koszt | Działanie |
-| --- | --- | --- |
-| Storehouse | 30 Wood + 10 Iron | +50 Wood, +25 Iron pojemności; rezerwuje 5 mocy |
-| Generator Arcane | 20 Wood + 15 Iron | +40 mocy |
-| Magic Tower | 20 Wood + 15 Iron | Rezerwuje 10 Arcane Power; zasięg 12 m, 25 obrażeń co 1,2 s |
-
-**Arcane oznacza Power:** generatory zwiększają całkowitą moc, a wieże i magazyny rezerwują jej część. HUD pokazuje moc wolną / całkowitą. Nie zbierasz Arcane i nie zużywasz go z czasem ani przy strzałach. Jeden generator zasila cztery wieże lub trzy wieże i magazyn. Koszty i balans dotyczą tego prototypu. Pociski wież lecą do celu. Ruiny, konstrukcje i żywe źródła blokują widoczność i ataki. Gracz i każdy zombie mają 100 HP; Shelter 300 HP.
-
-Zielony podgląd oznacza poprawne miejsce, czerwony blokadę z wyjaśnieniem. Nie można budować w przeszkodach, na graczu/zombie/żywych źródłach, w chronionych podejściach do Shelteru ani odciąć tras ze stref spawnu. Nieudana budowa nie pobiera zasobów.
-
-Generator + Tower kosztują **40 Wood i 30 Iron**. Cztery pnie i cztery złoża przy Shelterze dają 56 Wood i 32 Iron. Najpierw zbuduj generator, następnie magazyn i wieże. Dzień służy przygotowaniu infrastruktury; wieżę ustaw z widokiem na podejścia. Naprawy, rozbieranie i ataki zombie na konstrukcje będą kolejnymi rozszerzeniami.
-
-## Zapis i serwer
-
-Zapis automatyczny: początek/wznowienie próby, co 20 sekund, pauza i początek nowego dnia. Checkpoint zachowuje HP, pozycję gracza, zasoby, budynki, HP źródeł, zombie, cykl, kolejkę spawnu, generator losowy, cooldowny wież i pociski. Wczytana próba jest zatrzymana do przechwycenia kursora.
-
-Aktualny checkpoint ma **wersję 2**. Poprzedni układ mapy i zasób Arcane z wersji 1 nie są zgodne: rozpocznij nową próbę. Stary lokalny zapis pozostaje pod osobnym kluczem; w SQLite poprzedni checkpoint pozostaje do normalnego zapisu nowej próby. Moc jest odtwarzana z generatorów i odbiorników, bez osobnego zasobu Arcane.
-
-HUD wskazuje, czy zapis trafił do SQLite czy do przeglądarki. Przy uruchomieniu wybierany jest nowszy poprawny checkpoint. Historia przegranych jest osobną tabelą; przegrana nie nadpisuje ostatniego żywego zapisu. Jest jeden slot lokalnej próby.
-
-ASP.NET Core waliduje dane i przechowuje je w SQLite. **Symulacja gameplayu nadal działa w kliencie.** Multiplayer, SignalR i serwerowa walidacja ruchu oraz walki pozostają dalszym etapem. Szczegóły: [server/README.md](server/README.md).
-
-## Architektura i parametry
-
-~~~text
-shared/                  survival.json, harvesting.json, resources.json, shelter.json
-client/src/
-  domain/                Simulation, SurvivalCycle, typy i konfiguracja walki
-  core/                  Game, scena, input, pętla renderowania
-  player/                Stan gracza, kontroler Babylon, widok miecza
-  enemies/               Zombie, AI, ZombieSpawner, ZombieView, HordeView
-  resources/             ResourceManager, ResourceNode, HarvestingConfig, ResourceView
-  building/              Stan, walidacja, wieże, pociski i widoki konstrukcji
-  world/                 WorldLayout, NavigationGrid, geometria miasta
-  persistence/           RunSnapshot, SaveService
-  shelter/, ui/          Shelter i HUD HTML/CSS
-server/                  Minimal API, CheckpointValidator, RunStore, SQLite
-~~~
-
-TypeScript + Babylon.js + Vite, bez Reacta. Modele i reguły nie importują Babylon.js. Symulacja **30 Hz**, decyzje AI i dobór celów wież **5 Hz**. Wspólna siatka nawigacyjna wyznacza drogi dla hordy i aktualizuje się po zmianie przeszkód. Widoki interpolują ruch; zwłoki znikają po 3 sekundach i nie blokują raycastu.
-
-`shared/survival.json`: cykl i spawny; `shared/harvesting.json`: HP/wymiary/nagrody; `shared/resources.json`: 32 źródła; `shared/shelter.json`: granice bazy, wymiary Shelteru i bilans mocy. Te same pliki są kopiowane do serwera. Walka/budowanie: `client/src/domain/config.ts`; miasto: `client/src/world/WorldLayout.ts`. Geometria pozostaje prototypowa, bez zewnętrznych modeli i tekstur.
+| Pliki w shared/ | Parametry |
+| --- | --- |
+| survival.json | Fazy, ostrzeżenia, mini-fale, patrole |
+| economy.json / corruption.json | Pojemności i Skażenie |
+| skills.json / buildings.json | Perki, receptury i HP |
+| world.json / resources.json | Mapa, dzielnice, źródła |
+| harvesting.json / combat.json | Nagrody i ataki |
+| shelter.json / defense.json | Baza, stanowiska, moc, naprawy |
+| zombies.json / encounters.json | Zombie, bossowie i ataki |
+| night-modifiers.json / checkpoint.json | Specjalne noce i wersja zapisu |
 
 ## Weryfikacja
 
-~~~powershell
-cd client
-npm test
-npm run build
-# Z katalogu głównego:
-dotnet build server/FantasyShelter.Server.csproj
-./server/tests/Smoke.Tests.ps1
-~~~
+W katalogu głównym, PowerShell 7:
 
-**64 testy klienta**: cykl/fale, losowe spawny, trasy, dłuższe przebiegi hordy, walka, harvesting, budowanie, wieże, kompletny zapis i fallback. Babylon NullEngine sprawdza raycasty, kolizje, wejście i wyjście z wnętrza, wiele modeli zombie oraz usuwanie zwłok. Testy sprawdzają także budowę 10 wież bez odcięcia tras, bramy, kierunek do bazy i strzały ponad niskim murem.
+```powershell
+pwsh -NoProfile -File scripts/Verify-Milestone.ps1 -Stage manual-check
+```
 
-**16 kontroli integracyjnych serwera**: HTTP i osobna SQLite na porcie 5081, odrzucanie błędnych zapisów, historia bez duplikatów, checkpoint i wyniki zachowane po restarcie. Skrypt wymaga PowerShell 7. Build klienta i serwera przechodzi; Vite zgłasza ostrzeżenie o rozmiarze pakietu Babylon.js.
+Skrypt uruchamia testy klienta, build klienta, build serwera i test HTTP/SQLite. Kompiluje do osobnego `verification/server`, więc nie koliduje z działającą grą. Logi i raporty trafiają do `verification/`. Testy serwera używają osobnej bazy w `server/test-results/` na porcie 5081; nie zmieniają bazy gry. Migracja testowa wymaga Node z `node:sqlite` (zweryfikowano Node 24).
 
-Scena, żelazo, oświetlenie i HUD są sprawdzane w przeglądarce. Strona deweloperska `http://127.0.0.1:5173/tests/visual/preview.html` pozwala oglądać dzień/noc bez pointer lock; jej zegar przesuwają przyciski. Nie trafia do produkcyjnego `dist`.
+**136 testów klienta i 55 kontroli serwera przechodzi.** Wszystkie 12 etapów mają osobne raporty. Sprawdzono depozyty, limity, Skażenie, świt, fale, perki, moce, zniszczenia/naprawy, strażników, zwycięstwo, walidację checkpointu i migrację SQLite. Testy audio sprawdzają ciszę w tle, odtwarzanie sygnału zdobycia materiału i brak syntetycznego zamiennika przy błędzie. Vite ostrzega o rozmiarze pakietu Babylon.js.
 
-## Kolejne etapy
+[Podgląd deweloperski](http://127.0.0.1:5173/tests/visual/preview.html) pozwala sprawdzać scenariusze bez pointer lock. Zegar przesuwają przyciski; skróty i finansowanie dotyczą wyłącznie testu, który nie trafia do produkcyjnego dist. Sprawdzono HUD w wąskim i desktopowym układzie, harvesting/depozyt, drzewka, Skażenie, Blood Moon, bossów i zwycięstwo.
 
-**9: ulepszenia Shelteru**, następnie **10: drzewka Combat, Survival i Builder**. Dalej naprawy i niszczenie infrastruktury, ekonomia kolejnych dni, animacje/audio oraz symulacja serwerowa i multiplayer. SQLite wystarcza dla obecnego lokalnego zapisu; PostgreSQL można dodać przez drugi adapter RunStore.
+## Dźwięki i tempo — poprawka z 6 października
 
-#   S h e l t e r - W e b  
- 
+Przy zbieraniu Wood/Iron odtwarzany jest wyłącznie oryginalny sygnał zdobycia materiału `zsh_resouceget.wav` z instalacji CSNZ gracza. Uderzenia w źródła są bez dźwięku. Próbka jest identyczna bajtowo z wpisem w `cstrike.nar`, bez obróbki i syntetycznych zamienników. Pochodzenie i odczyt archiwum: `client/public/audio/README.md`. Poprawka audio nie zmienia checkpointu v13; raport: `verification/19-resource-cue-only.json`.
+Na prośbę gracza całkowicie usunięto ambient i muzykę w tle. Pozostają jednorazowe efekty gry.
+
+Bazowy ruch gracza 5,2 m/s (+30%). Normalny zombie 1,65 m/s, Biegacz 2,65 m/s, Tank 1,15 m/s; nocne przyspieszenie pozostaje ×1,65.
+
+Zapis v13 zachowuje rozwój, plecak, osłony/Cloak, cooldowny, cztery flagi bossów, stan zamkniętej areny i przygotowanie/trwanie szarży. Mapa i zapis zmieniły się — rozpocznij nową próbę. Starsze dane zachowano; przed uruchomieniem wersji utworzono kopię SQLite. Raport: `verification/18-reference-map.json`.

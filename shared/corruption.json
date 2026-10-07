@@ -1,0 +1,8 @@
+{
+  "maximum": 100,
+  "outsidePerSecond": 1,
+  "recoveryPerSecond": 4,
+  "movementAtMaximum": 0.8,
+  "damageInterval": 3,
+  "damage": 5
+}

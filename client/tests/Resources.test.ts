@@ -49,10 +49,10 @@ describe('milestone 6.5 harvesting', () => {
     advance(sim);
     for (let i = 0; !node.isDestroyed && i < 10; i++) { sim.attack(node.id); advance(sim); }
     expect(node.isDestroyed).toBe(true);
-    expect(sim.resources[type]).toBe(total);
-    for (const other of Object.values(ResourceType)) if (other !== type) expect(sim.resources[other]).toBe(0);
+    expect(sim.carried[type]).toBe(total);
+    for (const other of Object.values(ResourceType)) if (other !== type) expect(sim.carried[other]).toBe(0);
     sim.attack(node.id);
-    expect(sim.resources[type]).toBe(total);
+    expect(sim.carried[type]).toBe(total);
     expect(sim.buildingSystem.power.generated).toBe(0);
   });
 
@@ -67,15 +67,15 @@ describe('milestone 6.5 harvesting', () => {
     sim.pause();
     expect(sim.attack(node.id)).toBe(false);
     sim.start();
-    node.position.x = -13.5;
-    node.position.z = -8;
-    sim.player.position = { x: -11.5, z: -8 };
+    node.position.x = -18.5;
+    node.position.z = -12;
+    sim.player.position = { x: -16.5, z: -12 };
     sim.attack(node.id);
     expect(node.health).toBe(100);
     expect(sim.resources.wood).toBe(0);
   });
 
-  it('does not respawn nodes when a night ends and the next preparation day starts', () => {
+  it('respawns only nodes when a night ends and the next preparation day starts', () => {
     const sim = new Simulation({ settings: { dayPatrolCount: 0 } });
     sim.start();
     const node = sim.resourceNodes[0];
@@ -83,15 +83,15 @@ describe('milestone 6.5 harvesting', () => {
     sim.resourceManager.add('wood', 14);
     sim.cycle.state.period = 'night';
     sim.cycle.state.pendingSpawns = 0;
-    sim.cycle.state.periodElapsed = sim.cycle.settings.nightMinimumDuration;
+    sim.cycle.state.periodElapsed = sim.cycle.settings.nightDuration;
     advance(sim);
     expect(sim.cycle.state.day).toBe(2);
     expect(sim.phase).toBe('playing');
-    expect(node.isDestroyed).toBe(true);
+    expect(node.health).toBe(100);
     expect(sim.resources.wood).toBe(14);
     expect(sim.zombies).toHaveLength(0);
     sim.pause(); sim.start();
-    expect(node.isDestroyed).toBe(true);
+    expect(node.health).toBe(100);
     sim.reset();
     expect(sim.resourceNodes[0].health).toBe(100);
     expect(sim.resources.wood).toBe(0);

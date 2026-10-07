@@ -1,4 +1,5 @@
 import { Color3, CreateBox, CreateCylinder, CreatePolyhedron, Scene, StandardMaterial, TransformNode } from '../rendering/babylon';
+import { surfaceMaterial, tileBox } from '../rendering/SurfaceMaterials';
 import { BUILDINGS } from './Building';
 import type { Building, BuildingKind } from './Building';
 import type { Position } from '../domain/types';
@@ -23,9 +24,9 @@ export class BuildingView {
       value.specularColor = Color3.Black();
       return value;
     };
-    this.stone = material('building-stone', '#727d72');
-    this.wood = material('building-wood', '#76664c');
-    this.metal = material('building-metal', '#59615b');
+    this.stone = surfaceMaterial(scene, 'stone');
+    this.wood = surfaceMaterial(scene, 'wood');
+    this.metal = surfaceMaterial(scene, 'metal');
     this.crystal = material('building-crystal', '#8ccca8');
     this.crystal.emissiveColor = Color3.FromHexString('#4d9977');
     this.ghost = material('building-preview', '#78c998');
@@ -41,6 +42,8 @@ export class BuildingView {
       mesh.parent = root;
       mesh.position.set(x, y, z);
       mesh.material = preview ? this.ghost : mat;
+      if (!preview && mat.diffuseTexture) tileBox(mesh, w, h, d);
+      mesh.receiveShadows = true;
       mesh.isPickable = false;
       return mesh;
     };
@@ -93,7 +96,8 @@ export class BuildingView {
       if (!buildings.some(building => building.id === id)) { root.dispose(); this.roots.delete(id); this.turrets.delete(id); }
     }
     for (const building of buildings) {
-      if (this.roots.has(building.id)) continue;
+      const existing = this.roots.get(building.id);
+      if (existing) { existing.position.set(building.position.x,0,building.position.z); existing.rotation.y=building.rotation; existing.computeWorldMatrix(true); existing.getChildMeshes().forEach(mesh=>mesh.computeWorldMatrix(true)); continue; }
       const root = this.create(building.kind, building.id, false);
       root.position.set(building.position.x, 0, building.position.z);
       root.rotation.y = building.rotation;

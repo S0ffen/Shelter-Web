@@ -1,0 +1,18 @@
+{
+  "stage": "17-exact-harvest-audio",
+  "verifiedAt": "2026-10-06T19:36:59.0981069+02:00",
+  "checks": [
+    "tests",
+    "client-build",
+    "server-build",
+    "checkpoint"
+  ],
+  "audio": {
+    "sourceStart": 273.75,
+    "sourceEnd": 274.3,
+    "ambientRemoved": true,
+    "servedSampleMatches": true,
+    "sha256": "0b2848eb0d735108a03aa1ef4e6dc6d739d07b839375e6f1b8fe8f3604f8c514",
+    "browserErrors": 0
+  }
+}

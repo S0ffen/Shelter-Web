@@ -1,0 +1,24 @@
+{
+  "floorCells": 29102,
+  "floorRectangles": 337,
+  "solidRectangles": 207,
+  "boundaryRectangles": 96,
+  "markers": {
+    "ravager": {
+      "x": 48.9,
+      "z": 115.0
+    },
+    "graveGuardian": {
+      "x": -78.3,
+      "z": 130.6
+    },
+    "forgeGuardian": {
+      "x": 171.3,
+      "z": 94.6
+    },
+    "finalBoss": {
+      "x": 102.9,
+      "z": 224.2
+    }
+  }
+}

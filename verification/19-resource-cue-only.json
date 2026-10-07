@@ -1,0 +1,10 @@
+{
+  "stage": "19-resource-cue-only",
+  "verifiedAt": "2026-10-06T21:16:57.4756300+00:00",
+  "checks": [
+    "tests",
+    "client-build",
+    "server-build",
+    "checkpoint"
+  ]
+}

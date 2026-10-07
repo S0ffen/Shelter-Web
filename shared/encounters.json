@@ -1,0 +1,82 @@
+{
+  "forgeGuardian": {
+    "kind": "guardian",
+    "position": {
+      "x": 171.3,
+      "z": 94.6
+    },
+    "triggerDistance": 22,
+    "aggroRange": 15,
+    "leashRange": 18,
+    "attackRange": 2.5,
+    "windup": 1,
+    "slamRadius": 3
+  },
+  "finalBoss": {
+    "kind": "overlord",
+    "position": {
+      "x": 102.9,
+      "z": 224.2
+    },
+    "triggerDistance": 90,
+    "aggroRange": 90,
+    "leashRange": 90,
+    "attackRange": 3.8,
+    "windup": 1,
+    "slamRadius": 4,
+    "resistance": 0.2,
+    "enrageThreshold": 0.5,
+    "enrageSpeed": 1.4,
+    "enrageCooldown": 0.75,
+    "spellInterval": 6,
+    "spellWindup": 1,
+    "spellRadius": 3,
+    "spellDamage": 32,
+    "summonInterval": 12,
+    "minionLimit": 6,
+    "resetAfter": 6,
+    "chargeInterval": 8,
+    "chargeWindup": 0.8,
+    "chargeDuration": 1.0,
+    "chargeSpeed": 14,
+    "chargeDamage": 55
+  },
+  "graveGuardian": {
+    "kind": "warden",
+    "position": {
+      "x": -78.3,
+      "z": 130.6
+    },
+    "triggerDistance": 22,
+    "aggroRange": 15,
+    "leashRange": 18,
+    "attackRange": 2.5,
+    "windup": 1,
+    "slamRadius": 3
+  },
+  "ravager": {
+    "kind": "ravager",
+    "position": {
+      "x": 48.9,
+      "z": 115.0
+    },
+    "triggerDistance": 48,
+    "aggroRange": 44,
+    "leashRange": 76,
+    "attackRange": 2.8,
+    "windup": 0.25,
+    "slamRadius": 0
+  },
+  "finalArena": {
+    "bounds": {
+      "minX": 68.1,
+      "maxX": 130.5,
+      "minZ": 202.6,
+      "maxZ": 245.8
+    },
+    "gateHeight": 6,
+    "gateThickness": 0.65,
+    "entryInset": 1.5,
+    "protectsPsyche": true
+  }
+}

@@ -141,3 +141,91 @@ body:not(.in-game) .objective, body:not(.in-game) .shelter-panel, body:not(.in-g
 .shelter-guide small { display: block; font-size: 8px; line-height: 1.5; color: #a7bba0; }
 body:not(.in-game) .shelter-guide { opacity: 0; }
 @media (max-width: 700px) { .shelter-guide { left: 20px; top: 285px; max-width: 195px; padding: 8px; } }
+
+.shelter-actions { position:absolute; top:350px; left:40px; max-width:315px; padding:14px; background:rgba(14,22,24,.88); border:1px solid rgba(200,179,118,.3); }
+.shelter-actions[hidden] { display:none; }
+.shelter-actions b { font-size:10px; letter-spacing:2px; color:#d7c68d; }
+.shelter-actions p { font-size:11px; line-height:1.6; color:#ced0bc; margin:9px 0 0; }
+@media(max-width:700px) { .shelter-actions { left:20px; top:385px; max-width:240px; } }
+
+/* Compact Shelter resource panel; lower strip belongs to the player. */
+.run-hud {position:absolute; top:18px; left:50%; transform:translateX(-50%); display:flex; background:linear-gradient(#151e1ded,#0b1413e8); border:1px solid #aeaa8260; box-shadow:0 4px 18px #0006; color:#efe5c6;}
+.run-cell {position:relative; min-width:87px; padding:10px 14px 8px 32px; border-right:1px solid #a5a48836; text-align:right;}
+.run-cell:last-of-type {border-right:0;}
+.run-cell label {display:block; font-size:7px; letter-spacing:1px; white-space:nowrap; color:#bbc2ad;}
+.run-cell small {display:block; color:#a1aea2; font-size:10px; margin:5px 0 0;}
+.run-cell b {display:block; font:700 26px/1.05 Manrope,sans-serif; font-variant-numeric:tabular-nums;}
+.hud-icon {position:absolute; left:10px; top:32px; font-size:23px; color:#d1bb81;}
+.iron-glyph {color:#c5d0cd;}.power-glyph {color:#b2dcd4;}
+.phase-cell,.kills-cell {padding-left:32px; min-width:101px;}.phase-cell b,.kills-cell b {margin-top:14px; font-size:22px;}
+.phase-icon {position:absolute; left:8px; top:30px; font-size:26px; color:#e1c375;}
+.phase-timer {position:absolute; top:100%; left:50%; transform:translateX(-50%); margin:0; background:#101b18c9; padding:6px 15px; font-size:13px; font-variant-numeric:tabular-nums; white-space:nowrap; color:#e4e5ce; border:1px solid #a8b58c3d; border-top:0;}
+.expedition-hud {position:absolute; bottom:23px; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:18px; padding:10px 18px; background:#101817ec; border:1px solid #a9b49355;}
+.curse-icon {font-size:27px; color:#a7b7a1;}.corruption-gauge {width:170px;}.corruption-gauge label {display:flex; justify-content:space-between; font-size:8px; letter-spacing:1px;}.corruption-gauge .bar {height:7px; margin-top:6px;}.corruption-gauge .bar i {background:linear-gradient(90deg,#90ae7c,#ae4e66);}
+.carried-cell {min-width:68px; padding-left:15px; border-left:1px solid #b8b38f40;}.carried-cell small {display:block; font-size:7px; color:#acb6a5; white-space:nowrap;}.carried-cell b {display:block; font-size:22px; margin-top:2px;}
+.topbar .compass {display:none;}.topbar .brand {font-size:10px; letter-spacing:1px;}.topbar .prototype {font-size:8px;}
+.shelter-panel {top:130px; left:auto; right:35px; transform:none; width:240px;}.power-panel {top:200px; right:35px;}.power-panel small {display:none;}
+.objective {top:145px;}.shelter-guide {top:240px;}.shelter-actions {top:340px;}.weapon-panel {bottom:90px;}.bottom-hud {bottom:28px;}
+body:not(.in-game) .run-hud,body:not(.in-game) .expedition-hud {opacity:0;}
+@media(max-width:1100px){.brand div{max-width:110px;}.topbar{left:20px;right:20px;}.prototype {letter-spacing:0;}.run-cell {min-width:76px; padding-right:9px;}.shelter-panel {right:20px;}.controls{display:none;}}
+@media(max-width:700px){.topbar .brand,.topbar .prototype{display:none;}.run-hud {top:8px;width:calc(100% - 16px);justify-content:center;}.run-cell{min-width:0;flex:1;padding:7px 6px 7px 23px;}.run-cell label{font-size:6px;letter-spacing:0;}.run-cell b{font-size:22px;}.hud-icon,.phase-icon{left:4px;font-size:18px;}.phase-cell b,.kills-cell b{font-size:18px;}.expedition-hud {bottom:12px;width:calc(100% - 20px);justify-content:center;gap:8px;padding:8px;}.corruption-gauge{width:105px;}.carried-cell{min-width:59px;padding-left:8px;}.player-panel {position:absolute;bottom:80px;left:0;width:135px;}.weapon-panel{bottom:80px;right:0;left:auto;}.shelter-panel{top:125px;right:15px;left:auto;width:175px;transform:none;}.objective{top:220px;left:15px;max-width:200px;}.shelter-guide{top:300px;left:15px;}.shelter-actions{top:400px;left:15px;}.build-panel{top:220px;right:15px;}}
+
+#corruption-vignette {position:absolute;inset:0;opacity:var(--corruption-opacity,0);background:radial-gradient(ellipse,transparent 25%,#240f25b3 70%,#070408f5 100%);pointer-events:none;}
+#corruption-vignette.corruption-critical {animation:curse-pulse 3s ease-in-out infinite;}
+@keyframes curse-pulse {0%,100%{filter:brightness(1);opacity:.6;}50%{filter:brightness(.5);opacity:.9;}}
+body:not(.in-game) #corruption-vignette{display:none;}
+@media(prefers-reduced-motion:reduce){#corruption-vignette.corruption-critical{animation:none;}.bar i{transition:none;}}
+
+.night-hint{top:200px;left:40px;color:#e1cf9e;font-size:10px;}
+.skill-overlay{position:absolute;inset:0;z-index:10;background:#07100eef;display:flex;align-items:center;justify-content:center;pointer-events:auto;overflow:auto;padding:24px;}
+.skill-card{max-width:920px;width:100%;padding:26px;background:linear-gradient(120deg,#1b2825,#121b1a);border:1px solid #d0b87970;box-shadow:0 10px 70px #0008;}
+.skill-card header{display:flex;justify-content:space-between;align-items:flex-start;}.skill-card header small{color:#d4bc80;font-size:9px;letter-spacing:2px;}.skill-card h2{margin:10px 0;font-size:21px;font-weight:500;}.skill-close{border:1px solid #a8b89b66;color:#eee1c1;background:transparent;padding:10px;cursor:pointer;}
+.skill-points{display:flex;gap:14px;align-items:center;font-size:12px;color:#d4c496;border-bottom:1px solid #acb39744;padding:12px 0 20px;}.skill-points b{font-size:28px;}.skill-points span{margin-left:auto;color:#a9b5a4;font-size:11px;}
+.skill-paths{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;}.skill-paths h3{font-size:12px;letter-spacing:2px;color:#e0cc94;}.skill-perk{width:100%;display:flex;flex-direction:column;gap:10px;text-align:left;background:#0e1918;color:#c4cebc;border:1px solid #a4b38b42;padding:16px;margin-bottom:14px;min-height:116px;cursor:pointer;}.skill-perk small{font-size:8px;letter-spacing:1px;color:#b8a771;}.skill-perk b{font-size:12px;}.skill-perk span{font-size:11px;line-height:1.5;}.skill-perk.owned{border-color:#7db68b;color:#cfe2c7;background:#1b3527;}.skill-perk.locked{opacity:.48;}.skill-perk.available:not(:disabled):hover{border-color:#e6c786;background:#26352a;}.skill-perk:disabled{cursor:default;}.skill-note{font-size:12px;color:#b7c3a9;}.skill-card>small{font-size:10px;color:#94a88e;}
+@media(max-width:700px){.skill-overlay{padding:12px;align-items:flex-start;}.skill-card{padding:16px;}.skill-card h2{font-size:16px;}.skill-paths{gap:8px;}.skill-perk{padding:9px;min-height:135px;}.skill-perk b{font-size:10px;}.skill-perk span{font-size:9px;}.skill-points span{font-size:9px;}.night-hint{top:270px;left:15px;}}
+
+.hit-marker {position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font:300 40px/1 Manrope,sans-serif;color:#eee8d1;opacity:0;text-shadow:0 0 8px #ffc77c;}
+.hit-marker.hit {animation:hit-mark .22s ease-out;}@keyframes hit-mark{0%,20%{opacity:1;}100%{opacity:0;transform:translate(-50%,-50%) scale(1.3);}}
+.floating-gains {position:absolute;inset:0;pointer-events:none;}.gain-number{position:absolute;top:50%;color:#dfd096;text-shadow:0 2px 4px #000;font-size:17px;font-weight:700;animation:gain-rise 1.2s ease-out forwards;}@keyframes gain-rise{0%{opacity:0;transform:translateY(20px);}20%{opacity:1;}100%{opacity:0;transform:translateY(-60px);}}
+.shelter-panel.under-attack{animation:core-flash .65s ease-out;}.shelter-panel.critical{color:#f1a497;}.shelter-panel.critical .shelter-bar i{background:#e57b65;}.shelter-panel.critical p{color:#ffc1a7;font-weight:700;letter-spacing:1.5px;}@keyframes core-flash{0%{background:#ae332b80;box-shadow:0 0 22px #d1482b;}100%{background:transparent;box-shadow:none;}}
+
+.run-hud.special-night{border-color:#d9706888;box-shadow:0 0 25px #b12e254d;}.run-hud.special-night .phase-icon{color:#ff9383;}
+
+.boss-panel{position:absolute;top:155px;left:50%;transform:translateX(-50%);width:330px;text-align:center;padding:12px 18px;background:#1a141de8;border:1px solid #b1707777;}.boss-panel span{font-size:11px;letter-spacing:2px;color:#eac5d8;}.boss-panel strong{display:block;font-size:11px;color:#c5a5be;margin-top:5px;}.boss-panel .bar{height:5px;}.boss-panel .bar i{background:#cb82aa;}.boss-panel small{display:block;font-size:8px;color:#d3b3c2;margin-top:8px;}
+
+.end-statistics{display:flex;gap:40px;margin:26px 0;padding:22px 0;border-top:1px solid #d4bd7e55;border-bottom:1px solid #d4bd7e55;}.end-statistics small{display:block;font-size:9px;color:#b9b69f;letter-spacing:1.5px;}.end-statistics b{display:block;font-size:38px;color:#ead6a7;line-height:1.3;margin-top:8px;}.objective p{max-width:310px;line-height:1.7;}
+
+.night-hint{top:225px;}.shelter-guide{top:275px;}.shelter-actions{top:375px;}
+.shelter-panel .panel-heading{gap:7px;letter-spacing:.5px;}.shelter-panel .panel-heading>span{font-size:8px;letter-spacing:.5px;}.shelter-panel .panel-heading strong{white-space:nowrap;flex-shrink:0;}
+@media(max-width:700px){.night-hint{top:285px;}.shelter-guide{top:325px;}.shelter-actions{top:405px;}.shelter-panel .panel-heading svg{display:none;}.shelter-panel .panel-heading strong{font-size:10px;}.boss-panel{top:180px;width:280px;}}
+
+.psyche-icon{width:34px;height:38px;display:block;color:#d4d9c8}.psyche-icon svg{width:100%;height:100%}.sr-only{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}.corruption-gauge .bar{height:12px;margin-top:0}.corruption-gauge .bar i{background:linear-gradient(90deg,#b48258,#b8c394)}
+.skill-card { max-height:90vh; overflow:auto; width:min(960px,96vw); }
+.skill-tabs { display:flex; gap:8px; margin:12px 0; }
+.skill-tabs button { flex:1; padding:12px 4px; background:#192226; color:#bac4c7; border:1px solid #405055; }
+.skill-tabs button[aria-pressed="true"] { background:#354944; color:#e8d9ac; border-color:#b69a52; }
+.skill-tiers h3 { margin:14px 0 8px; font-size:13px; color:#d4bb7d; }
+.skill-tiers h3 small { float:right; color:#819690; font-weight:normal; }
+.skill-row { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+.skill-row .skill-perk { margin:0; min-height:135px; text-align:left; }
+.skill-perk em { font-size:10px; font-style:normal; color:#8daba1; margin-top:8px; }
+.skill-perk small { letter-spacing:1px; }
+@media(max-width:650px) { .skill-row { gap:5px; } .skill-row .skill-perk { padding:9px; font-size:11px; } .skill-perk b { font-size:12px; } .skill-tabs button { font-size:11px; } }
+.explorer-readout { position:absolute; left:32px; bottom:190px; font-size:12px; color:#c9bea1; }
+.ability-readout { position:absolute; bottom:138px; left:50%; transform:translateX(-50%); font-size:11px; color:#a8d9c7; white-space:nowrap; }
+@media(max-width:720px) { .explorer-readout { left:16px; bottom:260px; } .ability-readout { bottom:236px; font-size:9px; } }
+.psyche-icon { color:#c6aa5a; }
+.corruption-gauge .bar i { background:linear-gradient(90deg,#aa873f,#d2b35c); }
+.skill-card { padding:18px; max-height:94vh; scrollbar-color:#7c8877 #182420; }
+.skill-card h2 { margin:5px 0; font-size:18px; }
+.skill-points { margin:5px 0; padding:4px 0 8px; }
+.skill-points b { font-size:24px; }
+.skill-tabs { margin:8px 0; }
+.skill-tabs button { padding:8px 4px; }
+.skill-tiers h3 { margin:10px 0 6px; }
+.skill-row .skill-perk { min-height:100px; padding:10px; gap:5px; }
+.skill-row .skill-perk em { margin-top:4px; }
+.skill-note { margin:9px 0; font-size:10px; }
+@media(max-width:650px) { .skill-card{padding:12px;} .skill-row .skill-perk{padding:8px;} .skill-row .skill-perk b{font-size:11px;} }
+.skill-overlay { padding:12px; }
+.skill-card { max-height:calc(100vh - 32px); }

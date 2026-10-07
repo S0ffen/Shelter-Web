@@ -1,0 +1,3 @@
+{
+  "bloodMoon": { "label": "BLOOD MOON", "every": 5, "waveMultiplier": 1.5, "skyColor": "#3d101d", "lightColor": "#dc6666" }
+}

@@ -1,0 +1,19 @@
+{
+  "verified": [
+    "browser: reference layout overhead matches supplied street/building shape",
+    "browser: central Ravager 4500 HP, melee pursuit HUD, no floor circles",
+    "browser: final boss 16000 HP with closed arena and four blue barriers",
+    "browser: real heavy strike produces RUN COMPLETED, DAY REACHED 1, ZOMBIES KILLED 1",
+    "browser: main game reloaded to new milestone, old save incompatibility shown, no new player run started",
+    "asset: two served WAV files identical to CSNZ archive entries",
+    "live API: SQLite schema 2, checkpoint 13"
+  ],
+  "screenshots": [
+    "verification/screenshots/reference-city-layout.png",
+    "verification/screenshots/central-ravager.png",
+    "verification/screenshots/final-sealed-arena.png"
+  ],
+  "backup": "server/Data/backups/before-checkpoint-v13-1791320818023.db",
+  "clientTests": 137,
+  "serverChecks": 55
+}

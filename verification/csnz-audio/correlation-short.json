@@ -1,0 +1,1370 @@
+[
+  {
+    "name": "zsh_resouceget.wav",
+    "correlation": 0.6022517369592958,
+    "at": 275.63356009070293,
+    "offset": 0.0
+  },
+  {
+    "name": "axe_miss.wav",
+    "correlation": 0.5718871270182551,
+    "at": 276.8297052154195,
+    "offset": 0.2
+  },
+  {
+    "name": "axe_miss.wav",
+    "correlation": 0.5706984786597126,
+    "at": 276.8267573696145,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "axe_miss.wav",
+    "correlation": 0.5699506726665733,
+    "at": 276.8267573696145,
+    "offset": 0.0
+  },
+  {
+    "name": "crowbarcraft_slash2.wav",
+    "correlation": 0.5642020674852921,
+    "at": 269.22263038548755,
+    "offset": 0.2
+  },
+  {
+    "name": "thanatos3_wood1.wav",
+    "correlation": 0.5583287887300007,
+    "at": 276.76585034013607,
+    "offset": 0.2
+  },
+  {
+    "name": "turbulent9_wood1.wav",
+    "correlation": 0.5449673855331916,
+    "at": 276.76585034013607,
+    "offset": 0.2
+  },
+  {
+    "name": "speargun_wood2.wav",
+    "correlation": 0.5252184905034628,
+    "at": 276.76585034013607,
+    "offset": 0.2
+  },
+  {
+    "name": "crowbarcraft_slash1.wav",
+    "correlation": -0.5250809691947069,
+    "at": 271.4386848072562,
+    "offset": 0.2
+  },
+  {
+    "name": "zsh_resouceget.wav",
+    "correlation": 0.5083105252341553,
+    "at": 275.63356009070293,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "turbulent9_wood2.wav",
+    "correlation": 0.4908305102714154,
+    "at": 276.8701587301587,
+    "offset": 0.2
+  },
+  {
+    "name": "tknife_stone2.wav",
+    "correlation": -0.4905951775236036,
+    "at": 276.94326530612244,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "bow_stone3.wav",
+    "correlation": -0.48732213605857044,
+    "at": 276.9432199546485,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "speargun_stone2.wav",
+    "correlation": 0.4862510777019281,
+    "at": 276.76512471655326,
+    "offset": 0.2
+  },
+  {
+    "name": "thanatos3_stone2.wav",
+    "correlation": 0.4850142255933683,
+    "at": 276.76512471655326,
+    "offset": 0.2
+  },
+  {
+    "name": "axe_hit1.wav",
+    "correlation": -0.48255081565747965,
+    "at": 274.2781859410431,
+    "offset": 0.2
+  },
+  {
+    "name": "turbulent9_stone2.wav",
+    "correlation": -0.47475809994380647,
+    "at": 276.76798185941044,
+    "offset": 0.2
+  },
+  {
+    "name": "zsh_resouceget.wav",
+    "correlation": 0.46238591293099546,
+    "at": 273.1326077097506,
+    "offset": 0.1
+  },
+  {
+    "name": "lance_wall_stone2.wav",
+    "correlation": -0.45716270534183207,
+    "at": 276.8599092970521,
+    "offset": 0.1
+  },
+  {
+    "name": "sterlingbayonet_stone1.wav",
+    "correlation": 0.4534740034868658,
+    "at": 276.76920634920634,
+    "offset": 0.2
+  },
+  {
+    "name": "lance_wall_stone2.wav",
+    "correlation": -0.45140572086030567,
+    "at": 276.86385487528344,
+    "offset": 0.2
+  },
+  {
+    "name": "axe_miss.wav",
+    "correlation": 0.44752821714351915,
+    "at": 276.82698412698414,
+    "offset": 0.1
+  },
+  {
+    "name": "turbulent9_stone1.wav",
+    "correlation": -0.446633998200207,
+    "at": 276.8819501133787,
+    "offset": 0.2
+  },
+  {
+    "name": "janus9_stone2.wav",
+    "correlation": 0.4452135359069213,
+    "at": 276.89473922902494,
+    "offset": 0.1
+  },
+  {
+    "name": "thanatos3_stone1.wav",
+    "correlation": -0.4421146141350406,
+    "at": 276.8819954648526,
+    "offset": 0.2
+  },
+  {
+    "name": "crowbarcraft_slash1.wav",
+    "correlation": -0.4319763100531074,
+    "at": 271.52997732426303,
+    "offset": 0.1
+  },
+  {
+    "name": "lance_wall_stone1.wav",
+    "correlation": 0.42672224899154154,
+    "at": 276.86657596371884,
+    "offset": 0.1
+  },
+  {
+    "name": "skullaxe_wall.wav",
+    "correlation": -0.4157645527312978,
+    "at": 276.82190476190476,
+    "offset": 0.2
+  },
+  {
+    "name": "stormgiant_stone1.wav",
+    "correlation": 0.4097270796408416,
+    "at": 276.76512471655326,
+    "offset": 0.2
+  },
+  {
+    "name": "tknife_wood2.wav",
+    "correlation": 0.40869794144241056,
+    "at": 271.259410430839,
+    "offset": 0.2
+  },
+  {
+    "name": "stormgiant_wood2.wav",
+    "correlation": -0.408596607633699,
+    "at": 276.78916099773244,
+    "offset": 0.2
+  },
+  {
+    "name": "janus9_stone1.wav",
+    "correlation": 0.4084661993683978,
+    "at": 276.77120181405894,
+    "offset": 0.2
+  },
+  {
+    "name": "crowbarcraft_slash2.wav",
+    "correlation": -0.40636215727729874,
+    "at": 278.17619047619047,
+    "offset": 0.1
+  },
+  {
+    "name": "stormgiant_wood1.wav",
+    "correlation": -0.4046576082133723,
+    "at": 276.78916099773244,
+    "offset": 0.2
+  },
+  {
+    "name": "stormgiant_stone2.wav",
+    "correlation": 0.4040721585553934,
+    "at": 276.77292517006805,
+    "offset": 0.2
+  },
+  {
+    "name": "crowbarcraft_slash1.wav",
+    "correlation": -0.39737786878536674,
+    "at": 279.1253514739229,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "crowbarcraft_slash1.wav",
+    "correlation": -0.3884060694567686,
+    "at": 268.9956462585034,
+    "offset": 0.0
+  },
+  {
+    "name": "speargun_stone1.wav",
+    "correlation": 0.38005372307319024,
+    "at": 276.88090702947846,
+    "offset": 0.2
+  },
+  {
+    "name": "thanatos3_wood2.wav",
+    "correlation": -0.3762992443331078,
+    "at": 279.018820861678,
+    "offset": 0.2
+  },
+  {
+    "name": "bow_stone3.wav",
+    "correlation": -0.3706232483876325,
+    "at": 276.94489795918366,
+    "offset": 0.0
+  },
+  {
+    "name": "janus9_stone1.wav",
+    "correlation": 0.36862283668256396,
+    "at": 276.9161904761905,
+    "offset": 0.1
+  },
+  {
+    "name": "skullaxe_slash2.wav",
+    "correlation": 0.3680221613196394,
+    "at": 269.5357369614512,
+    "offset": 0.2
+  },
+  {
+    "name": "skullaxe_slash1.wav",
+    "correlation": 0.36412321797432484,
+    "at": 270.5734693877551,
+    "offset": 0.2
+  },
+  {
+    "name": "lance_wall_stone1.wav",
+    "correlation": -0.36261620649207926,
+    "at": 276.8255782312925,
+    "offset": 0.2
+  },
+  {
+    "name": "sterlingbayonet_stone2.wav",
+    "correlation": 0.3623746514491335,
+    "at": 276.8761451247166,
+    "offset": 0.2
+  },
+  {
+    "name": "tknife_stone2.wav",
+    "correlation": 0.3593553468543507,
+    "at": 276.97537414965984,
+    "offset": 0.0
+  },
+  {
+    "name": "skullaxe_miss.wav",
+    "correlation": -0.34906152564621024,
+    "at": 278.99609977324263,
+    "offset": 0.2
+  },
+  {
+    "name": "bow_stone1.wav",
+    "correlation": 0.3475393814322174,
+    "at": 277.0077097505669,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "crowbarcraft_slash2.wav",
+    "correlation": -0.34611679156927644,
+    "at": 278.17619047619047,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "janus9_wood2.wav",
+    "correlation": 0.3458391876792847,
+    "at": 279.4398185941043,
+    "offset": 0.1
+  },
+  {
+    "name": "stormgiant_stone1.wav",
+    "correlation": 0.3421989952409695,
+    "at": 276.8505215419501,
+    "offset": 0.1
+  },
+  {
+    "name": "crowbarcraft_slash2.wav",
+    "correlation": -0.3410459100960577,
+    "at": 278.17619047619047,
+    "offset": 0.0
+  },
+  {
+    "name": "sterlingbayonet_stone2.wav",
+    "correlation": 0.34012430016164263,
+    "at": 276.8566893424036,
+    "offset": 0.1
+  },
+  {
+    "name": "stormgiant_stone2.wav",
+    "correlation": 0.3348361643882185,
+    "at": 276.84408163265306,
+    "offset": 0.1
+  },
+  {
+    "name": "janus9_stone2.wav",
+    "correlation": -0.334822609944013,
+    "at": 277.00979591836733,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "tknife_stone1.wav",
+    "correlation": 0.3326269650876593,
+    "at": 277.01020408163265,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "bow_wood2.wav",
+    "correlation": 0.3306472521166665,
+    "at": 271.9358276643991,
+    "offset": 0.1
+  },
+  {
+    "name": "sterlingbayonet_stone2.wav",
+    "correlation": -0.32897148115009384,
+    "at": 276.8814058956916,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "skullaxe_slash2.wav",
+    "correlation": 0.31996128359852916,
+    "at": 272.71578231292517,
+    "offset": 0.0
+  },
+  {
+    "name": "thanatos3_stone1.wav",
+    "correlation": 0.3192254726716577,
+    "at": 276.84408163265306,
+    "offset": 0.1
+  },
+  {
+    "name": "skullaxe_hit.wav",
+    "correlation": -0.31731984150487214,
+    "at": 276.75274376417235,
+    "offset": 0.2
+  },
+  {
+    "name": "skullaxe_slash1.wav",
+    "correlation": -0.3158240726027264,
+    "at": 271.5842630385487,
+    "offset": 0.1
+  },
+  {
+    "name": "axe_hit1.wav",
+    "correlation": -0.3133548541657009,
+    "at": 274.2782766439909,
+    "offset": 0.0
+  },
+  {
+    "name": "bow_stone2.wav",
+    "correlation": -0.3127636176882877,
+    "at": 278.28122448979593,
+    "offset": 0.0
+  },
+  {
+    "name": "tknife_wood1.wav",
+    "correlation": 0.3109518325849032,
+    "at": 271.935873015873,
+    "offset": 0.1
+  },
+  {
+    "name": "speargun_stone1.wav",
+    "correlation": -0.30816234447104834,
+    "at": 274.3625850340136,
+    "offset": 0.1
+  },
+  {
+    "name": "axe_hit1.wav",
+    "correlation": -0.30679830223972454,
+    "at": 274.2782766439909,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "skullaxe_slash2.wav",
+    "correlation": 0.30555615592997876,
+    "at": 272.71578231292517,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "axe_hit1.wav",
+    "correlation": -0.3047669517971112,
+    "at": 274.2782766439909,
+    "offset": 0.1
+  },
+  {
+    "name": "skullaxe_slash2.wav",
+    "correlation": 0.30361791233677093,
+    "at": 272.71578231292517,
+    "offset": 0.1
+  },
+  {
+    "name": "janus9_stone2.wav",
+    "correlation": -0.2942620199414039,
+    "at": 276.8439455782313,
+    "offset": 0.2
+  },
+  {
+    "name": "janus9_wood1.wav",
+    "correlation": 0.2932008276605451,
+    "at": 274.35954648526075,
+    "offset": 0.1
+  },
+  {
+    "name": "jknife_hitwall1.wav",
+    "correlation": 0.2900992915544137,
+    "at": 279.0960544217687,
+    "offset": 0.1
+  },
+  {
+    "name": "zsh_resouceget.wav",
+    "correlation": 0.2895009875604487,
+    "at": 275.4896598639456,
+    "offset": 0.2
+  },
+  {
+    "name": "turbulent9_stone1.wav",
+    "correlation": -0.28839640719504106,
+    "at": 276.9471655328798,
+    "offset": 0.1
+  },
+  {
+    "name": "thanatos3_stone2.wav",
+    "correlation": 0.2881314331738623,
+    "at": 276.8505215419501,
+    "offset": 0.1
+  },
+  {
+    "name": "speargun_stone2.wav",
+    "correlation": 0.28777345208933985,
+    "at": 276.85061224489795,
+    "offset": 0.1
+  },
+  {
+    "name": "speargun_wood1.wav",
+    "correlation": -0.28733077233316623,
+    "at": 276.78208616780046,
+    "offset": 0.2
+  },
+  {
+    "name": "wood3.wav",
+    "correlation": -0.2869169116305505,
+    "at": 269.3910204081633,
+    "offset": 0.2
+  },
+  {
+    "name": "janus9_wood1.wav",
+    "correlation": -0.2859325281883233,
+    "at": 274.3029024943311,
+    "offset": 0.2
+  },
+  {
+    "name": "axe_hit2.wav",
+    "correlation": 0.2811545327680638,
+    "at": 276.74997732426306,
+    "offset": 0.2
+  },
+  {
+    "name": "bow_stone1.wav",
+    "correlation": -0.2802553676453003,
+    "at": 277.02231292517007,
+    "offset": 0.0
+  },
+  {
+    "name": "bow_wood3.wav",
+    "correlation": -0.27965573663122073,
+    "at": 278.0839455782313,
+    "offset": 0.2
+  },
+  {
+    "name": "sterlingbayonet_stone1.wav",
+    "correlation": -0.2786055640667232,
+    "at": 276.8815873015873,
+    "offset": 0.1
+  },
+  {
+    "name": "bow_wood1.wav",
+    "correlation": -0.27426644616399737,
+    "at": 274.4232199546485,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "tknife_stone2.wav",
+    "correlation": -0.27263207631347947,
+    "at": 276.9398185941043,
+    "offset": 0.1
+  },
+  {
+    "name": "stormgiant_stone1.wav",
+    "correlation": -0.2722406878120063,
+    "at": 274.38766439909296,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "bow_stone2.wav",
+    "correlation": 0.2675971803188167,
+    "at": 277.01891156462585,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "skullaxe_hit.wav",
+    "correlation": 0.2635822565116679,
+    "at": 276.9159637188209,
+    "offset": 0.1
+  },
+  {
+    "name": "janus9_wood2.wav",
+    "correlation": -0.2603986768004646,
+    "at": 276.7433560090703,
+    "offset": 0.2
+  },
+  {
+    "name": "bow_stone1.wav",
+    "correlation": 0.2603953372980217,
+    "at": 276.9134240362812,
+    "offset": 0.1
+  },
+  {
+    "name": "tknife_stone1.wav",
+    "correlation": -0.26001932104495534,
+    "at": 277.02231292517007,
+    "offset": 0.0
+  },
+  {
+    "name": "sterlingbayonet_stone2.wav",
+    "correlation": -0.2588252823604557,
+    "at": 276.8810884353741,
+    "offset": 0.0
+  },
+  {
+    "name": "bow_wood1.wav",
+    "correlation": 0.2576302597252241,
+    "at": 276.75378684807254,
+    "offset": 0.2
+  },
+  {
+    "name": "tknife_wood2.wav",
+    "correlation": -0.2565344516412652,
+    "at": 274.42326530612246,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "jknife_hitwall1.wav",
+    "correlation": -0.25432749112921227,
+    "at": 279.3261224489796,
+    "offset": 0.2
+  },
+  {
+    "name": "tknife_stone1.wav",
+    "correlation": 0.2538294292645123,
+    "at": 276.9134240362812,
+    "offset": 0.1
+  },
+  {
+    "name": "turbulent9_stone2.wav",
+    "correlation": 0.2514065455744866,
+    "at": 276.82984126984127,
+    "offset": 0.1
+  },
+  {
+    "name": "janus9_stone1.wav",
+    "correlation": -0.24908032065260297,
+    "at": 276.88766439909296,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "janus9_wood2.wav",
+    "correlation": -0.24728042302334213,
+    "at": 270.9714285714286,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "wood3.wav",
+    "correlation": -0.24629690677305938,
+    "at": 269.70920634920634,
+    "offset": 0.0
+  },
+  {
+    "name": "speargun_stone2.wav",
+    "correlation": -0.24617713979161657,
+    "at": 274.3875736961451,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "stormgiant_wood2.wav",
+    "correlation": 0.24551176439532524,
+    "at": 276.88281179138323,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "speargun_wood2.wav",
+    "correlation": -0.245382740377254,
+    "at": 274.4332879818594,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "lance_wall_stone1.wav",
+    "correlation": 0.2450244295816132,
+    "at": 277.00380952380954,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "thanatos3_stone2.wav",
+    "correlation": -0.24388698668029332,
+    "at": 274.3875736961451,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "thanatos3_wood2.wav",
+    "correlation": -0.24380305018031148,
+    "at": 274.35514739229023,
+    "offset": 0.1
+  },
+  {
+    "name": "turbulent9_stone2.wav",
+    "correlation": 0.2437686015951138,
+    "at": 270.32920634920634,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "turbulent9_wood2.wav",
+    "correlation": -0.2435575121649209,
+    "at": 276.955873015873,
+    "offset": 0.1
+  },
+  {
+    "name": "stormgiant_wood1.wav",
+    "correlation": 0.24331510392373656,
+    "at": 276.88281179138323,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "lance_wall_stone2.wav",
+    "correlation": -0.2389921022798819,
+    "at": 276.8619954648526,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "skullaxe_slash1.wav",
+    "correlation": -0.2368722514618206,
+    "at": 276.803537414966,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "janus9_stone2.wav",
+    "correlation": -0.23644995580993494,
+    "at": 276.9244444444444,
+    "offset": 0.0
+  },
+  {
+    "name": "skullaxe_slash1.wav",
+    "correlation": -0.23624480299664788,
+    "at": 276.803537414966,
+    "offset": 0.0
+  },
+  {
+    "name": "skullaxe_miss.wav",
+    "correlation": -0.2357579383492591,
+    "at": 276.80349206349206,
+    "offset": 0.1
+  },
+  {
+    "name": "bow_stone3.wav",
+    "correlation": -0.23521651319305956,
+    "at": 276.85233560090705,
+    "offset": 0.1
+  },
+  {
+    "name": "bow_wood1.wav",
+    "correlation": 0.23133775768546933,
+    "at": 274.3530612244898,
+    "offset": 0.1
+  },
+  {
+    "name": "wood3.wav",
+    "correlation": 0.23115763493312252,
+    "at": 271.5659410430839,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "lance_wall_stone2.wav",
+    "correlation": -0.23081368871233943,
+    "at": 276.86217687074827,
+    "offset": 0.0
+  },
+  {
+    "name": "lance_wall_stone1.wav",
+    "correlation": 0.22943764763897825,
+    "at": 277.61378684807255,
+    "offset": 0.0
+  },
+  {
+    "name": "bow_wood2.wav",
+    "correlation": -0.22942808787760696,
+    "at": 276.8629931972789,
+    "offset": 0.2
+  },
+  {
+    "name": "sterlingbayonet_stone1.wav",
+    "correlation": 0.2288363458260043,
+    "at": 279.49478458049884,
+    "offset": 0.0
+  },
+  {
+    "name": "wood2.wav",
+    "correlation": 0.22860486388785292,
+    "at": 276.8485714285714,
+    "offset": 0.1
+  },
+  {
+    "name": "stormgiant_stone1.wav",
+    "correlation": -0.22771123070796098,
+    "at": 274.38761904761907,
+    "offset": 0.0
+  },
+  {
+    "name": "skullaxe_miss.wav",
+    "correlation": -0.2251556501003523,
+    "at": 276.803537414966,
+    "offset": 0.0
+  },
+  {
+    "name": "skullaxe_miss.wav",
+    "correlation": -0.22467204474692745,
+    "at": 276.803537414966,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "skullaxe_hit.wav",
+    "correlation": 0.22445087113829257,
+    "at": 274.3193197278912,
+    "offset": 0.0
+  },
+  {
+    "name": "speargun_wood1.wav",
+    "correlation": 0.22404699944479586,
+    "at": 274.4326077097506,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "speargun_stone1.wav",
+    "correlation": -0.22390571278152938,
+    "at": 274.3631746031746,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "skullaxe_wall.wav",
+    "correlation": 0.2237896832232365,
+    "at": 276.83560090702946,
+    "offset": 0.1
+  },
+  {
+    "name": "turbulent9_wood2.wav",
+    "correlation": 0.22366096419729398,
+    "at": 270.66589569161,
+    "offset": 0.0
+  },
+  {
+    "name": "bow_wood3.wav",
+    "correlation": -0.22310663882907353,
+    "at": 278.4863492063492,
+    "offset": 0.1
+  },
+  {
+    "name": "skullaxe_hit.wav",
+    "correlation": 0.22285069090850673,
+    "at": 274.3193197278912,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "stormgiant_wood2.wav",
+    "correlation": 0.22266550096129042,
+    "at": 276.87714285714287,
+    "offset": 0.1
+  },
+  {
+    "name": "tknife_wood1.wav",
+    "correlation": -0.22221707325080534,
+    "at": 276.8375963718821,
+    "offset": 0.2
+  },
+  {
+    "name": "hammer_hit_slash.wav",
+    "correlation": -0.22162558137479688,
+    "at": 274.3512925170068,
+    "offset": 0.1
+  },
+  {
+    "name": "sterlingbayonet_stone1.wav",
+    "correlation": 0.21894446296646108,
+    "at": 272.5614512471655,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "speargun_stone2.wav",
+    "correlation": -0.21866663803002875,
+    "at": 274.38761904761907,
+    "offset": 0.0
+  },
+  {
+    "name": "thanatos3_wood2.wav",
+    "correlation": 0.2173750971171096,
+    "at": 271.61927437641725,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "stormgiant_wood1.wav",
+    "correlation": 0.21732934011805707,
+    "at": 274.44004535147394,
+    "offset": 0.0
+  },
+  {
+    "name": "hammer_hit_slash.wav",
+    "correlation": 0.2170003349159861,
+    "at": 274.40761904761905,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "janus9_wood1.wav",
+    "correlation": -0.2167738450216779,
+    "at": 271.5444444444444,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "speargun_wood2.wav",
+    "correlation": 0.21548475529405323,
+    "at": 276.956462585034,
+    "offset": 0.1
+  },
+  {
+    "name": "wood3.wav",
+    "correlation": -0.215473240825551,
+    "at": 269.6221315192744,
+    "offset": 0.1
+  },
+  {
+    "name": "wood2.wav",
+    "correlation": 0.21506277410987093,
+    "at": 274.44920634920635,
+    "offset": 0.0
+  },
+  {
+    "name": "skullaxe_wall.wav",
+    "correlation": -0.21327084679490393,
+    "at": 276.81433106575963,
+    "offset": 0.0
+  },
+  {
+    "name": "tknife_wood2.wav",
+    "correlation": 0.2132099822492839,
+    "at": 274.3510657596372,
+    "offset": 0.1
+  },
+  {
+    "name": "speargun_stone1.wav",
+    "correlation": -0.21310333278491486,
+    "at": 274.3631746031746,
+    "offset": 0.0
+  },
+  {
+    "name": "skullaxe_wall.wav",
+    "correlation": -0.2123292645093649,
+    "at": 276.81433106575963,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "thanatos3_stone2.wav",
+    "correlation": -0.2093501082256386,
+    "at": 274.38761904761907,
+    "offset": 0.0
+  },
+  {
+    "name": "thanatos3_wood1.wav",
+    "correlation": 0.20856882603664695,
+    "at": 276.87750566893425,
+    "offset": 0.1
+  },
+  {
+    "name": "janus9_wood1.wav",
+    "correlation": 0.2082096565162095,
+    "at": 270.983537414966,
+    "offset": 0.0
+  },
+  {
+    "name": "bow_stone1.wav",
+    "correlation": 0.2077841875894406,
+    "at": 276.70104308390023,
+    "offset": 0.2
+  },
+  {
+    "name": "turbulent9_wood1.wav",
+    "correlation": 0.20722747677183245,
+    "at": 276.8776870748299,
+    "offset": 0.1
+  },
+  {
+    "name": "axe_hit2.wav",
+    "correlation": 0.20681050561846998,
+    "at": 276.7649433106576,
+    "offset": 0.0
+  },
+  {
+    "name": "thanatos3_wood1.wav",
+    "correlation": -0.2065312741643174,
+    "at": 274.43356009070294,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "stormgiant_wood1.wav",
+    "correlation": 0.20599212937704364,
+    "at": 276.956462585034,
+    "offset": 0.1
+  },
+  {
+    "name": "hammer_hit_slash.wav",
+    "correlation": 0.2059768021086831,
+    "at": 274.20399092970524,
+    "offset": 0.2
+  },
+  {
+    "name": "axe_hit2.wav",
+    "correlation": 0.20535932475431623,
+    "at": 276.7649433106576,
+    "offset": 0.1
+  },
+  {
+    "name": "axe_hit2.wav",
+    "correlation": 0.20528143353466582,
+    "at": 276.7649433106576,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "stormgiant_stone2.wav",
+    "correlation": -0.20404625822141195,
+    "at": 271.61002267573696,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "turbulent9_wood1.wav",
+    "correlation": -0.2028228673175551,
+    "at": 274.43265306122447,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "speargun_wood2.wav",
+    "correlation": 0.2014790061468498,
+    "at": 276.88326530612244,
+    "offset": 0.0
+  },
+  {
+    "name": "janus9_stone1.wav",
+    "correlation": -0.20145668268518685,
+    "at": 276.88798185941044,
+    "offset": 0.0
+  },
+  {
+    "name": "turbulent9_wood2.wav",
+    "correlation": -0.20057501728348226,
+    "at": 274.4407709750567,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "turbulent9_stone1.wav",
+    "correlation": 0.19923196152369083,
+    "at": 270.33482993197276,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "axe_hitwall.wav",
+    "correlation": 0.19779039996398579,
+    "at": 279.0512925170068,
+    "offset": 0.0
+  },
+  {
+    "name": "hammer_hit_stab.wav",
+    "correlation": 0.19734598858491495,
+    "at": 274.33337868480726,
+    "offset": 0.1
+  },
+  {
+    "name": "janus9_wood2.wav",
+    "correlation": -0.19627708870782612,
+    "at": 270.9875283446712,
+    "offset": 0.0
+  },
+  {
+    "name": "thanatos3_stone1.wav",
+    "correlation": -0.19624097869217783,
+    "at": 276.7962811791383,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "tknife_stone1.wav",
+    "correlation": -0.19465990896582114,
+    "at": 276.81573696145125,
+    "offset": 0.2
+  },
+  {
+    "name": "wood1.wav",
+    "correlation": -0.19360354563651744,
+    "at": 277.92757369614515,
+    "offset": 0.0
+  },
+  {
+    "name": "stormgiant_stone2.wav",
+    "correlation": -0.19319863832657086,
+    "at": 276.79632653061225,
+    "offset": 0.0
+  },
+  {
+    "name": "thanatos3_stone1.wav",
+    "correlation": -0.1905800809159525,
+    "at": 276.7962811791383,
+    "offset": 0.0
+  },
+  {
+    "name": "wood1.wav",
+    "correlation": 0.18963006136046504,
+    "at": 276.87351473922905,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "bow_wood1.wav",
+    "correlation": -0.18936334341352337,
+    "at": 274.4238095238095,
+    "offset": 0.0
+  },
+  {
+    "name": "wood4.wav",
+    "correlation": -0.18651093217515466,
+    "at": 276.69197278911565,
+    "offset": 0.2
+  },
+  {
+    "name": "axe_hitwall.wav",
+    "correlation": 0.18568005667422588,
+    "at": 279.0512925170068,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "axe_hitwall.wav",
+    "correlation": 0.18534931601685525,
+    "at": 279.0512925170068,
+    "offset": 0.1
+  },
+  {
+    "name": "wood1.wav",
+    "correlation": -0.18433303228338851,
+    "at": 278.17931972789114,
+    "offset": 0.1
+  },
+  {
+    "name": "stormgiant_wood2.wav",
+    "correlation": 0.1838192170041161,
+    "at": 276.88326530612244,
+    "offset": 0.0
+  },
+  {
+    "name": "hammer_hit_stab.wav",
+    "correlation": -0.18337883827044604,
+    "at": 276.78285714285715,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "bow_wood2.wav",
+    "correlation": -0.18136138935842655,
+    "at": 268.13156462585033,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "jknife_hitwall1.wav",
+    "correlation": 0.18035230405051186,
+    "at": 268.9663492063492,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "turbulent9_stone2.wav",
+    "correlation": 0.1799603471881349,
+    "at": 276.3368707482993,
+    "offset": 0.0
+  },
+  {
+    "name": "axe_hitwall.wav",
+    "correlation": 0.1768626234553328,
+    "at": 276.8344217687075,
+    "offset": 0.2
+  },
+  {
+    "name": "bow_wood3.wav",
+    "correlation": -0.17673524297168186,
+    "at": 278.4863492063492,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "speargun_wood1.wav",
+    "correlation": 0.17556591682795056,
+    "at": 271.4479365079365,
+    "offset": 0.1
+  },
+  {
+    "name": "bow_wood3.wav",
+    "correlation": -0.17518383559120834,
+    "at": 278.4863492063492,
+    "offset": 0.0
+  },
+  {
+    "name": "thanatos3_wood1.wav",
+    "correlation": 0.17439752393350158,
+    "at": 269.70938775510206,
+    "offset": 0.0
+  },
+  {
+    "name": "tknife_wood2.wav",
+    "correlation": 0.17430054563157357,
+    "at": 274.4157369614513,
+    "offset": 0.0
+  },
+  {
+    "name": "hammer_hit_stab.wav",
+    "correlation": -0.17165718711773859,
+    "at": 274.2728798185941,
+    "offset": 0.2
+  },
+  {
+    "name": "hammer_hit_stab.wav",
+    "correlation": -0.1714621393087283,
+    "at": 276.78285714285715,
+    "offset": 0.0
+  },
+  {
+    "name": "turbulent9_stone1.wav",
+    "correlation": -0.17100512897518685,
+    "at": 269.016462585034,
+    "offset": 0.0
+  },
+  {
+    "name": "wood4.wav",
+    "correlation": -0.17090385808067998,
+    "at": 276.69197278911565,
+    "offset": 0.1
+  },
+  {
+    "name": "wood4.wav",
+    "correlation": -0.16817623879972365,
+    "at": 276.69197278911565,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "turbulent9_wood1.wav",
+    "correlation": -0.16761892570947443,
+    "at": 276.9043537414966,
+    "offset": 0.0
+  },
+  {
+    "name": "wood2.wav",
+    "correlation": -0.16756971240070745,
+    "at": 277.70412698412696,
+    "offset": 0.2
+  },
+  {
+    "name": "wood1.wav",
+    "correlation": -0.1667538926904741,
+    "at": 270.47591836734694,
+    "offset": 0.2
+  },
+  {
+    "name": "tknife_wood1.wav",
+    "correlation": -0.16550622611461327,
+    "at": 268.1316099773243,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "wood4.wav",
+    "correlation": -0.1651451552829327,
+    "at": 276.69197278911565,
+    "offset": 0.0
+  },
+  {
+    "name": "bow_stone2.wav",
+    "correlation": 0.16493064138678593,
+    "at": 271.46920634920633,
+    "offset": 0.2
+  },
+  {
+    "name": "jknife_hitwall1.wav",
+    "correlation": 0.1648321762725607,
+    "at": 269.69714285714286,
+    "offset": 0.0
+  },
+  {
+    "name": "bow_wood2.wav",
+    "correlation": -0.16371416838073208,
+    "at": 268.5005442176871,
+    "offset": 0.0
+  },
+  {
+    "name": "wood2.wav",
+    "correlation": -0.15992170446368947,
+    "at": 274.42748299319726,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "speargun_wood1.wav",
+    "correlation": 0.1539219974942578,
+    "at": 279.0278004535147,
+    "offset": 0.0
+  },
+  {
+    "name": "thanatos3_wood2.wav",
+    "correlation": -0.15147577889502278,
+    "at": 274.35501133786846,
+    "offset": 0.0
+  },
+  {
+    "name": "tknife_wood1.wav",
+    "correlation": 0.1511270647593477,
+    "at": 268.51505668934243,
+    "offset": 0.0
+  },
+  {
+    "name": "hammer_hit_slash.wav",
+    "correlation": 0.15091145225515218,
+    "at": 273.77836734693875,
+    "offset": 0.0
+  },
+  {
+    "name": "tknife_stone2.wav",
+    "correlation": -0.1508916457125858,
+    "at": 276.8783673469388,
+    "offset": 0.2
+  },
+  {
+    "name": "bow_stone3.wav",
+    "correlation": 0.1420183976444336,
+    "at": 276.7445804988662,
+    "offset": 0.2
+  },
+  {
+    "name": "dragontail_hitwall1.wav",
+    "correlation": 0.1385868515557102,
+    "at": 275.0734693877551,
+    "offset": 0.2
+  },
+  {
+    "name": "knife_hitwall1.wav",
+    "correlation": 0.1385868515557102,
+    "at": 275.0734693877551,
+    "offset": 0.2
+  },
+  {
+    "name": "bow_stone2.wav",
+    "correlation": -0.11467418744260302,
+    "at": 275.1958276643991,
+    "offset": 0.1
+  },
+  {
+    "name": "axe_draw.wav",
+    "correlation": 0.10001623301943413,
+    "at": 274.3988662131519,
+    "offset": 0.2
+  },
+  {
+    "name": "skullaxe_draw.wav",
+    "correlation": -0.09662134342079334,
+    "at": 271.7165079365079,
+    "offset": 0.0
+  },
+  {
+    "name": "skullaxe_draw.wav",
+    "correlation": -0.09497381691456554,
+    "at": 271.688843537415,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "dragontail_hitwall1.wav",
+    "correlation": 0.0926799278158407,
+    "at": 276.8091609977324,
+    "offset": 0.1
+  },
+  {
+    "name": "knife_hitwall1.wav",
+    "correlation": 0.0926799278158407,
+    "at": 276.8091609977324,
+    "offset": 0.1
+  },
+  {
+    "name": "skullaxe_draw.wav",
+    "correlation": 0.08718378777799272,
+    "at": 273.2528798185941,
+    "offset": 0.2
+  },
+  {
+    "name": "dragontail_hitwall1.wav",
+    "correlation": -0.08496934503564627,
+    "at": 276.8051247165533,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "knife_hitwall1.wav",
+    "correlation": -0.08496934503564627,
+    "at": 276.8051247165533,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "dragontail_hitwall1.wav",
+    "correlation": -0.08463474883477166,
+    "at": 276.8051247165533,
+    "offset": 0.0
+  },
+  {
+    "name": "knife_hitwall1.wav",
+    "correlation": -0.08463474883477166,
+    "at": 276.8051247165533,
+    "offset": 0.0
+  },
+  {
+    "name": "skullaxe_draw.wav",
+    "correlation": -0.08224670163067722,
+    "at": 271.6824489795918,
+    "offset": 0.1
+  },
+  {
+    "name": "axe_draw.wav",
+    "correlation": -0.08030932421521367,
+    "at": 273.9467120181406,
+    "offset": 0.1
+  },
+  {
+    "name": "axe_draw.wav",
+    "correlation": -0.062250589401128154,
+    "at": 273.88621315192745,
+    "offset": 0.049977324263038546
+  },
+  {
+    "name": "axe_draw.wav",
+    "correlation": 0.048468103698135555,
+    "at": 268.3715192743764,
+    "offset": 0.0
+  }
+]

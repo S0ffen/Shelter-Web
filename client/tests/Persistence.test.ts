@@ -16,9 +16,9 @@ describe('complete run checkpoints', () => {
   it('roundtrips a live night without losing resources, depleted nodes, construction, health or RNG state', () => {
     const sim = prepared();
     sim.resourceManager.add('wood', 100); sim.resourceManager.add('iron', 50);
-    sim.buildingSystem.buildings.push(new Building('fixture-generator', 'arcane-core', { x: 10, z: 10 }, 0));
+    sim.buildingSystem.buildings.push(new Building('fixture-generator', 'arcane-core', { x: 16, z: 12 }, 0));
     expect(sim.placeBuilding('storehouse', { x: -4, z: -7 }, 0).ok).toBe(true);
-    sim.player.position = { x: -15, z: -9.4 };
+    sim.player.position = { x: sim.resourceNodes[0].position.x, z: sim.resourceNodes[0].position.z - 1.4 };
     sim.attack('wood-01');
     sim.player.hp = 87; sim.shelter.hp = 245;
     sim.cycle.state = { day: 3, period: 'night', periodElapsed: 17, pendingSpawns: 5, waveSize: 16, spawnCountdown: 1, patrolCountdown: 0 };
@@ -26,7 +26,8 @@ describe('complete run checkpoints', () => {
     sim.spawner.nextId = 2;
     const saved = captureRun(sim);
     sim.resources.wood = 0;
-    expect(saved.resources.wood).toBe(73);
+    expect(saved.resources.wood).toBe(70);
+    expect(saved.carried.wood).toBe(3);
     const parsed = parseRun(JSON.parse(JSON.stringify(saved)))!;
     expect(parsed).not.toBeNull();
     const restored = new Simulation();
@@ -45,18 +46,18 @@ describe('complete run checkpoints', () => {
     expect(restored.elapsed).toBe(elapsed);
     restored.start();
     expect(restored.zombies).toHaveLength(1);
-    restored.player.position = { x: -4, z: -3 };
-    expect(restored.placeBuilding('arcane-core', { x: -7, z: -1 }, 0).ok).toBe(true);
+    restored.player.position = { x: -10, z: 1 };
+    expect(restored.placeBuilding('arcane-core', { x: -13, z: 1 }, 0).ok).toBe(true);
     expect(restored.buildingSystem.buildings.at(-1)!.id).toBe('building-2');
   });
 
   it('restores projectiles and tower cooldowns without granting another immediate shot', () => {
     const sim = prepared();
     sim.resourceManager.add('wood', 100); sim.resourceManager.add('iron', 50);
-    sim.placeBuilding('arcane-core', { x: -4, z: -7 }, 0);
-    sim.player.position = { x: -6, z: -4 };
-    sim.placeBuilding('magic-tower', { x: -4, z: -1 }, 0);
-    sim.zombies.push(new Zombie('zombie-1', { x: -6, z: 0 }));
+    (sim.player.position = { x: -10, z: -13 }, sim.placeBuilding('arcane-core', { x: -13, z: -13 }, 0));
+    sim.player.position = { x: -15, z: 3 };
+    sim.placeBuilding('magic-tower', { x: -13, z: 6 }, 0);
+    sim.zombies.push(new Zombie('zombie-1', { x: -13, z: 3 }));
     sim.spawner.nextId = 2;
     sim.update(1 / 30);
     const saved = captureRun(sim);
@@ -81,7 +82,7 @@ describe('complete run checkpoints', () => {
     if (field === 'position') saved.player.position.z = 1000;
     if (field === 'timer') saved.cycle.periodElapsed = NaN;
     if (field === 'arcane-currency') Object.assign(saved.resources, { arcane: 10 });
-    if (field === 'outside-base') saved.buildings.push({ id: 'building-1', kind: 'arcane-core', position: { x: 25, z: 20 }, rotation: 0 });
+    if (field === 'outside-base') saved.buildings.push({ id: 'building-1', kind: 'arcane-core', position: { x: 25, z: 20 }, rotation: 0, hp: 200 });
     expect(parseRun(saved)).toBeNull();
     const runId = sim.runId;
     expect(() => restoreRun(sim, saved)).toThrow();

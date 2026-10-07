@@ -11,3 +11,6 @@ server/test-results/
 *.db-shm
 *.db-wal
 
+
+.tools/
+verification/audio-reference/

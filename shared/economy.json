@@ -1,0 +1,14 @@
+{
+  "shelterCapacity": {
+    "wood": 100,
+    "iron": 50
+  },
+  "storehouseBonus": {
+    "wood": 50,
+    "iron": 25
+  },
+  "carriedCapacity": {
+    "wood": 30,
+    "iron": 20
+  }
+}

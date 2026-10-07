@@ -1,0 +1,515 @@
+[
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\cstrike.nar",
+    "name": "/cstrike/sound/weapons/axe_draw.wav",
+    "kind": 0,
+    "offset": 1270148910,
+    "stored": 6735,
+    "size": 6735,
+    "crc": 34528875
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\cstrike.nar",
+    "name": "/cstrike/sound/weapons/axe_hit1.wav",
+    "kind": 0,
+    "offset": 1270155645,
+    "stored": 20369,
+    "size": 20369,
+    "crc": 2829659034
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\cstrike.nar",
+    "name": "/cstrike/sound/weapons/axe_hit2.wav",
+    "kind": 0,
+    "offset": 1270176014,
+    "stored": 20150,
+    "size": 20150,
+    "crc": 2867665427
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\cstrike.nar",
+    "name": "/cstrike/sound/weapons/axe_hitwall.wav",
+    "kind": 0,
+    "offset": 1270196164,
+    "stored": 19853,
+    "size": 19853,
+    "crc": 3200130520
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\cstrike.nar",
+    "name": "/cstrike/sound/weapons/axe_miss.wav",
+    "kind": 0,
+    "offset": 1270216017,
+    "stored": 8438,
+    "size": 8438,
+    "crc": 2399463963
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\cstrike.nar",
+    "name": "/cstrike/sound/weapons/dragontail_hitwall1.wav",
+    "kind": 0,
+    "offset": 1273793607,
+    "stored": 10858,
+    "size": 10858,
+    "crc": 4122973418
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\cstrike.nar",
+    "name": "/cstrike/sound/weapons/jknife_hitwall1.wav",
+    "kind": 0,
+    "offset": 1277281565,
+    "stored": 32102,
+    "size": 32102,
+    "crc": 1031893457
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\cstrike.nar",
+    "name": "/cstrike/sound/weapons/knife_hitwall1.wav",
+    "kind": 0,
+    "offset": 1277925229,
+    "stored": 10858,
+    "size": 10858,
+    "crc": 4122973418
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\cstrike.nar",
+    "name": "/cstrike/sound/weapons/skullaxe_draw.wav",
+    "kind": 0,
+    "offset": 1289241658,
+    "stored": 25460,
+    "size": 25460,
+    "crc": 195976477
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\cstrike.nar",
+    "name": "/cstrike/sound/weapons/skullaxe_hit.wav",
+    "kind": 0,
+    "offset": 1289267118,
+    "stored": 19888,
+    "size": 19888,
+    "crc": 2317790002
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\cstrike.nar",
+    "name": "/cstrike/sound/weapons/skullaxe_miss.wav",
+    "kind": 0,
+    "offset": 1289287006,
+    "stored": 13386,
+    "size": 13386,
+    "crc": 4103243204
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\cstrike.nar",
+    "name": "/cstrike/sound/weapons/skullaxe_slash1.wav",
+    "kind": 0,
+    "offset": 1289300392,
+    "stored": 8628,
+    "size": 8628,
+    "crc": 1267334516
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\cstrike.nar",
+    "name": "/cstrike/sound/weapons/skullaxe_slash2.wav",
+    "kind": 0,
+    "offset": 1289309020,
+    "stored": 20546,
+    "size": 20546,
+    "crc": 1338126775
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\cstrike.nar",
+    "name": "/cstrike/sound/weapons/skullaxe_wall.wav",
+    "kind": 0,
+    "offset": 1289329566,
+    "stored": 14262,
+    "size": 14262,
+    "crc": 1301316187
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/crowbarcraft_draw.wav",
+    "kind": 0,
+    "offset": 1182802935,
+    "stored": 26012,
+    "size": 26012,
+    "crc": 3679743119
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/crowbarcraft_slash1.wav",
+    "kind": 0,
+    "offset": 1182828947,
+    "stored": 11608,
+    "size": 11608,
+    "crc": 2207270064
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/crowbarcraft_slash2.wav",
+    "kind": 0,
+    "offset": 1182840555,
+    "stored": 12994,
+    "size": 12994,
+    "crc": 2486106997
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/crowbarcraft_stab.wav",
+    "kind": 0,
+    "offset": 1182853549,
+    "stored": 24574,
+    "size": 24574,
+    "crc": 3737181151
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/crowbarcraft_stab_miss.wav",
+    "kind": 0,
+    "offset": 1182878123,
+    "stored": 14710,
+    "size": 14710,
+    "crc": 3426380454
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/janus9_stone1.wav",
+    "kind": 0,
+    "offset": 1185962799,
+    "stored": 43122,
+    "size": 43122,
+    "crc": 3800477403
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/janus9_stone2.wav",
+    "kind": 0,
+    "offset": 1186005921,
+    "stored": 14942,
+    "size": 14942,
+    "crc": 3054392654
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/janus9_wood1.wav",
+    "kind": 0,
+    "offset": 1186020863,
+    "stored": 18026,
+    "size": 18026,
+    "crc": 1951932744
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/janus9_wood2.wav",
+    "kind": 0,
+    "offset": 1186038889,
+    "stored": 16686,
+    "size": 16686,
+    "crc": 3392430952
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/speargun_stone1.wav",
+    "kind": 0,
+    "offset": 1196630461,
+    "stored": 18304,
+    "size": 18304,
+    "crc": 3552593708
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/speargun_stone2.wav",
+    "kind": 0,
+    "offset": 1196648765,
+    "stored": 19246,
+    "size": 19246,
+    "crc": 3351779334
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/speargun_wood1.wav",
+    "kind": 0,
+    "offset": 1196668011,
+    "stored": 22828,
+    "size": 22828,
+    "crc": 3735087570
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/speargun_wood2.wav",
+    "kind": 0,
+    "offset": 1196690839,
+    "stored": 22672,
+    "size": 22672,
+    "crc": 3683776957
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/stormgiant_stone1.wav",
+    "kind": 0,
+    "offset": 1199300257,
+    "stored": 44004,
+    "size": 44004,
+    "crc": 3394816581
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/stormgiant_stone2.wav",
+    "kind": 0,
+    "offset": 1199344261,
+    "stored": 36974,
+    "size": 36974,
+    "crc": 3915997915
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/stormgiant_wood1.wav",
+    "kind": 0,
+    "offset": 1199381235,
+    "stored": 38648,
+    "size": 38648,
+    "crc": 1145496346
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/stormgiant_wood2.wav",
+    "kind": 0,
+    "offset": 1199419883,
+    "stored": 38648,
+    "size": 38648,
+    "crc": 2254405134
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/thanatos3_stone1.wav",
+    "kind": 0,
+    "offset": 1201293299,
+    "stored": 15946,
+    "size": 15946,
+    "crc": 1304669687
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/thanatos3_stone2.wav",
+    "kind": 0,
+    "offset": 1201309245,
+    "stored": 20790,
+    "size": 20790,
+    "crc": 1499993838
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/thanatos3_wood1.wav",
+    "kind": 0,
+    "offset": 1201330035,
+    "stored": 19756,
+    "size": 19756,
+    "crc": 2469793040
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/thanatos3_wood2.wav",
+    "kind": 0,
+    "offset": 1201349791,
+    "stored": 14400,
+    "size": 14400,
+    "crc": 201685078
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/tknife_stone1.wav",
+    "kind": 0,
+    "offset": 1202561053,
+    "stored": 80184,
+    "size": 80184,
+    "crc": 3626753537
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/tknife_stone2.wav",
+    "kind": 0,
+    "offset": 1202641237,
+    "stored": 74296,
+    "size": 74296,
+    "crc": 2151062968
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/tknife_wood1.wav",
+    "kind": 0,
+    "offset": 1202715533,
+    "stored": 26000,
+    "size": 26000,
+    "crc": 2725945215
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\dstrike.nar",
+    "name": "/dstrike/sound/weapons/tknife_wood2.wav",
+    "kind": 0,
+    "offset": 1202741533,
+    "stored": 33238,
+    "size": 33238,
+    "crc": 686565839
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\estrike.nar",
+    "name": "/estrike/sound/weapons/sterlingbayonet_stone1.wav",
+    "kind": 0,
+    "offset": 1439781446,
+    "stored": 17510,
+    "size": 17510,
+    "crc": 2647978461
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\estrike.nar",
+    "name": "/estrike/sound/weapons/sterlingbayonet_stone2.wav",
+    "kind": 0,
+    "offset": 1439798956,
+    "stored": 14068,
+    "size": 14068,
+    "crc": 1663171430
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\estrike.nar",
+    "name": "/estrike/sound/weapons/turbulent9_stone1.wav",
+    "kind": 0,
+    "offset": 1446721778,
+    "stored": 22562,
+    "size": 22562,
+    "crc": 1302652557
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\estrike.nar",
+    "name": "/estrike/sound/weapons/turbulent9_stone2.wav",
+    "kind": 0,
+    "offset": 1446744340,
+    "stored": 34600,
+    "size": 34600,
+    "crc": 2148102226
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\estrike.nar",
+    "name": "/estrike/sound/weapons/turbulent9_wood1.wav",
+    "kind": 0,
+    "offset": 1446778940,
+    "stored": 20528,
+    "size": 20528,
+    "crc": 3400210088
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\estrike.nar",
+    "name": "/estrike/sound/weapons/turbulent9_wood2.wav",
+    "kind": 0,
+    "offset": 1446799468,
+    "stored": 18376,
+    "size": 18376,
+    "crc": 1721599932
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\fstrike.nar",
+    "name": "/fstrike/sound/weapons/bow_stone1.wav",
+    "kind": 0,
+    "offset": 676172537,
+    "stored": 50008,
+    "size": 50008,
+    "crc": 1294009577
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\fstrike.nar",
+    "name": "/fstrike/sound/weapons/bow_stone2.wav",
+    "kind": 0,
+    "offset": 676222545,
+    "stored": 18956,
+    "size": 18956,
+    "crc": 3661437297
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\fstrike.nar",
+    "name": "/fstrike/sound/weapons/bow_stone3.wav",
+    "kind": 0,
+    "offset": 676241501,
+    "stored": 49722,
+    "size": 49722,
+    "crc": 526331800
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\fstrike.nar",
+    "name": "/fstrike/sound/weapons/bow_wood1.wav",
+    "kind": 0,
+    "offset": 676291223,
+    "stored": 51052,
+    "size": 51052,
+    "crc": 1019454854
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\fstrike.nar",
+    "name": "/fstrike/sound/weapons/bow_wood2.wav",
+    "kind": 0,
+    "offset": 676342275,
+    "stored": 6600,
+    "size": 6600,
+    "crc": 157913182
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\fstrike.nar",
+    "name": "/fstrike/sound/weapons/bow_wood3.wav",
+    "kind": 0,
+    "offset": 676348875,
+    "stored": 18180,
+    "size": 18180,
+    "crc": 441090188
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\fstrike.nar",
+    "name": "/fstrike/sound/weapons/lance_wall_stone1.wav",
+    "kind": 0,
+    "offset": 678581933,
+    "stored": 23238,
+    "size": 23238,
+    "crc": 4053716283
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\fstrike.nar",
+    "name": "/fstrike/sound/weapons/lance_wall_stone2.wav",
+    "kind": 0,
+    "offset": 678605171,
+    "stored": 14538,
+    "size": 14538,
+    "crc": 3424004756
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\valve.nar",
+    "name": "/valve/sound/debris/wood1.wav",
+    "kind": 0,
+    "offset": 75645673,
+    "stored": 6328,
+    "size": 6328,
+    "crc": 1356106956
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\valve.nar",
+    "name": "/valve/sound/debris/wood2.wav",
+    "kind": 0,
+    "offset": 75652001,
+    "stored": 6528,
+    "size": 6528,
+    "crc": 1822273457
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\valve.nar",
+    "name": "/valve/sound/debris/wood3.wav",
+    "kind": 0,
+    "offset": 75658529,
+    "stored": 6116,
+    "size": 6116,
+    "crc": 152891001
+  },
+  {
+    "archive": "D:\\steam\\steamapps\\common\\CSNZ\\Data\\valve.nar",
+    "name": "/valve/sound/debris/wood4.wav",
+    "kind": 0,
+    "offset": 75664645,
+    "stored": 6830,
+    "size": 6830,
+    "crc": 3781843061
+  }
+]

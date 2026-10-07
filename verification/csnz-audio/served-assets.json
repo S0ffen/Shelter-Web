@@ -1,0 +1,12 @@
+[
+  {
+    "asset": "harvest-hit.wav",
+    "servedBytesIdentical": true,
+    "sha256": "88987614387eb602753d3ee75f6098195e40a125e74027e79e0f9bd0ffb24df8"
+  },
+  {
+    "asset": "resource-get.wav",
+    "servedBytesIdentical": true,
+    "sha256": "0c369e2c32b6dfc4a838e7e0122e2ef87f26120e91f1403dba2eca0dfcf36103"
+  }
+]

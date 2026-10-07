@@ -1,3 +1,4 @@
+import definitions from '../../../shared/buildings.json';
 import type { Position, ResourceCounts } from '../domain/types';
 import type { Footprint } from '../world/WorldLayout';
 
@@ -8,16 +9,19 @@ export interface BuildingDefinition {
   width: number;
   depth: number;
   height: number;
+  maxHp: number;
 }
 
-export const BUILDINGS: Record<BuildingKind, BuildingDefinition> = {
-  storehouse: { label: 'Storehouse', cost: { wood: 30, iron: 10 }, width: 2.8, depth: 2.2, height: 2.2 },
-  'arcane-core': { label: 'Generator Arcane', cost: { wood: 20, iron: 15 }, width: 1.8, depth: 1.8, height: 2.4 },
-  'magic-tower': { label: 'Magic Tower', cost: { wood: 20, iron: 15 }, width: 1.6, depth: 1.6, height: 3.2 },
-};
+export const BUILDINGS: Record<BuildingKind, BuildingDefinition> = definitions;
 
 export class Building {
-  constructor(readonly id: string, readonly kind: BuildingKind, readonly position: Position, readonly rotation: number) {}
+  maxHp: number;
+  hp: number;
+  constructor(readonly id: string, readonly kind: BuildingKind, readonly position: Position, public rotation: number, healthMultiplier = 1) { this.maxHp = this.hp = Math.round(BUILDINGS[kind].maxHp * healthMultiplier); }
+  get alive(): boolean { return this.hp > 0; }
+  distanceFrom(from: Position): number { return Math.hypot(Math.max(0, Math.abs(from.x - this.position.x) - this.footprint.width / 2), Math.max(0, Math.abs(from.z - this.position.z) - this.footprint.depth / 2)); }
+  contactPoint(from: Position): Position { const a = this.footprint; return { x: Math.max(a.x - a.width / 2, Math.min(a.x + a.width / 2, from.x)), z: Math.max(a.z - a.depth / 2, Math.min(a.z + a.depth / 2, from.z)) }; }
+  damage(amount: number): void { this.hp = Math.max(0, this.hp - amount); }
 
   get footprint(): Footprint { return footprint(this.kind, this.position, this.rotation); }
 }

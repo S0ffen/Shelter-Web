@@ -8,7 +8,7 @@ function prepared(): Simulation {
   const sim = new Simulation({ settings: { dayPatrolCount: 0 } });
   sim.resourceManager.add('wood', 100); sim.resourceManager.add('iron', 50);
   sim.resourceNodes.forEach(node => node.damage(node.maxHealth)); sim.start();
-  sim.buildingSystem.buildings.push(new Building('fixture-generator', 'arcane-core', { x: 10, z: 10 }, 0));
+  sim.buildingSystem.buildings.push(new Building('fixture-generator', 'arcane-core', { x: 16, z: 12 }, 0));
   return sim;
 }
 describe('construction confined to Shelter', () => {

@@ -1,9 +1,11 @@
 import { Color3, CreateBox, CreateCylinder, Scene, StandardMaterial, TransformNode, Vector3 } from '../rendering/babylon';
+import type { AttackKind } from '../domain/types';
 import type { UniversalCamera } from '../rendering/babylon';
 
 export class Sword {
   private readonly root: TransformNode;
-  private swingTime = 1;
+  private swingTime = 2;
+  private kind: AttackKind = 'quick';
 
   constructor(scene: Scene, camera: UniversalCamera) {
     this.root = new TransformNode('sword-rig', scene);
@@ -40,16 +42,17 @@ export class Sword {
     this.update(0, 0, false);
   }
 
-  swing(): void { this.swingTime = 0; }
-  reset(): void { this.swingTime = 1; }
+  swing(kind: AttackKind = 'quick'): void { this.kind = kind; this.swingTime = 0; }
+  reset(): void { this.swingTime = 2; }
   setVisible(visible: boolean): void { this.root.setEnabled(visible); }
 
   update(dt: number, time: number, moving: boolean): void {
     this.swingTime += dt;
-    const t = Math.min(1, this.swingTime / 0.42);
+    const heavy = this.kind === 'heavy';
+    const t = Math.min(1, this.swingTime / (heavy ? 0.9 : 0.42));
     const arc = Math.sin(t * Math.PI);
     const bob = moving ? Math.sin(time * 10) * 0.018 : Math.sin(time * 1.8) * 0.005;
-    this.root.position = new Vector3(0.37 - arc * 0.4, -0.42 + arc * 0.08 + bob, 0.7);
-    this.root.rotation.set(-0.16 + arc * 0.7, -0.15 + arc * 0.4, -0.22 + arc * 1.7);
+    this.root.position = new Vector3(0.37 - arc * (heavy ? 0.2 : 0.4), -0.42 + arc * (heavy ? 0.42 : 0.08) + bob, 0.7 + (heavy ? arc * 0.22 : 0));
+    this.root.rotation.set(-0.16 + arc * (heavy ? -1.2 : 0.7), -0.15 + arc * 0.4, -0.22 + arc * (heavy ? -0.4 : 1.7));
   }
 }

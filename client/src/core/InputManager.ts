@@ -1,3 +1,4 @@
+import type { AttackKind } from '../domain/types';
 import type { BuildingKind } from '../building/Building';
 
 export class InputManager {
@@ -5,9 +6,14 @@ export class InputManager {
   private readonly abort = new AbortController();
   private lookX = 0;
   private lookY = 0;
-  onAttack: () => void = () => {};
+  onAttack: (kind: AttackKind) => void = () => {};
   onRestart: () => void = () => {};
-  onNextNight: () => void = () => {};
+  onInteract: () => void = () => {};
+  onAbility: (kind: 'barrage'|'cloak'|'demolition') => void = () => {};
+  onRecycle: () => void = () => {};
+  onMoveTower: () => void = () => {};
+  onSkillToggle: () => void = () => {};
+  onShelterUpgrade: () => void = () => {};
   onBuildToggle: () => void = () => {};
   onBuildSelect: (kind: BuildingKind) => void = () => {};
   onBuildRotate: () => void = () => {};
@@ -18,11 +24,17 @@ export class InputManager {
   constructor(private readonly canvas: HTMLCanvasElement) {
     const options = { signal: this.abort.signal };
     document.addEventListener('keydown', event => {
-      if (!this.locked) return;
-      if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyR', 'KeyB', 'KeyQ', 'KeyN', 'Digit1', 'Digit2', 'Digit3', 'Space'].includes(event.code)) event.preventDefault();
+      if (event.defaultPrevented) return;
+      if (!this.locked) { if(event.code==='KeyN'&&!event.repeat){event.preventDefault();this.onSkillToggle();}return; }
+      if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'KeyR', 'KeyB', 'KeyQ', 'KeyN', 'KeyF', 'KeyE', 'KeyX', 'KeyV', 'Digit5', 'Digit6', 'Digit7', 'Digit1', 'Digit2', 'Digit3', 'Space'].includes(event.code)) event.preventDefault();
       this.keys.add(event.code);
       if (event.code === 'KeyR' && !event.repeat) this.onRestart();
-      if (event.code === 'KeyN' && !event.repeat) this.onNextNight();
+      if (event.code === 'KeyN' && !event.repeat) this.onSkillToggle();
+      if (event.code === 'KeyE' && !event.repeat) this.onInteract();
+      if(event.code==='KeyX'&&!event.repeat)this.onRecycle();
+      if(event.code==='KeyV'&&!event.repeat)this.onMoveTower();
+      if(!event.repeat) { const abilities:Record<string,'barrage'|'cloak'|'demolition'>={Digit5:'barrage',Digit6:'cloak',Digit7:'demolition'};if(abilities[event.code])this.onAbility(abilities[event.code]); }
+      if (event.code === 'KeyF' && !event.repeat) this.onShelterUpgrade();
       if (event.code === 'KeyB' && !event.repeat) this.onBuildToggle();
       if (event.code === 'KeyQ' && !event.repeat) this.onBuildRotate();
       if (!event.repeat) {
@@ -37,8 +49,8 @@ export class InputManager {
       this.lookY += event.movementY;
     }, options);
     document.addEventListener('mousedown', event => {
-      if (this.locked && event.button === 0) this.onAttack();
-      if (this.locked && event.button === 2) this.onBuildCancel();
+      if (this.locked && event.button === 0) this.onAttack('quick');
+      if (this.locked && event.button === 2) this.onAttack('heavy');
     }, options);
     canvas.addEventListener('contextmenu', event => event.preventDefault(), options);
     document.addEventListener('pointerlockchange', () => {

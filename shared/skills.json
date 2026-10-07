@@ -1,0 +1,618 @@
+{
+  "initialPoints": 3,
+  "pointsPerDay": 1,
+  "tierRequirements": [
+    0,
+    3,
+    6,
+    9
+  ],
+  "bonusDefaults": {
+    "meleeDamage": 1,
+    "maxHealth": 1,
+    "attackSpeed": 1,
+    "movementSpeed": 1,
+    "harvestBonus": 0,
+    "harvestDamage": 1,
+    "harvestRange": 0,
+    "corruptionRate": 1,
+    "buildingCost": 1,
+    "buildingHealth": 1,
+    "repairAmount": 1,
+    "repairSpeed": 1,
+    "armor": 0,
+    "heavyDamage": 1,
+    "meleeRange": 0,
+    "carryWood": 0,
+    "carryIron": 0,
+    "explorer": 0,
+    "campfire": 0,
+    "enduranceRegen": 0,
+    "slow": 0,
+    "scavenger": 0,
+    "cloak": 0,
+    "transport": 0,
+    "autoRepair": 0,
+    "powerOutput": 1,
+    "powerDemand": 1,
+    "towerDamage": 1,
+    "towerSpeed": 1,
+    "recycle": 0,
+    "barrage": 0,
+    "demolition": 0,
+    "moveTower": 0,
+    "combatMaster": 0
+  },
+  "branches": {
+    "combat": [
+      {
+        "id": "weapon-mastery",
+        "name": "Beginner Weapon Mastery",
+        "tier": 1,
+        "effect": "Obrażenia miecza +8 / 16 / 24%",
+        "effects": {
+          "meleeDamage": [
+            0.08,
+            0.16,
+            0.24
+          ]
+        },
+        "maxRank": 3,
+        "requires": []
+      },
+      {
+        "id": "battle-tempo",
+        "name": "Battle Tempo",
+        "tier": 1,
+        "effect": "Szybkość ataków +5 / 10 / 15%",
+        "effects": {
+          "attackSpeed": [
+            0.05,
+            0.1,
+            0.15
+          ]
+        },
+        "maxRank": 3,
+        "requires": []
+      },
+      {
+        "id": "health-up",
+        "name": "Health Up",
+        "tier": 1,
+        "effect": "Maksymalne HP +10 / 20 / 30%",
+        "effects": {
+          "maxHealth": [
+            0.1,
+            0.2,
+            0.3
+          ]
+        },
+        "maxRank": 3,
+        "requires": []
+      },
+      {
+        "id": "weapon-mastery-ii",
+        "name": "Intermediate Weapon Mastery",
+        "tier": 2,
+        "effect": "Dalsze +10 / 20 / 30% obrażeń miecza",
+        "effects": {
+          "meleeDamage": [
+            0.1,
+            0.2,
+            0.3
+          ]
+        },
+        "maxRank": 3,
+        "requires": [
+          {
+            "id": "weapon-mastery",
+            "rank": 3
+          }
+        ]
+      },
+      {
+        "id": "combat-crafting",
+        "name": "Combat Crafting",
+        "tier": 2,
+        "effect": "Wzmocnione ostrze: +15% obrażeń i +0,4 m zasięgu",
+        "effects": {
+          "meleeDamage": [
+            0.15
+          ],
+          "meleeRange": [
+            0.4
+          ]
+        },
+        "maxRank": 1,
+        "requires": []
+      },
+      {
+        "id": "armor",
+        "name": "Armor Enhancement",
+        "tier": 2,
+        "effect": "Redukcja obrażeń od wrogów o 8 / 16 / 24%",
+        "effects": {
+          "armor": [
+            0.08,
+            0.16,
+            0.24
+          ]
+        },
+        "maxRank": 3,
+        "requires": []
+      },
+      {
+        "id": "weapon-mastery-iii",
+        "name": "Advanced Weapon Mastery",
+        "tier": 3,
+        "effect": "Dalsze +15 / 30 / 45% obrażeń miecza",
+        "effects": {
+          "meleeDamage": [
+            0.15,
+            0.3,
+            0.45
+          ]
+        },
+        "maxRank": 3,
+        "requires": [
+          {
+            "id": "weapon-mastery-ii",
+            "rank": 3
+          }
+        ]
+      },
+      {
+        "id": "combat-master",
+        "name": "Combat Master",
+        "tier": 3,
+        "effect": "Przy niskim HP: osłona na 4 / 5 s, odnowienie 90 s",
+        "effects": {
+          "combatMaster": [
+            1,
+            2
+          ]
+        },
+        "maxRank": 2,
+        "requires": []
+      },
+      {
+        "id": "special-mastery",
+        "name": "Special Weapon Mastery",
+        "tier": 3,
+        "effect": "Mocny atak: dodatkowe +20 / 40 / 60% obrażeń",
+        "effects": {
+          "heavyDamage": [
+            0.2,
+            0.4,
+            0.6
+          ]
+        },
+        "maxRank": 3,
+        "requires": []
+      },
+      {
+        "id": "barrage",
+        "name": "Bombing Request · Arcane Barrage",
+        "tier": 4,
+        "effect": "5: magiczny ostrzał wokół celownika, odnowienie 90 s",
+        "effects": {
+          "barrage": [
+            1
+          ]
+        },
+        "maxRank": 1,
+        "requires": []
+      },
+      {
+        "id": "stats-up",
+        "name": "Stats Up",
+        "tier": 4,
+        "effect": "+20% HP, +15% obrażeń, +5% ruchu",
+        "effects": {
+          "maxHealth": [
+            0.2
+          ],
+          "meleeDamage": [
+            0.15
+          ],
+          "movementSpeed": [
+            0.05
+          ]
+        },
+        "maxRank": 1,
+        "requires": []
+      }
+    ],
+    "survival": [
+      {
+        "id": "beginner-harvest",
+        "name": "Beginner Harvest",
+        "tier": 1,
+        "effect": "Plecak +5/10/15 Wood i +3/6/9 Iron; harvesting +10/20/30%; ranga 3: +1 nagrody",
+        "effects": {
+          "carryWood": [
+            5,
+            10,
+            15
+          ],
+          "carryIron": [
+            3,
+            6,
+            9
+          ],
+          "harvestDamage": [
+            0.1,
+            0.2,
+            0.3
+          ],
+          "harvestBonus": [
+            0,
+            0,
+            1
+          ]
+        },
+        "maxRank": 3,
+        "requires": []
+      },
+      {
+        "id": "speed-up",
+        "name": "Speed Up",
+        "tier": 1,
+        "effect": "Ruch szybszy o 5 / 10 / 20%",
+        "effects": {
+          "movementSpeed": [
+            0.05,
+            0.1,
+            0.2
+          ]
+        },
+        "maxRank": 3,
+        "requires": []
+      },
+      {
+        "id": "explorer",
+        "name": "Explorer",
+        "tier": 1,
+        "effect": "Wskazuje pobliskie Wood / również Iron / również zombie",
+        "effects": {
+          "explorer": [
+            1,
+            2,
+            3
+          ]
+        },
+        "maxRank": 3,
+        "requires": []
+      },
+      {
+        "id": "advance-harvest",
+        "name": "Advance Harvest",
+        "tier": 2,
+        "effect": "Dodatkowa pojemność +5/10/15 Wood i +3/6/9 Iron; +1/1/2 nagrody",
+        "effects": {
+          "carryWood": [
+            5,
+            10,
+            15
+          ],
+          "carryIron": [
+            3,
+            6,
+            9
+          ],
+          "harvestBonus": [
+            1,
+            1,
+            2
+          ]
+        },
+        "maxRank": 3,
+        "requires": [
+          {
+            "id": "beginner-harvest",
+            "rank": 3
+          }
+        ]
+      },
+      {
+        "id": "campfire",
+        "name": "Campfire",
+        "tier": 2,
+        "effect": "Ognisko wewnątrz Shelteru przywraca 2 HP/s i Psyche",
+        "effects": {
+          "campfire": [
+            1
+          ]
+        },
+        "maxRank": 1,
+        "requires": []
+      },
+      {
+        "id": "survival-crafting",
+        "name": "Survival Crafting",
+        "tier": 2,
+        "effect": "Narzędzie: +25% obrażeń źródeł i +1 m zasięgu",
+        "effects": {
+          "harvestDamage": [
+            0.25
+          ],
+          "harvestRange": [
+            1
+          ]
+        },
+        "maxRank": 1,
+        "requires": []
+      },
+      {
+        "id": "hunter",
+        "name": "Hunter",
+        "tier": 3,
+        "effect": "Trafienie mieczem spowalnia przeciwnika o 10/20/30% na 2 s",
+        "effects": {
+          "slow": [
+            0.1,
+            0.2,
+            0.3
+          ]
+        },
+        "maxRank": 3,
+        "requires": []
+      },
+      {
+        "id": "endurance",
+        "name": "Endurance",
+        "tier": 3,
+        "effect": "Psyche wyczerpuje się o 15/25/35% wolniej; regeneracja przy Psyche >50%",
+        "effects": {
+          "corruptionRate": [
+            -0.15,
+            -0.25,
+            -0.35
+          ],
+          "enduranceRegen": [
+            0.33,
+            0.67,
+            1
+          ]
+        },
+        "maxRank": 3,
+        "requires": []
+      },
+      {
+        "id": "scavenger",
+        "name": "Scavenger",
+        "tier": 3,
+        "effect": "10/20/30% szans na materiał do plecaka z zabitego zombie",
+        "effects": {
+          "scavenger": [
+            0.1,
+            0.2,
+            0.3
+          ]
+        },
+        "maxRank": 3,
+        "requires": []
+      },
+      {
+        "id": "cloak",
+        "name": "Cloak",
+        "tier": 4,
+        "effect": "6: ukrycie na 15 s, pierwszy cios ×2; odnowienie 90 s",
+        "effects": {
+          "cloak": [
+            1
+          ]
+        },
+        "maxRank": 1,
+        "requires": []
+      },
+      {
+        "id": "resource-transport",
+        "name": "Resource Transporting",
+        "tier": 4,
+        "effect": "E pozwala zdalnie oddać pełny plecak do banku Shelteru",
+        "effects": {
+          "transport": [
+            1
+          ]
+        },
+        "maxRank": 1,
+        "requires": []
+      }
+    ],
+    "engineer": [
+      {
+        "id": "auto-repair",
+        "name": "Auto Repair",
+        "tier": 1,
+        "effect": "Podczas bezruchu: pobliska infrastruktura odzyskuje 1/3/5% HP/s (2 Wood + 1 Iron/s)",
+        "effects": {
+          "autoRepair": [
+            0.01,
+            0.03,
+            0.05
+          ]
+        },
+        "maxRank": 3,
+        "requires": []
+      },
+      {
+        "id": "beginner-engineer",
+        "name": "Beginner Engineer",
+        "tier": 1,
+        "effect": "HP konstrukcji +10/20/30%; szybsze naprawy",
+        "effects": {
+          "buildingHealth": [
+            0.1,
+            0.2,
+            0.3
+          ],
+          "repairSpeed": [
+            0.1,
+            0.2,
+            0.3
+          ]
+        },
+        "maxRank": 3,
+        "requires": []
+      },
+      {
+        "id": "blueprint",
+        "name": "Improve Blueprint",
+        "tier": 1,
+        "effect": "Budowa i rozbudowa tańsze o 5 / 10 / 15%",
+        "effects": {
+          "buildingCost": [
+            -0.05,
+            -0.1,
+            -0.15
+          ]
+        },
+        "maxRank": 3,
+        "requires": []
+      },
+      {
+        "id": "engineer-crafting",
+        "name": "Engineer Crafting",
+        "tier": 2,
+        "effect": "Młot: +30% napraw i +20% szybkości napraw",
+        "effects": {
+          "repairAmount": [
+            0.3
+          ],
+          "repairSpeed": [
+            0.2
+          ]
+        },
+        "maxRank": 1,
+        "requires": []
+      },
+      {
+        "id": "intermediate-engineer",
+        "name": "Intermediate Engineer",
+        "tier": 2,
+        "effect": "Dalsze +10/20/30% HP i +5/10/15% wydajności generatorów",
+        "effects": {
+          "buildingHealth": [
+            0.1,
+            0.2,
+            0.3
+          ],
+          "powerOutput": [
+            0.05,
+            0.1,
+            0.15
+          ]
+        },
+        "maxRank": 3,
+        "requires": [
+          {
+            "id": "beginner-engineer",
+            "rank": 3
+          }
+        ]
+      },
+      {
+        "id": "electrical",
+        "name": "Electrical Engineering",
+        "tier": 2,
+        "effect": "Wieże i magazyny potrzebują o 10/20/30% mniej mocy",
+        "effects": {
+          "powerDemand": [
+            -0.1,
+            -0.2,
+            -0.3
+          ]
+        },
+        "maxRank": 3,
+        "requires": []
+      },
+      {
+        "id": "recycle",
+        "name": "Recycle",
+        "tier": 3,
+        "effect": "X: rozbiórka trafionej konstrukcji, zwrot 25/50/75% ceny",
+        "effects": {
+          "recycle": [
+            0.25,
+            0.5,
+            0.75
+          ]
+        },
+        "maxRank": 3,
+        "requires": []
+      },
+      {
+        "id": "expert-engineer",
+        "name": "Expert Engineer",
+        "tier": 3,
+        "effect": "Dalsze +10/20/30% HP konstrukcji i obrażeń wież",
+        "effects": {
+          "buildingHealth": [
+            0.1,
+            0.2,
+            0.3
+          ],
+          "towerDamage": [
+            0.1,
+            0.2,
+            0.3
+          ]
+        },
+        "maxRank": 3,
+        "requires": [
+          {
+            "id": "intermediate-engineer",
+            "rank": 3
+          }
+        ]
+      },
+      {
+        "id": "construction-master",
+        "name": "Construction Master",
+        "tier": 3,
+        "effect": "Szybkość wież +5/10/15%; naprawy +10/20/30% przy Psyche >50%",
+        "effects": {
+          "towerSpeed": [
+            0.05,
+            0.1,
+            0.15
+          ],
+          "repairAmount": [
+            0.1,
+            0.2,
+            0.3
+          ]
+        },
+        "maxRank": 3,
+        "requires": []
+      },
+      {
+        "id": "wrecking-team",
+        "name": "Wrecking Team",
+        "tier": 4,
+        "effect": "7: wybuch runy, 800 obrażeń wokół celu; odnowienie 90 s",
+        "effects": {
+          "demolition": [
+            1
+          ]
+        },
+        "maxRank": 1,
+        "requires": []
+      },
+      {
+        "id": "turret-moving",
+        "name": "Turret Tower Moving",
+        "tier": 4,
+        "effect": "V na wieży: przenieś ją przez podgląd budowania bez opłat",
+        "effects": {
+          "moveTower": [
+            1
+          ]
+        },
+        "maxRank": 1,
+        "requires": []
+      }
+    ]
+  }
+}

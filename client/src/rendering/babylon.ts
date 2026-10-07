@@ -1,8 +1,12 @@
 // Explicit imports keep the prototype free of unrelated Babylon subsystems.
 import '@babylonjs/core/Collisions/collisionCoordinator.js';
+import '@babylonjs/core/Lights/Shadows/shadowGeneratorSceneComponent.js';
 import '@babylonjs/core/Culling/ray.js';
 import '@babylonjs/core/Meshes/instancedMesh.js';
 
+export { DynamicTexture } from '@babylonjs/core/Materials/Textures/dynamicTexture.js';
+export { Texture } from '@babylonjs/core/Materials/Textures/texture.js';
+export { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator.js';
 export { Engine } from '@babylonjs/core/Engines/engine.js';
 export { Scene } from '@babylonjs/core/scene.js';
 export { Color3, Color4 } from '@babylonjs/core/Maths/math.color.js';

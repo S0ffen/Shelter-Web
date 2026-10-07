@@ -3,18 +3,16 @@ import { distance } from '../domain/types';
 import { isBlocked, WORLD_BOUNDS } from './WorldLayout';
 import type { Footprint } from './WorldLayout';
 import { SHELTER_GOALS } from './ShelterLayout';
+import world from '../../../shared/world.json';
 
-export const SPAWN_AREAS: readonly Position[] = [
-  { x: -36, z: 29 }, { x: -19, z: 28 }, { x: 0, z: 38 }, { x: 35, z: 32 },
-  { x: 18, z: 20 }, { x: 17, z: -22 }, { x: 30, z: -32 }, { x: 0, z: -39 },
-  { x: -31, z: -32 }, { x: -37, z: -18 },
-];
+export const SPAWN_AREAS: readonly Position[] = world.spawnAreas;
 
 /** A shared distance field: one city search, then cheap routes for the whole horde. */
 export class NavigationGrid {
   private readonly width = WORLD_BOUNDS.maxX - WORLD_BOUNDS.minX - 1;
   private readonly height = WORLD_BOUNDS.maxZ - WORLD_BOUNDS.minZ - 1;
   private readonly open: Uint8Array;
+  private readonly links: Uint8Array;
   private readonly next: Int32Array;
   private readonly costs: Int32Array;
   private readonly destinations = new Map<number, Position>();
@@ -22,9 +20,17 @@ export class NavigationGrid {
   constructor(private readonly obstacles: readonly Footprint[]) {
     const size = this.width * this.height;
     this.open = new Uint8Array(size);
+    this.links = new Uint8Array(size);
     this.next = new Int32Array(size).fill(-1);
     this.costs = new Int32Array(size).fill(-1);
     for (let i = 0; i < size; i++) this.open[i] = Number(!isBlocked(this.position(i), 0.38, obstacles));
+    for (let i=0;i<size;i++) if (this.open[i]) {
+      const point=this.position(i);
+      for (const [dx,dz,bit,opposite] of [[1,0,1,2],[0,1,4,8]]) {
+        const target=this.index({x:point.x+dx,z:point.z+dz});
+        if (target>=0 && this.open[target] && !isBlocked({x:point.x+dx/2,z:point.z+dz/2},.38,obstacles)) { this.links[i]|=bit;this.links[target]|=opposite; }
+      }
+    }
     const queue: number[] = [];
     for (const goal of SHELTER_GOALS) {
       const index = this.index(goal);
@@ -35,10 +41,9 @@ export class NavigationGrid {
     for (let head = 0; head < queue.length; head++) {
       const current = queue[head];
       const from = this.position(current);
-      for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      for (const [dx, dz, bit] of [[1, 0,1], [-1, 0,2], [0, 1,4], [0, -1,8]]) {
         const candidate = this.index({ x: from.x + dx, z: from.z + dz });
-        if (candidate < 0 || !this.open[candidate] || this.costs[candidate] >= 0 ||
-          isBlocked({ x: from.x + dx / 2, z: from.z + dz / 2 }, 0.38, obstacles)) continue;
+        if (candidate < 0 || this.costs[candidate] >= 0 || !(this.links[current]&bit)) continue;
         this.costs[candidate] = this.costs[current] + 1;
         this.next[candidate] = current;
         queue.push(candidate);
@@ -61,6 +66,26 @@ export class NavigationGrid {
       if (isBlocked({ x: from.x + (to.x - from.x) * t, z: from.z + (to.z - from.z) * t }, 0.35, this.obstacles)) return false;
     }
     return true;
+  }
+  /** Occasional territorial bosses use the same walkable grid for pursuit and returning home. */
+  routeTo(from: Position, to: Position): Position[] {
+    if (this.canWalk(from, to)) return [{ ...to }];
+    const start = this.index(from), goal = this.index(to);
+    if (start < 0 || goal < 0 || !this.open[start] || !this.open[goal] || !this.canWalk(from, this.position(start)) || !this.canWalk(this.position(goal), to)) return [];
+    const previous = new Int32Array(this.open.length).fill(-1), queue = [start]; previous[start] = start;
+    for (let head = 0; head < queue.length && previous[goal] < 0; head++) {
+      const current = queue[head], point = this.position(current);
+      for (const [dx, dz,bit] of [[1,0,1],[-1,0,2],[0,1,4],[0,-1,8]]) {
+        const next = this.index({ x: point.x + dx, z: point.z + dz });
+        if (next < 0 || previous[next] >= 0 || !(this.links[current]&bit)) continue;
+        previous[next] = current; queue.push(next);
+      }
+    }
+    if (previous[goal] < 0) return [];
+    const path: Position[] = [to]; for (let at = goal; at !== start; at = previous[at]) path.push(this.position(at)); path.push(this.position(start)); path.reverse();
+    const result: Position[] = []; let origin = from;
+    for (let i = 0; i < path.length;) { let end = i; while (end + 1 < path.length && this.canWalk(origin, path[end + 1])) end++; result.push(path[end]); origin = path[end]; i = end + 1; }
+    return result;
   }
   routeFrom(position: Position): Position[] {
     let start = -1;
