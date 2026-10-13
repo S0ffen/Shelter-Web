@@ -14,3 +14,27 @@ server/test-results/
 
 .tools/
 verification/audio-reference/
+
+# Local downloads and high-resolution source assets; runtime copies live in client/public.
+/models/
+/music/
+/reference-assets/generated-textures/
+
+# Generated reports, screenshots, extracted CSNZ files and compiled verification server.
+/verification/
+__pycache__/
+*.py[cod]
+.env
+.env.*
+!.env.example
+
+# Keep maintained project tools; ignore one-off extraction and research scripts.
+/scripts/*
+!/scripts/README.md
+!/scripts/Verify-Milestone.ps1
+!/scripts/generate-reference-map.py
+!/scripts/place-reference-resources.py
+!/scripts/render-current-layout.py
+!/scripts/prepare-enemy-models.ps1
+!/scripts/prepare-environment-textures.py
+!/scripts/model-tools/
