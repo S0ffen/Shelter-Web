@@ -10,5 +10,6 @@ try {
   if (import.meta.hot) import.meta.hot.dispose(() => game.dispose());
 } catch (error) {
   console.error('Unable to start Fantasy Shelter:', error);
-  root.innerHTML = '<div class="startup-error"><h1>Unable to enter the ruins.</h1><p>This prototype requires WebGL and hardware acceleration. Refresh the page or check the browser console.</p></div>';
+  root.innerHTML = '<div class="startup-error"><h1>Unable to enter the ruins.</h1><p>The game could not start. Refresh the page. If the problem continues, share the error below.</p><details><summary>Error details</summary><pre></pre></details></div>';
+  root.querySelector('pre')!.textContent = error instanceof Error ? error.message : String(error);
 }

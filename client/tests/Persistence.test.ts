@@ -98,6 +98,22 @@ describe('SQLite connection and local fallback', () => {
     const data = new Map<string, string>();
     vi.stubGlobal('localStorage', { getItem: (key: string) => data.get(key) ?? null, setItem: (key: string, value: string) => data.set(key, value) });
   }
+  it('routes loading, checkpoint writes and results through the page origin for LAN clients', async () => {
+    memoryStorage();
+    const saved = captureRun(prepared());
+    const fetch = vi.fn()
+      .mockResolvedValueOnce(new Response('{}'))
+      .mockResolvedValueOnce(new Response(JSON.stringify(saved)))
+      .mockResolvedValue(new Response('{}'));
+    vi.stubGlobal('fetch', fetch);
+    const service = new SaveService();
+    expect(await service.initialize()).toEqual(saved);
+    expect(await service.save(saved)).toBe('sqlite');
+    await service.recordResult({ runId: saved.runId, day: 1, kills: 0, elapsed: 0 });
+    expect(fetch.mock.calls.map(call => call[0])).toEqual(['/api/health', '/api/checkpoint', '/api/checkpoint', '/api/runs']);
+    for (const [url] of fetch.mock.calls)
+      expect(new URL(url, 'http://192.168.1.143:5173').origin).toBe('http://192.168.1.143:5173');
+  });
   it('retains an offline checkpoint across service recreation', async () => {
     memoryStorage();
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('offline')));

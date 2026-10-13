@@ -2,7 +2,8 @@ import { parseRun, SAVE_VERSION, SUPPORTED_SAVE_VERSIONS } from './RunSnapshot';
 import type { RunSnapshot } from './RunSnapshot';
 
 const KEY = `fantasy-shelter.run.v${SAVE_VERSION}`;
-const API = import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:5080';
+// Relative API requests work both on localhost and on another computer in the LAN.
+const API = import.meta.env.VITE_API_URL ?? '';
 
 /** Local fallback plus serialized SQLite writes; the latest checkpoint never races an older write. */
 export class SaveService {

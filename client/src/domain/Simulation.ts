@@ -1,4 +1,5 @@
 import { ARENA_WALLS, arenaEnemyHeight, inFinalArena, FINAL_ARENA } from '../world/ArenaLayout';
+import { createRunId } from './RunId';
 import encounters from '../../../shared/encounters.json';
 import { PERKS, SkillTree } from './SkillTree';
 import { Corruption } from './Corruption';
@@ -27,7 +28,7 @@ import { SurvivalCycle, SURVIVAL_SETTINGS } from './SurvivalCycle';
 import type { SurvivalSettings } from './SurvivalCycle';
 /** Local gameplay authority; the server currently persists checkpoints, not combat decisions. */
 export class Simulation {
-  runId: string = crypto.randomUUID();
+  runId: string = createRunId();
   player = new Player();
   corruption = new Corruption();
   skills = new SkillTree();
@@ -83,7 +84,7 @@ export class Simulation {
     return [...ARENA_WALLS, ...this.buildingSystem.footprints, ...this.resourceNodes.filter(node => !node.isDestroyed).map(node => node.footprint)];
   }
   reset(): void {
-    this.runId = crypto.randomUUID();
+    this.runId = createRunId();
     this.player = new Player();
     this.corruption = new Corruption();
     this.skills = new SkillTree();
