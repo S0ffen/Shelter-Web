@@ -1,0 +1,110 @@
+{
+  "size": 2048,
+  "source": "User-provided local texture sets",
+  "sets": [
+    {
+      "id": "medieval_wall_02",
+      "sourceSha256": {
+        "models/medieval_wall_02_4k.blend/textures/medieval_wall_02_diff_4k.jpg": "524c52b61e5ad2952d9cdd304847a7e70132f606fbc7544ef30810b7b6134cf2",
+        "models/medieval_wall_02_4k.blend/textures/medieval_wall_02_nor_gl_4k.exr": "cd350f28fcf0fda64fbceabf3ec6c264ce5d5f56e8e168c548c3b81e85ca03b0",
+        "models/medieval_wall_02_4k.blend/textures/medieval_wall_02_rough_4k.exr": "57391ccb249dc9c84cfc8bcff2bd1c2174a32c3e51a9896f66e2019e684b1caa"
+      },
+      "maps": {
+        "albedo.webp": {
+          "bytes": 1311144,
+          "sha256": "3cec428594a16c708751cf60c55b070f74111ccb97ec394d1cb154aa3ff5e2a4"
+        },
+        "normal.webp": {
+          "bytes": 8264200,
+          "sha256": "e8c0b9a896a7d01b21330f299d42bedfb69da864f6f2b9c35072ee014ae26cfc"
+        },
+        "roughness.webp": {
+          "bytes": 1849750,
+          "sha256": "c40b8b14a2145b65715194211fc7ae7a84ed4a4d7a5f1f1417f50e9ddfa8cca7"
+        }
+      },
+      "roughnessRange": [
+        0.70263671875,
+        0.9984130859375
+      ]
+    },
+    {
+      "id": "roof_slates_02",
+      "sourceSha256": {
+        "models/roof_slates_02_4k.blend/textures/roof_slates_02_diff_4k.jpg": "34fb590275ce0e6f66cf4472577d222265957a7d56c315254df11da339555edc",
+        "models/roof_slates_02_4k.blend/textures/roof_slates_02_nor_gl_4k.exr": "24312dc1365efa615e4480399e4a5f46453682d5d8977f1dd20e4bfe7f7ae9d6",
+        "models/roof_slates_02_4k.blend/textures/roof_slates_02_rough_4k.jpg": "2b823c78fbb2c40fa7bb2e38eb36d32581ff14a8810c5f4849f41e115c25d543"
+      },
+      "maps": {
+        "albedo.webp": {
+          "bytes": 1212436,
+          "sha256": "b36ddedf6c7eb423aa4bf92791aaf0ec95043eb6a87513b20ba5049907f19929"
+        },
+        "normal.webp": {
+          "bytes": 6655948,
+          "sha256": "95de2a7e81048703178076279fba064e42d3079fbf8a010ce378e89732d7bc1e"
+        },
+        "roughness.webp": {
+          "bytes": 1841792,
+          "sha256": "e9354eb3f390b2ca14c5510a873ce99e0946c2a5e9c2793d06abbfc2496b96c2"
+        }
+      },
+      "roughnessRange": [
+        0.029411766678094864,
+        1.0
+      ]
+    },
+    {
+      "id": "weathered_planks",
+      "sourceSha256": {
+        "models/weathered_planks_4k.blend/textures/weathered_planks_diff_4k.jpg": "e270daa7ac5aed9d8c0f55e1bdccb219405ec581d4fabce9eda8785acf5df484",
+        "models/weathered_planks_4k.blend/textures/weathered_planks_nor_gl_4k.exr": "31b2b455e318be8ebb737bcff8a9a46c0db189de41891e834bf86af79c7dc324",
+        "models/weathered_planks_4k.blend/textures/weathered_planks_rough_4k.exr": "ff092e13808d46d9a0ea973e3da9c54e3097e0fbf331f3273b29c9eac05b7667"
+      },
+      "maps": {
+        "albedo.webp": {
+          "bytes": 616036,
+          "sha256": "9b37f9f78eb60e3fe83096184a4a0ed27d9c7f87afec9f8680cdb7d4b27bd049"
+        },
+        "normal.webp": {
+          "bytes": 6112922,
+          "sha256": "3d47c854df91bc7c59fb939052a027b70cef4025250da804cff413a4d0558de1"
+        },
+        "roughness.webp": {
+          "bytes": 900162,
+          "sha256": "28a04f485988bb43226b4758983308a2bce2ee0675606d52b3ebf9c8140c0dd8"
+        }
+      },
+      "roughnessRange": [
+        0.6666259765625,
+        0.7916259765625
+      ]
+    },
+    {
+      "id": "cobblestone_01",
+      "sourceSha256": {
+        "models/cobblestone_01_4k.blend/textures/cobblestone_01_diff_4k.jpg": "978cc0f894f49b54a1bea614524d8bea52ba644437afa2282590db94252cee2f",
+        "models/cobblestone_01_4k.blend/textures/cobblestone_01_nor_gl_4k.exr": "97b6e4e45c788a8f7587f6522aeaaecc0456d2dbdce4593bda10acee2d603862",
+        "models/cobblestone_01_4k.blend/textures/cobblestone_01_rough_4k.jpg": "a91c967a56944453019a80e77eea47cd9b7cc40cb059329092a62daf8f17c7b2"
+      },
+      "maps": {
+        "albedo.webp": {
+          "bytes": 1369638,
+          "sha256": "16d2e256baa5927bd81bca3f4f7b66a18c91abaa64afbe75a50bd09553860e37"
+        },
+        "normal.webp": {
+          "bytes": 4531164,
+          "sha256": "b9d4bdb163b8319d1c11152d999b37777d420d11852045d9230577fffdaa1119"
+        },
+        "roughness.webp": {
+          "bytes": 2702324,
+          "sha256": "a37b8e8a33b6452063620deefbc666bab56df416ac844eac95c911aeea17148d"
+        }
+      },
+      "roughnessRange": [
+        0.0009803922148421407,
+        1.0
+      ]
+    }
+  ]
+}

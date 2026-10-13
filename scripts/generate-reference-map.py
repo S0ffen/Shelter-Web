@@ -8,7 +8,7 @@ from PIL import Image
 root = pathlib.Path(__file__).resolve().parent.parent
 image = Image.open(root / 'reference-assets/layout.png').convert('RGB')
 width, height = image.size
-scale, origin_x, origin_y = 1.2, 88.5, 217.5
+scale, origin_x, origin_y = .7, 88.5, 217.5
 
 def position(x, y):
     return {'x': round(1.5 + (x-origin_x)*scale, 3), 'z': round(4 + (origin_y-y)*scale, 3)}
@@ -78,23 +78,36 @@ areas={
 }
 patrol_pixels=[(45,193),(109,186),(114,145),(62,131),(23,147),(69,78),(133,78),(202,100),(229,170),(180,193),(100,42)]
 world={
-    'bounds': {'minX':-106,'maxX':203,'minZ':-43,'maxZ':267},
+    'bounds': {'minX':-62,'maxX':120,'minZ':-24,'maxZ':158},
     'reference':{'width':width,'height':height,'metersPerPixel':scale,'originPixel':{'x':origin_x,'y':origin_y},'originWorld':{'x':1.5,'z':4},'source':'reference-assets/layout.png','walkableRows':rows},
     'areas':areas,
     'floorTiles':[footprint(rect) for rect in rectangles(walk)],
     'solidLots':[footprint(rect,7.2) for rect in rectangles(interior)],
     'boundaryLots':[footprint(rect,7.2) for rect in rectangles(external)],
     'patrolAreas':[position(*p) for p in patrol_pixels if walk[p[1]][p[0]]],
-    'spawnAreas':[{'x':-29,'z':27},{'x':-24,'z':-15},{'x':23,'z':-17},{'x':27,'z':25},{'x':14,'z':27}],
+    'spawnAreas':[{'x':-29,'z':-2.5},{'x':29.5,'z':-2.5},{'x':1.5,'z':23},{'x':1.5,'z':-10.5},{'x':-15,'z':23}],
 }
+for area in world['areas'].values():
+    area['width']=round(area['width']*scale/1.2,3)
+    area['depth']=round(area['depth']*scale/1.2,3)
 (root/'shared/world.json').write_text(json.dumps(world,indent=2)+'\n',encoding='utf-8')
 encounters=json.loads((root/'shared/encounters.json').read_text())
 encounters['forgeGuardian']['position']=position(*markers['forgeGuardian'])
 encounters['graveGuardian']={**encounters['forgeGuardian'],'kind':'warden','position':position(*markers['graveGuardian'])}
-encounters['ravager']={'kind':'ravager','position':position(*markers['ravager']),'triggerDistance':48,'aggroRange':44,'leashRange':76,'attackRange':2.8,'windup':.25,'slamRadius':0}
+encounters['ravager']={'kind':'ravager','position':position(*markers['ravager']),'triggerDistance':48,'aggroRange':44,'leashRange':76,'attackRange':2.8,'windup':.25}
 encounters['finalBoss'].update({'position':position(*markers['finalBoss']),'triggerDistance':90,'aggroRange':90,'leashRange':90,'chargeInterval':8,'chargeWindup':.8,'chargeDuration':1.0,'chargeSpeed':14,'chargeDamage':55})
-encounters['finalArena']={'bounds':{'minX':round(arena_center['x']-31.2,3),'maxX':round(arena_center['x']+31.2,3),'minZ':round(arena_center['z']-21.6,3),'maxZ':round(arena_center['z']+21.6,3)},'gateHeight':6,'gateThickness':.65,'entryInset':1.5,'protectsPsyche':True}
+encounters['finalArena']={'bounds':{'minX':round(arena_center['x']-18.2,3),'maxX':round(arena_center['x']+18.2,3),'minZ':round(arena_center['z']-12.6,3),'maxZ':round(arena_center['z']+12.6,3)},'gateHeight':6,'gateThickness':.65,'entryInset':1.5,'protectsPsyche':True}
 (root/'shared/encounters.json').write_text(json.dumps(encounters,indent=2)+'\n',encoding='utf-8')
+layout=json.loads((root/'shared/shelter.json').read_text())
+# Red rectangle supplied by the player, measured against the 256 px radar.
+lower=position(51,236);upper=position(126,196)
+layout['bounds']={'minX':lower['x'],'maxX':upper['x'],'minZ':lower['z'],'maxZ':upper['z']}
+# shelter_check1 brush (*66) in original zsh_deadcity_pve.bsp: 496 x 312 GoldSrc units.
+layout['hall'].update({'width':12.6,'depth':7.9,'doorWidth':3.2})
+layout['generatorPads']=[{'x':x,'z':z} for x in [-21.25,24.25] for z in [-6,5.5,15.5]]
+layout['deposit'].update({'x':5.3,'z':6.7})
+layout['reference']={'shelterBrushUnits':{'width':496,'depth':312},'unitToMeters':.0254,'buildAreaPixels':{'left':51,'right':126,'top':196,'bottom':236}}
+(root/'shared/shelter.json').write_text(json.dumps(layout,indent=2)+'\n',encoding='utf8')
 report={'floorCells':sum(map(sum,walk)),'floorRectangles':len(world['floorTiles']),'solidRectangles':len(world['solidLots']),'boundaryRectangles':len(world['boundaryLots']),'markers':{k:position(*v) for k,v in markers.items()}}
 (root/'verification/reference-layout.json').write_text(json.dumps(report,indent=2)+'\n')
 print(json.dumps(report))
