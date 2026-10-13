@@ -1,3 +1,4 @@
+import { GENERATOR_PADS } from '../src/world/ShelterLayout';
 import { expect, it } from 'vitest';
 import { Simulation } from '../src/domain/Simulation';
 import { Building } from '../src/building/Building';
@@ -9,7 +10,7 @@ it('respawns partial and depleted nodes once at dawn, preserving the rest of the
   sim.resources.wood = 45; sim.carried.iron = 7; sim.totalKills = 12;
   sim.player.position = { x: -31, z: 14 };
   sim.shelter.upgrade(); sim.shelter.hp = 450;
-  sim.buildingSystem.buildings.push(new Building('generator', 'arcane-core', { x: -13, z: -13 }, 0));
+  sim.buildingSystem.buildings.push(new Building('generator', 'arcane-core', GENERATOR_PADS[0], 0));
   sim.cycle.state.period = 'night'; sim.cycle.state.pendingSpawns = 0;
   sim.cycle.state.periodElapsed = sim.cycle.settings.nightDuration;
   sim.update(.01);

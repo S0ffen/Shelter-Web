@@ -1,0 +1,5 @@
+{
+  "effectsVolume": 0.22,
+  "music": { "day": 0.11, "night": 0.075 },
+  "crossfadeSeconds": 2
+}

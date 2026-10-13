@@ -1,3 +1,4 @@
+import { GENERATOR_PADS } from '../src/world/ShelterLayout';
 import { describe, expect, it } from 'vitest';
 import { Simulation } from '../src/domain/Simulation';
 import { SurvivalCycle, SURVIVAL_SETTINGS } from '../src/domain/SurvivalCycle';
@@ -22,17 +23,17 @@ describe('day, night and random hordes', () => {
   it('ends the night on schedule, drops the pending queue and grows the next wave', () => {
     const cycle = new SurvivalCycle({ ...SURVIVAL_SETTINGS, dayDuration: 1, nightDuration: 1 });
     expect(cycle.update(1, 2)).toBe('night-started');
-    expect(cycle.state.waveSize).toBe(8);
-    expect(cycle.state.pendingSpawns).toBe(6);
+    expect(cycle.state.waveSize).toBe(24);
+    expect(cycle.state.pendingSpawns).toBe(24);
     expect(cycle.update(1, 2)).toBe('day-started');
     expect(cycle.state.pendingSpawns).toBe(0);
     expect(cycle.state.day).toBe(2);
     expect(cycle.update(1, 0)).toBe('night-started');
-    expect(cycle.state.waveSize).toBe(12);
+    expect(cycle.state.waveSize).toBe(32);
     cycle.state.day = 100;
     cycle.state.period = 'day';
     cycle.update(1, 0);
-    expect(cycle.state.waveSize).toBe(64);
+    expect(cycle.state.waveSize).toBe(128);
   });
 
   it('limits active enemies, retains the remaining queue, and pauses spawns', () => {
@@ -41,7 +42,7 @@ describe('day, night and random hordes', () => {
     for (let i = 0; i < 60; i++) sim.update(1 / 30);
     expect(sim.cycle.state.period).toBe('night');
     expect(sim.livingZombies).toHaveLength(2);
-    expect(sim.cycle.state.pendingSpawns).toBe(6);
+    expect(sim.cycle.state.pendingSpawns).toBe(22);
     sim.pause();
     const elapsed = sim.cycle.state.periodElapsed;
     sim.update(30);
@@ -58,7 +59,7 @@ describe('day, night and random hordes', () => {
     sim.resourceManager.add('wood', 100); sim.resourceManager.add('iron', 50);
     const node = sim.resourceNodes[0];
     node.damage(1000);
-    sim.buildingSystem.buildings.push(new Building('fixture-generator', 'arcane-core', { x: 16, z: 12 }, 0));
+    sim.buildingSystem.buildings.push(new Building('fixture-generator', 'arcane-core', GENERATOR_PADS[5], 0));
     expect(sim.placeBuilding('storehouse', { x: -4, z: -7 }, 0).ok).toBe(true);
     expect(sim.beginNight()).toBe(true);
     sim.update(1 / 30);
@@ -72,7 +73,7 @@ describe('day, night and random hordes', () => {
     expect(sim.resourceNodes[0].isDestroyed).toBe(false);
     expect(sim.buildingSystem.buildings).toHaveLength(2);
     expect(sim.resourceManager.capacity.wood).toBe(150);
-    expect(sim.resources.wood).toBe(70);
+    expect(sim.resources.wood).toBe(88);
   });
 
   it('spawns reproducible but varied, reachable enemies away from the player', () => {

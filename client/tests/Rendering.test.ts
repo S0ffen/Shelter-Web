@@ -1,3 +1,4 @@
+import { GENERATOR_PADS } from '../src/world/ShelterLayout';
 import { SHELTER_HALL } from '../src/world/ShelterLayout';
 import { describe, expect, it } from 'vitest';
 import { NullEngine } from '@babylonjs/core/Engines/nullEngine.js';
@@ -15,6 +16,7 @@ import { ResourceView } from '../src/resources/ResourceView';
 import { ResourceType } from '../src/resources/ResourceType';
 import { ProjectileView } from '../src/building/ProjectileView';
 import { Building } from '../src/building/Building';
+import { CITY_RUINS } from '../src/world/WorldLayout';
 
 describe('Babylon adapters', () => {
   it('physically walks through the open Shelter entrance, stays inside its walls and exits again', () => {
@@ -34,7 +36,7 @@ describe('Babylon adapters', () => {
       controller.restore({ ...player, position: { x: 1.5, z: 1.5 } } as Player);
       controller.camera.rotation.set(0, 0, 0); key = 'KeyS';
       for (let step = 0; step < 140; step++) { controller.update(1 / 30, player); manager.scene.render(); }
-      expect(player.position.z).toBeLessThan(-13.5);
+      expect(player.position.z).toBeLessThan(SHELTER_HALL.z-SHELTER_HALL.depth/2-10);
     } finally { engine.dispose(); }
   });
   it('picks distinct horde members, ignores corpses and disposes removed rigs', () => {
@@ -111,16 +113,17 @@ describe('Babylon adapters', () => {
       const input = { consumeLook: () => ({ x: 0, y: 0 }), down: (key: string) => key === 'KeyD' };
       const controller = new PlayerController(manager.scene, input);
       const player = new Player();
+      const wall = CITY_RUINS.find(block => block.width > 4 && block.depth > 4)!;
+      controller.restore({ ...player, position: { x: wall.x-wall.width/2-2, z: wall.z } } as Player);
       controller.camera.rotation.set(0, 0, 0);
       new Sword(manager.scene, controller.camera);
       const view = new ZombieView(manager.scene);
       view.update(new Zombie(), player, 1, 0, 0);
       manager.scene.render();
       for (let step = 0; step < 200; step++) { controller.update(1 / 30, player); manager.scene.render(); }
-      // The larger courtyard ends at the solid eastern base wall.
-      expect(player.position.x).toBeGreaterThan(19.8);
-      expect(player.position.x).toBeLessThan(20.2);
-      expect(player.position.z).toBeCloseTo(-7);
+      expect(player.position.x).toBeGreaterThan(wall.x-wall.width/2-.65);
+      expect(player.position.x).toBeLessThan(wall.x-wall.width/2-.3);
+      expect(player.position.z).toBeCloseTo(wall.z);
       expect(manager.scene.meshes.length).toBeGreaterThan(150);
     } finally { engine.dispose(); }
   });
@@ -163,7 +166,7 @@ describe('Babylon adapters', () => {
       sim.start();
       sim.resourceManager.add('wood', 100);
       sim.resourceManager.add('iron', 50);
-      sim.buildingSystem.buildings.push(new Building('fixture-generator', 'arcane-core', { x: 16, z: 12 }, 0));
+      sim.buildingSystem.buildings.push(new Building('fixture-generator', 'arcane-core', GENERATOR_PADS[5], 0));
       const building = new BuildingController(manager.scene, controller.camera);
       controller.camera.setTarget(new Vector3(-4, -0.02, -7));
       manager.scene.render();
@@ -172,7 +175,7 @@ describe('Babylon adapters', () => {
       building.update(sim);
       expect(building.position).toEqual({ x: -4, z: -7 });
       expect(building.reason).toBeNull();
-      expect(building.confirm(sim)).toBe('Zbudowano Storehouse');
+      expect(building.confirm(sim)).toBe('Built Storehouse');
       building.update(sim);
       expect(manager.scene.getMeshByName('building-1-collider')?.checkCollisions).toBe(true);
       building.cancel();

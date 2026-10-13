@@ -1,3 +1,4 @@
+import { GENERATOR_PADS } from '../src/world/ShelterLayout';
 import { describe, expect, it } from 'vitest';
 import { Simulation } from '../src/domain/Simulation';
 import { ResourceType } from '../src/resources/ResourceType';
@@ -35,13 +36,13 @@ describe('milestone 4 storehouse', () => {
     expect(sim.carried.wood).toBe(30);
     expect(sim.drainEvents()).toContainEqual({ type: 'storage-full', kind: 'wood', needed: 3 });
     sim.player.position = { x: 1.5, z: -7 };
-    sim.buildingSystem.buildings.push(new Building('fixture-generator', 'arcane-core', { x: 16, z: 12 }, 0));
+    sim.buildingSystem.buildings.push(new Building('fixture-generator', 'arcane-core', GENERATOR_PADS[5], 0));
     expect(sim.placeBuilding('storehouse', { x: -4, z: -7 }, 0).ok).toBe(true);
     expect(sim.resourceManager.capacity).toEqual({ wood: 150, iron: 75 });
-    expect(sim.resources.wood).toBe(70);
+    expect(sim.resources.wood).toBe(100);
     sim.player.position={x:6,z:5};sim.depositResources();
     expect(sim.carried.wood).toBe(0);
-    expect(sim.resources.wood).toBe(100);
+    expect(sim.resources.wood).toBe(118);
     sim.player.position = { x: node.position.x, z: node.position.z - 1.4 };
     for (let i = 0; i < 2; i++) { for (let step = 0; step < 22; step++) sim.update(1 / 30); sim.attack(node.id); }
     expect(sim.carried.wood).toBe(11);

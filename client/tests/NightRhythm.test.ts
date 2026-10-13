@@ -6,11 +6,12 @@ import { captureRun, restoreRun } from '../src/persistence/RunSnapshot';
 it('uses configurable 180/90 phases and four increasingly strong bursts with gaps', () => {
   const cycle = new SurvivalCycle(); expect(cycle.settings.nightDuration * 2).toBe(cycle.settings.dayDuration);
   cycle.update(180, 0); const spawns: number[] = [];
-  for (let second = 0; second < 90; second++) {
-    if (cycle.wantsSpawn(0)) { spawns.push(second); cycle.spawned(); }
-    cycle.update(1, 0);
+  for (let frame = 0; frame < 90 * 30; frame++) {
+    if (cycle.wantsSpawn(0)) { spawns.push(cycle.state.periodElapsed); cycle.spawned(); }
+    cycle.update(1 / 30, 0);
   }
-  expect(spawns).toHaveLength(8);
+  if (cycle.state.period === 'night') cycle.update(1 / 30, 0);
+  expect(spawns).toHaveLength(24);
   expect(spawns.some(second => second > 13 && second < 22)).toBe(false);
   expect(spawns.filter(second => second >= 67.5).length).toBeGreaterThan(spawns.filter(second => second < 22.5).length);
   expect(cycle.state.day).toBe(2); expect(cycle.secondsRemaining).toBe(180);

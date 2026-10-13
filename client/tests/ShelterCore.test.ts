@@ -9,8 +9,8 @@ import { PlayerController } from '../src/player/PlayerController';
 import { combatTarget } from '../src/player/CombatTarget';
 import { Vector3 } from '../src/rendering/babylon';
 import { NavigationGrid, SPAWN_AREAS } from '../src/world/NavigationGrid';
-import { BASE_BOUNDS, SHELTER_CORE, SHELTER_CORE_ID, inHall } from '../src/world/ShelterLayout';
-import { CITY_RUINS, SHELTER_CLEARING, isBlocked } from '../src/world/WorldLayout';
+import { BASE_BOUNDS, BASE_ZONES, SHELTER_CORE, SHELTER_CORE_ID, inHall } from '../src/world/ShelterLayout';
+import { CITY_RUINS, isBlocked } from '../src/world/WorldLayout';
 import { captureRun, parseRun, restoreRun } from '../src/persistence/RunSnapshot';
 
 const advance = (sim: Simulation, seconds: number) => {
@@ -40,7 +40,7 @@ describe('central Shelter core and two melee attacks', () => {
   it('does not damage the hall from outside and only attacks after reaching the pillar inside', () => {
     const sim = prepared(); sim.player.position = { x: 16, z: -13 };
     const enemy = new Zombie('siege', { x: 1.5, z: 9.8 }); sim.zombies.push(enemy);
-    advance(sim, 1); expect(sim.shelter.hp).toBe(300);
+    advance(sim, 1); expect(sim.shelter.hp).toBe(1250);
     let hits = 0;
     for (let i = 0; i < 2700 && sim.phase === 'playing'; i++) {
       sim.update(1 / 30);
@@ -57,17 +57,17 @@ describe('central Shelter core and two melee attacks', () => {
     const engine = new NullEngine();
     try {
       const sim = prepared(), scenes = new SceneManager(engine);
-      sim.player.position = { x: 1.5, z: 1.5 }; sim.shelter.hp = 260;
+      sim.player.position = { x: 1.5, z: 1.5 }; sim.shelter.hp = 1150;
       sim.resourceManager.add('wood', 10); sim.resourceManager.add('iron', 5);
       const controller = new PlayerController(scenes.scene, { down: () => false, consumeLook: () => ({ x: 0, y: 0 }) });
       controller.restore(sim.player); controller.camera.setTarget(new Vector3(1.5, 1.7, 4)); scenes.scene.render();
       const target = combatTarget(scenes.scene, controller.camera, CONFIG.sword.range);
       expect(target).toBe(SHELTER_CORE_ID);
       expect(scenes.world.shelterCore.checkCollisions).toBe(true);
-      sim.attack(target); expect(sim.shelter.hp).toBe(285); expect(sim.resources).toEqual({ wood: 8, iron: 4 });
+      sim.attack(target); expect(sim.shelter.hp).toBe(1210); expect(sim.resources).toEqual({ wood: 8, iron: 4 });
       expect(sim.attack(target)).toBe(false);
-      advance(sim, .7); sim.attack(null); expect(sim.shelter.hp).toBe(285);
-      advance(sim, .85); sim.attack(target); expect(sim.shelter.hp).toBe(300);
+      advance(sim, .7); sim.attack(null); expect(sim.shelter.hp).toBe(1210);
+      advance(sim, .85); sim.attack(target); expect(sim.shelter.hp).toBe(1250);
       expect(sim.resources).toEqual({ wood: 6, iron: 3 });
       advance(sim, 1.6); sim.attack(target); expect(sim.resources).toEqual({ wood: 6, iron: 3 });
     } finally { engine.dispose(); }
@@ -83,7 +83,7 @@ describe('central Shelter core and two melee attacks', () => {
     advance(sim, 1.5); sim.player.position = { x: 1.5, z: -3 };
     sim.attack(SHELTER_CORE_ID); expect(sim.shelter.hp).toBe(200);
     advance(sim, .7); sim.player.position = { x: 1.5, z: 1.5 };
-    sim.attack(SHELTER_CORE_ID); expect(sim.shelter.hp).toBe(225);
+    sim.attack(SHELTER_CORE_ID); expect(sim.shelter.hp).toBe(260);
     expect(sim.resources).toEqual({ wood: 8, iron: 4 });
     sim.pause(); expect(sim.attack(SHELTER_CORE_ID)).toBe(false);
   });
@@ -133,20 +133,15 @@ describe('central Shelter core and two melee attacks', () => {
     const legacy = { ...saved, version: 3 }; expect(parseRun(legacy)).toBeNull();
   });
 
-  it('keeps a broad open plaza and clear approaches beyond all four perimeter gates', () => {
-    expect(BASE_BOUNDS.maxX - BASE_BOUNDS.minX).toBe(38);
-    expect(BASE_BOUNDS.maxZ - BASE_BOUNDS.minZ).toBe(36);
-    for (const ruin of CITY_RUINS) expect(
-      Math.abs(ruin.x - SHELTER_CLEARING.x) < (ruin.width + SHELTER_CLEARING.width) / 2 &&
-      Math.abs(ruin.z - SHELTER_CLEARING.z) < (ruin.depth + SHELTER_CLEARING.depth) / 2,
+  it('keeps the irregular enlarged courtyard clear of houses and its street approaches open', () => {
+    expect(BASE_BOUNDS.maxX - BASE_BOUNDS.minX).toBeCloseTo(62.05);
+    expect(BASE_BOUNDS.maxZ - BASE_BOUNDS.minZ).toBeCloseTo(39.4);
+    for(const zone of BASE_ZONES) for(const ruin of CITY_RUINS) expect(
+      Math.abs(ruin.x-(zone.minX+zone.maxX)/2)<(ruin.width+zone.maxX-zone.minX)/2 &&
+      Math.abs(ruin.z-(zone.minZ+zone.maxZ)/2)<(ruin.depth+zone.maxZ-zone.minZ)/2,
     ).toBe(false);
-    const obstacles = prepared().obstacles;
-    for (let offset = 1; offset <= 5; offset += .25) {
-      for (const point of [{ x: BASE_BOUNDS.minX - offset, z: -2.5 }, { x: BASE_BOUNDS.maxX + offset, z: -2.5 },
-        { x: 1.5, z: BASE_BOUNDS.minZ - offset }, { x: 1.5, z: BASE_BOUNDS.maxZ + offset }]) {
-        expect(isBlocked(point, .32, obstacles), JSON.stringify(point)).toBe(false);
-      }
-    }
+    const obstacles=prepared().obstacles;
+    for(const point of [{x:1.5,z:20.5},{x:29,z:9},{x:1.5,z:-10.5}]) expect(isBlocked(point,.32,obstacles),JSON.stringify(point)).toBe(false);
     expect(isBlocked(SHELTER_CORE)).toBe(true);
   });
 });

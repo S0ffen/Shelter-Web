@@ -1,6 +1,6 @@
 {
   "wood": {
-    "label": "Powalony pień",
+    "label": "Fallen Log",
     "maxHealth": 100,
     "reward": [
       {
@@ -25,7 +25,7 @@
     "height": 1
   },
   "iron": {
-    "label": "Złoże żelaza",
+    "label": "Iron Deposit",
     "maxHealth": 160,
     "reward": [
       {

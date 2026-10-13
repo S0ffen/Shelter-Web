@@ -25,6 +25,8 @@ export class Zombie {
   chargeHit = false;
   summonCooldown = 10;
   retreatTimer = 0;
+  pursuitElapsed = 0;
+  returning = false;
   slow = 0;
   windup = 0;
   windupTarget: Position | null = null;

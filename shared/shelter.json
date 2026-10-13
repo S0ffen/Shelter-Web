@@ -1,24 +1,24 @@
 {
   "bounds": {
-    "minX": -17.5,
-    "maxX": 20.5,
-    "minZ": -18,
-    "maxZ": 18
+    "minX": -33.05,
+    "maxX": 29.0,
+    "minZ": -15.65,
+    "maxZ": 23.75
   },
   "hall": {
     "x": 1.5,
     "z": 4,
-    "width": 21.6,
-    "depth": 9.6,
+    "width": 12.6,
+    "depth": 7.9,
     "height": 4.2,
-    "doorWidth": 4.4
+    "doorWidth": 3.2
   },
   "wallThickness": 0.5,
   "gateWidth": 8,
   "sideGateZ": -2.5,
-  "generatorOutput": 40,
-  "towerDemand": 10,
-  "storehouseDemand": 5,
+  "generatorOutput": 10,
+  "towerDemand": 12,
+  "storehouseDemand": 10,
   "core": {
     "x": 1.5,
     "z": 4,
@@ -28,36 +28,76 @@
   },
   "generatorPads": [
     {
-      "x": -13,
-      "z": -13
+      "x": -21.25,
+      "z": -6
     },
     {
-      "x": -13,
-      "z": 1
+      "x": -21.25,
+      "z": 5.5
     },
     {
-      "x": -13,
-      "z": 12
+      "x": -21.25,
+      "z": 15.5
     },
     {
-      "x": 16,
-      "z": -13
+      "x": 24.25,
+      "z": -6
     },
     {
-      "x": 16,
-      "z": 1
+      "x": 24.25,
+      "z": 5.5
     },
     {
-      "x": 16,
-      "z": 12
+      "x": 24.25,
+      "z": 15.5
     }
   ],
   "deposit": {
-    "x": 6,
-    "z": 6.8,
+    "x": 6.5,
+    "z": 6.6,
     "width": 1.4,
     "depth": 1.1,
     "height": 2.25,
     "range": 2.8
-  }
+  },
+  "reference": {
+    "shelterBrushUnits": {
+      "width": 496,
+      "depth": 312
+    },
+    "unitToMeters": 0.0254,
+    "buildAreaPixels": {
+      "left": 51,
+      "right": 126,
+      "top": 196,
+      "bottom": 236
+    },
+    "buildAreaSource": "codex-clipboard-99a2286b-be72-41b9-9629-d48b0b2e754c.png"
+  },
+  "generatorOutputs": [
+    10,
+    15,
+    25,
+    130
+  ],
+  "buildZones": [
+    {
+      "minX": -25.9,
+      "maxX": 29.0,
+      "minZ": -8.95,
+      "maxZ": 23.75
+    },
+    {
+      "minX": -33.05,
+      "maxX": -10.55,
+      "minZ": -15.65,
+      "maxZ": 5.1
+    },
+    {
+      "minX": -11.05,
+      "maxX": 17.25,
+      "minZ": -12.4,
+      "maxZ": -8.45
+    }
+  ]
 }

@@ -1,17 +1,15 @@
-import { Color3, CreateBox, CreateCylinder, CreatePolyhedron, Scene, StandardMaterial, TransformNode } from '../rendering/babylon';
-import { surfaceMaterial, tileBox } from '../rendering/SurfaceMaterials';
+import { Color3, CreateBox, Scene, StandardMaterial, TransformNode, Vector3 } from '../rendering/babylon';
+import { FantasyArt } from '../rendering/FantasyArt';
 import { BUILDINGS } from './Building';
 import type { Building, BuildingKind } from './Building';
 import type { Position } from '../domain/types';
-import type { Mesh } from '../rendering/babylon';
 import type { TowerState } from './MagicTowerSystem';
 
 export class BuildingView {
   private readonly roots = new Map<string, TransformNode>();
   private readonly turrets = new Map<string, TransformNode>();
-  private readonly stone: StandardMaterial;
-  private readonly wood: StandardMaterial;
-  private readonly metal: StandardMaterial;
+  private readonly conduitCrystals = new Map<string, TransformNode>();
+  private visualTime = 0;
   private readonly crystal: StandardMaterial;
   private readonly ghost: StandardMaterial;
   private previewRoot: TransformNode | null = null;
@@ -24,9 +22,6 @@ export class BuildingView {
       value.specularColor = Color3.Black();
       return value;
     };
-    this.stone = surfaceMaterial(scene, 'stone');
-    this.wood = surfaceMaterial(scene, 'wood');
-    this.metal = surfaceMaterial(scene, 'metal');
     this.crystal = material('building-crystal', '#8ccca8');
     this.crystal.emissiveColor = Color3.FromHexString('#4d9977');
     this.ghost = material('building-preview', '#78c998');
@@ -37,47 +32,46 @@ export class BuildingView {
   private create(kind: BuildingKind, id: string, preview: boolean): TransformNode {
     const root = new TransformNode(id, this.scene);
     const definition = BUILDINGS[kind];
-    const box = (name: string, w: number, h: number, d: number, x: number, y: number, z: number, mat: StandardMaterial): Mesh => {
-      const mesh = CreateBox(`${id}-${name}`, { width: w, height: h, depth: d }, this.scene);
-      mesh.parent = root;
-      mesh.position.set(x, y, z);
-      mesh.material = preview ? this.ghost : mat;
-      if (!preview && mat.diffuseTexture) tileBox(mesh, w, h, d);
-      mesh.receiveShadows = true;
-      mesh.isPickable = false;
-      return mesh;
-    };
-    box('base', definition.width, 0.22, definition.depth, 0, 0.11, 0, this.stone);
-    if (kind === 'storehouse') {
-      box('walls', 2.55, 1.65, 1.95, 0, 1, 0, this.wood);
-      for (const x of [-1.2, 1.2]) box('beam', 0.16, 1.95, 2.1, x, 1.05, 0, this.metal);
-      box('roof', 2.8, 0.28, 2.2, 0, 2.05, 0, this.metal);
-      box('door', 0.8, 1.2, 0.03, 0, 0.82, -0.99, this.metal);
-    } else {
-      const pillar = CreateCylinder(`${id}-pillar`, { diameter: kind === 'magic-tower' ? 0.95 : 1.2, height: kind === 'magic-tower' ? 2.3 : 1.2, tessellation: 8 }, this.scene);
-      pillar.parent = root;
-      pillar.position.y = kind === 'magic-tower' ? 1.35 : 0.85;
-      pillar.material = preview ? this.ghost : this.stone;
-      pillar.isPickable = false;
-      const crystal = CreatePolyhedron(`${id}-crystal`, { type: 1, size: 0.32 }, this.scene);
-      crystal.parent = root;
-      crystal.position.y = kind === 'magic-tower' ? 2.95 : 1.9;
-      crystal.scaling.y = 1.5;
-      crystal.material = preview ? this.ghost : this.crystal;
-      crystal.isPickable = false;
-      if (kind === 'magic-tower') {
-        const turret = new TransformNode(`${id}-turret`, this.scene);
-        turret.parent = root;
-        turret.position.y = 2.55;
-        const crown = box('crown', 1.45, 0.22, 1.45, 0, 0, 0, this.metal);
-        crown.parent = turret;
-        crystal.parent = turret;
-        crystal.position.y = 0.4;
-        const barrel = box('focus', 0.22, 0.22, 0.9, 0, 0.3, 0.45, this.metal);
-        barrel.parent = turret;
-        if (!preview) this.turrets.set(id, turret);
+    const art=new FantasyArt(this.scene,root,preview?this.ghost:undefined);
+    art.box(`${id}-base`,definition.width,.22,definition.depth,0,.11,0);
+    if(kind==='storehouse') {
+      art.box(`${id}-stone-footing`,2.55,.45,1.95,0,.45,0);
+      art.box(`${id}-oak-walls`,2.55,1.1,1.95,0,1.15,0,art.timber);
+      for(const x of [-1.19,1.19]) art.box(`${id}-oak-post`,.16,1.65,2.04,x,1.025,0,art.timber);
+      art.roof(`${id}-storehouse`,2.7,2.1,0,1.76,0,.65,art.timber);
+      art.box(`${id}-door`,.84,1.35,.035,0,.96,-.997,art.dark);
+      art.box(`${id}-oak-door`,.7,1.25,.035,0,.92,-1.021,art.timber);
+      for(const y of [.65,1.3])art.box(`${id}-hinge`,.7,.07,.035,0,y,-1.04,art.iron);
+      art.runeGlyph(`${id}-store-ward`,0,1.9,-1.065,.25,art.bronze);
+    } else if(kind==='arcane-core') {
+      art.cylinder(`${id}-runic-base`,1.65,.37,0,.405,0);
+      art.cylinder(`${id}-mana-pillar`,.7,.75,0,.92,0,art.stone,.55);
+      art.ring(`${id}-bronze-seal`,1.15,0,.64,0,.075,art.bronze);
+      const crystalRig=new TransformNode(`${id}-conduit-heart`,this.scene);crystalRig.parent=root;crystalRig.position.y=1.65;
+      const crystal=art.crystal(`${id}-crystal`,.37,0,0,0,this.crystal);crystal.parent=crystalRig;
+      for(const side of [-1,1])for(const z of [-.55,.55]) {
+        art.beam(`${id}-conduit-brace`,new Vector3(side*.62,.45,z),new Vector3(side*.54,1.8,z),.12,art.bronze);
+        art.beam(`${id}-conduit-crown`,new Vector3(side*.54,1.8,z),new Vector3(side*.33,2.25,z*.6),.09,art.bronze);
       }
-      else for (const x of [-0.7, 0.7]) box('core-frame', 0.12, 2, 0.15, x, 1.15, 0, this.metal);
+      for(const z of [-.35,.35])art.runeGlyph(`${id}-conduit-rune`,0,1,z,.45,art.rune);
+      if(!preview)this.conduitCrystals.set(id,crystalRig);
+    } else {
+      art.cylinder(`${id}-octagonal-foot`,1.5,.35,0,.4,0);
+      art.cylinder(`${id}-runic-shaft`,1.08,1.9,0,1.45,0,art.stone,.75);
+      art.cylinder(`${id}-carved-capital`,1.35,.22,0,2.4,0,art.stone,1.5);
+      for(const side of [-1,1]) {
+        art.box(`${id}-stone-buttress`,.2,1.1,.35,side*.57,.85,0);
+        art.runeGlyph(`${id}-tower-inscription`,0,1.65,side*.5,.6,art.rune);
+      }
+      const turret=new TransformNode(`${id}-turret`,this.scene);turret.parent=root;turret.position.y=2.55;
+      const crown=new FantasyArt(this.scene,turret,preview?this.ghost:undefined);
+      crown.ring(`${id}-runic-head`,1.3,0,0,0,.1,crown.bronze);
+      crown.crystal(`${id}-crystal`,.3,0,.25,0,this.crystal);
+      for(const side of [-1,1]) {
+        crown.beam(`${id}-focus-prong`,new Vector3(side*.45,0,-.25),new Vector3(side*.2,.48,.25),.075,crown.bronze);
+        crown.crystal(`${id}-focus`,.09,side*.2,.48,.25,this.crystal);
+      }
+      if(!preview)this.turrets.set(id,turret);
     }
     if (!preview) {
       const collider = CreateBox(`${id}-collider`, { width: definition.width, height: definition.height, depth: definition.depth }, this.scene);
@@ -93,7 +87,7 @@ export class BuildingView {
 
   sync(buildings: readonly Building[]): void {
     for (const [id, root] of this.roots) {
-      if (!buildings.some(building => building.id === id)) { root.dispose(); this.roots.delete(id); this.turrets.delete(id); }
+      if (!buildings.some(building => building.id === id)) { root.dispose(); this.roots.delete(id); this.turrets.delete(id); this.conduitCrystals.delete(id); }
     }
     for (const building of buildings) {
       const existing = this.roots.get(building.id);
@@ -108,6 +102,8 @@ export class BuildingView {
   }
 
   updateTowers(states: ReadonlyMap<string, TowerState>, dt: number): void {
+    this.visualTime+=dt;
+    for(const heart of this.conduitCrystals.values()){heart.rotation.y=this.visualTime*.3;heart.position.y=1.65+Math.sin(this.visualTime*1.6)*.035;}
     for (const [id, turret] of this.turrets) {
       const state = states.get(id);
       if (!state) continue;
@@ -136,6 +132,7 @@ export class BuildingView {
     for (const root of this.roots.values()) root.dispose();
     this.roots.clear();
     this.turrets.clear();
+    this.conduitCrystals.clear();
     this.previewRoot?.setEnabled(false);
   }
 }

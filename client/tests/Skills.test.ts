@@ -1,3 +1,4 @@
+import { GENERATOR_PADS } from '../src/world/ShelterLayout';
 import { describe,expect,it } from 'vitest';
 import { Simulation } from '../src/domain/Simulation';
 import { CONFIG } from '../src/domain/config';
@@ -26,7 +27,7 @@ describe('expanded Shelter skill trees',()=>{
  it('Combat changes real damage, HP and shared attack cooldown and checkpoints its speed',()=>{
   const sim=start();buy(sim,'weapon-mastery');buy(sim,'health-up');buy(sim,'battle-tempo');
   expect(sim.player.hp).toBe(110);expect(sim.skills.points).toBe(0);
-  const enemy=new Zombie('test-enemy',{x:-6,z:-8});sim.zombies=[enemy];sim.player.position={x:-6,z:-10};sim.attack(enemy.id,'heavy');
+  const enemy=new Zombie('test-enemy',{x:-6,z:-7});sim.zombies=[enemy];sim.player.position={x:-6,z:-5};sim.attack(enemy.id,'heavy');
   expect(enemy.hp).toBe(14);expect(sim.swordCooldown).toBeCloseTo(1.4/1.05);sim.attack(enemy.id);expect(enemy.hp).toBe(14);
   const loaded=start();restoreRun(loaded,captureRun(sim));expect(loaded.player.maxHp).toBe(110);expect(loaded.swordCooldown).toBeCloseTo(sim.swordCooldown);
  });
@@ -34,16 +35,16 @@ describe('expanded Shelter skill trees',()=>{
   const sim=start();unlockSurvival(sim);buy(sim,'endurance',3);
   expect(sim.movementSpeed).toBeCloseTo(CONFIG.player.speed*1.2);expect(sim.carriedManager.capacity).toEqual({wood:60,iron:38});
   const node=sim.resourceNodes[0];sim.player.position={x:node.position.x,z:node.position.z-1.4};sim.attack(node.id,'heavy');
-  expect(node.isDestroyed).toBe(true);expect(sim.carried.wood).toBe(26);sim.update(10);expect(sim.corruption.value).toBeCloseTo(6.5);
+  expect(node.isDestroyed).toBe(true);expect(sim.carried.wood).toBe(26);sim.player.position={x:35,z:25};sim.update(10);expect(sim.corruption.value).toBeCloseTo(6.5);
   expect(parseRun(captureRun(sim))).not.toBeNull();
  });
  it('Engineer discounts costs, preserves building wounds, boosts repairs and changes real power demand',()=>{
-  const sim=start();const existing=new Building('existing','magic-tower',{x:-13,z:6},0);existing.hp=190;sim.buildingSystem.buildings.push(existing);
+  const sim=start();const existing=new Building('existing','magic-tower',{x:-13,z:6},0);existing.hp=450;sim.buildingSystem.buildings.push(existing);
   unlockEngineer(sim);buy(sim,'engineer-crafting');buy(sim,'electrical',3);buy(sim,'expert-engineer',3);
-  expect(sim.buildingSystem.costFor('arcane-core')).toEqual({wood:17,iron:13});expect(existing.maxHp).toBe(456);expect(existing.hp).toBe(406);
-  sim.resources.wood=100;sim.resources.iron=50;sim.player.position={x:-10,z:-13};const result=sim.placeBuilding('arcane-core',{x:-13,z:-13},0);
-  expect(result.ok).toBe(true);expect(sim.buildingSystem.power).toEqual({generated:46,used:7,available:39});expect(sim.towerSystem.demand).toBe(7);
-  sim.player.position={x:-11,z:6};sim.attack(existing.id);expect(existing.hp).toBe(439);expect(sim.repairCooldown).toBeCloseTo(1.5/1.5);
+  expect(sim.buildingSystem.costFor('arcane-core')).toEqual({wood:5,iron:5});expect(existing.maxHp).toBe(1045);expect(existing.hp).toBe(945);
+  sim.resources.wood=100;sim.resources.iron=50;sim.player.position={ x: GENERATOR_PADS[0].x+3, z: GENERATOR_PADS[0].z };const result=sim.placeBuilding('arcane-core',GENERATOR_PADS[0],0);
+  expect(result.ok).toBe(true);expect(sim.buildingSystem.power).toEqual({generated:12,used:9,available:3});expect(sim.towerSystem.demand).toBe(9);
+  sim.player.position={x:-11,z:6};sim.attack(existing.id);expect(existing.hp).toBe(1023);expect(sim.repairCooldown).toBeCloseTo(1.5/1.5);
   expect(parseRun(captureRun(sim))).not.toBeNull();
  });
  it('Campfire heals near its brazier and endurance regen waits until recent damage ends',()=>{
@@ -52,8 +53,8 @@ describe('expanded Shelter skill trees',()=>{
   sim.player.position={x:-31,z:14};receivePlayerDamage(sim,10);sim.update(4);expect(sim.player.hp).toBe(42);sim.update(2);expect(sim.player.hp).toBeGreaterThan(42);
  });
  it('Auto Repair needs idling, reachable infrastructure and Shelter materials',()=>{
-  const sim=start();buy(sim,'auto-repair');sim.shelter.damage(50);sim.player.position={x:1.5,z:1.5};sim.update(.01);sim.update(1.1);expect(sim.shelter.hp).toBe(250);
-  sim.resources.wood=10;sim.resources.iron=5;sim.update(1);expect(sim.shelter.hp).toBe(253);expect(sim.resources).toEqual({wood:8,iron:4});
+  const sim=start();buy(sim,'auto-repair');sim.shelter.damage(50);sim.player.position={x:1.5,z:1.5};sim.update(.01);sim.update(1.1);expect(sim.shelter.hp).toBe(1200);
+  sim.resources.wood=10;sim.resources.iron=5;sim.update(1);expect(sim.shelter.hp).toBe(1212.5);expect(sim.resources).toEqual({wood:8,iron:4});
  });
  it('Armor reduces enemy hits and Combat Master grants a bounded emergency shield',()=>{
   const sim=start();fund(sim);buy(sim,'health-up',3);buy(sim,'armor',3);buy(sim,'combat-master');sim.player.hp=23;
@@ -62,26 +63,26 @@ describe('expanded Shelter skill trees',()=>{
  });
  it('Cloak prevents normal detection, doubles first hit and starts a saved cooldown; Hunter slows targets',()=>{
   const sim=start();unlockSurvival(sim);buy(sim,'cloak');buy(sim,'hunter',3);
-  sim.player.position={x:-6,z:-10};const enemy=new Zombie('target',{x:-6,z:-8},'tank');enemy.mode='patrol';sim.zombies=[enemy];
+  sim.player.position={x:-6,z:-5};const enemy=new Zombie('target',{x:-6,z:-7},'tank');enemy.mode='patrol';sim.zombies=[enemy];
   expect(sim.useAbility('cloak',sim.player.position)).toContain('CLOAK');sim.update(.01);expect(enemy.intent).toBe('patrol');
-  sim.attack(enemy.id,'heavy');expect(enemy.hp).toBe(140);expect(enemy.slow).toBe(2);expect(sim.abilities.cloak).toBe(0);expect(sim.useAbility('cloak',sim.player.position)).toContain('Odnowienie');
+  sim.attack(enemy.id,'heavy');expect(enemy.hp).toBe(140);expect(enemy.slow).toBe(2);expect(sim.abilities.cloak).toBe(0);expect(sim.useAbility('cloak',sim.player.position)).toContain('Cooldown');
   expect(parseRun(captureRun(sim))).not.toBeNull();
  });
  it('Barrage and Wrecking deal real area damage, respect walls and cooldowns',()=>{
   const sim=start();fund(sim);buy(sim,'weapon-mastery',3);buy(sim,'health-up',3);buy(sim,'battle-tempo',3);buy(sim,'barrage');
-  sim.player.position={x:-6,z:-10};const enemy=new Zombie('target',{x:-6,z:-8},'tank');sim.zombies=[enemy];
+  sim.player.position={x:-6,z:-5};const enemy=new Zombie('target',{x:-6,z:-7},'tank');sim.zombies=[enemy];
   expect(sim.useAbility('barrage',enemy.position)).toBe('ARCANE BARRAGE');expect(enemy.alive).toBe(false);expect(sim.totalKills).toBe(1);
-  expect(sim.useAbility('barrage',enemy.position)).toContain('Odnowienie');unlockEngineer(sim);buy(sim,'wrecking-team');
+  expect(sim.useAbility('barrage',enemy.position)).toContain('Cooldown');unlockEngineer(sim);buy(sim,'wrecking-team');
   const boss=new Zombie('forge-guardian',{x:56,z:0},'guardian');boss.mode='guard';sim.zombies=[boss];sim.player.position={x:56,z:-2.2};
   expect(sim.useAbility('demolition',boss.position)).toBe('WRECKING TEAM');expect(boss.hp).toBe(1000);
  });
  it('Recycle refunds shared resources and Tower Moving preserves health and cooldown without payment',()=>{
   const sim=start();unlockEngineer(sim);buy(sim,'recycle',3);buy(sim,'turret-moving');
   const tower=new Building('tower','magic-tower',{x:-13,z:6},0,sim.skills.bonuses.buildingHealth);tower.hp=100;sim.buildingSystem.buildings.push(tower);
-  sim.buildingSystem.buildings.push(new Building('g','arcane-core',{x:-13,z:-13},0));sim.player.position={x:-15,z:6};
+  sim.buildingSystem.buildings.push(new Building('g','arcane-core',GENERATOR_PADS[0],0));sim.player.position={x:-15,z:6};
   sim.towerSystem.towers.set(tower.id,{buildingId:tower.id,targetId:null,yaw:0,cooldown:.7,powered:true});
-  expect(sim.moveTower(tower.id,{x:-13,z:9},Math.PI/2)).toBe('Wieża przeniesiona');expect(tower.hp).toBe(100);expect(sim.resources.wood).toBe(0);expect(sim.towerSystem.towers.get(tower.id)!.cooldown).toBe(.7);
-  sim.player.position={x:-15,z:9};expect(sim.demolishBuilding(tower.id)).toContain('RECYCLE');expect(sim.resources.wood).toBe(12);expect(sim.towerSystem.towers.has(tower.id)).toBe(false);
+  expect(sim.moveTower(tower.id,{x:-13,z:9},Math.PI/2)).toBe('Tower moved');expect(tower.hp).toBe(100);expect(sim.resources.wood).toBe(0);expect(sim.towerSystem.towers.get(tower.id)!.cooldown).toBe(.7);
+  sim.player.position={x:-15,z:9};expect(sim.demolishBuilding(tower.id)).toContain('RECYCLE');expect(sim.resources.wood).toBe(4);expect(sim.towerSystem.towers.has(tower.id)).toBe(false);
  });
  it('only the transport perk allows deliberate remote deposit of a full backpack',()=>{
   const sim=start();unlockSurvival(sim);buy(sim,'resource-transport');sim.player.position={x:-31,z:14};sim.carried.wood=sim.carriedManager.capacity.wood;

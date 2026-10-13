@@ -1,3 +1,53 @@
 {
-  "version": 13
+  "version": 17,
+  "migration": {
+    "previousVersion": 16,
+    "shelterMaxHp": [
+      1250,
+      2100,
+      2750,
+      3300
+    ],
+    "buildingMaxHp": {
+      "storehouse": 1250,
+      "arcane-core": 1000,
+      "magic-tower": 550
+    },
+    "generatorMaxHp": [
+      1000,
+      1500,
+      2000,
+      2500
+    ],
+    "preserveBuildingLevels": true
+  },
+  "legacyMigrations": [
+    {
+      "previousVersion": 15,
+      "shelterMaxHp": [
+        1000,
+        2000,
+        3500
+      ],
+      "buildingMaxHp": {
+        "storehouse": 500,
+        "arcane-core": 800,
+        "magic-tower": 600
+      }
+    },
+    {
+      "previousVersion": 14,
+      "shelterMaxHp": [
+        300,
+        500,
+        750
+      ],
+      "buildingMaxHp": {
+        "storehouse": 160,
+        "arcane-core": 200,
+        "magic-tower": 240
+      },
+      "relocateDeposit": true
+    }
+  ]
 }

@@ -2,305 +2,305 @@
   {
     "id": "wood-01",
     "type": "wood",
-    "x": -26,
-    "z": -14
+    "x": -14.5,
+    "z": -12.5
   },
   {
     "id": "iron-01",
     "type": "iron",
-    "x": -21,
-    "z": -24
+    "x": -19.4,
+    "z": -12.3
   },
   {
     "id": "wood-02",
     "type": "wood",
-    "x": -30,
-    "z": 12
+    "x": -27.9,
+    "z": 2.7
   },
   {
     "id": "iron-02",
     "type": "iron",
-    "x": 32,
-    "z": 20
+    "x": 19.3,
+    "z": 22.3
   },
   {
     "id": "wood-03",
     "type": "wood",
-    "x": -30,
-    "z": 35
+    "x": -18.9,
+    "z": 22.1
   },
   {
     "id": "iron-03",
     "type": "iron",
-    "x": 35,
-    "z": 38
+    "x": 21.0,
+    "z": 25.8
   },
   {
     "id": "wood-04",
     "type": "wood",
-    "x": -44,
-    "z": 52
+    "x": -24.2,
+    "z": 35.0
   },
   {
     "id": "iron-04",
     "type": "iron",
-    "x": 60,
-    "z": 55
+    "x": 35.6,
+    "z": 34.8
   },
   {
     "id": "wood-old-town-01",
     "type": "wood",
-    "x": -65,
-    "z": 79
+    "x": -37.3,
+    "z": 47.1
   },
   {
     "id": "wood-old-town-02",
     "type": "wood",
-    "x": 67,
-    "z": 97
+    "x": 38.4,
+    "z": 58.2
   },
   {
     "id": "wood-slums-01",
     "type": "wood",
-    "x": -35,
-    "z": 89
+    "x": -19.8,
+    "z": 52.8
   },
   {
     "id": "wood-slums-02",
     "type": "wood",
-    "x": 25,
-    "z": 115
+    "x": 15.2,
+    "z": 68.8
   },
   {
     "id": "iron-slums-01",
     "type": "iron",
-    "x": 65,
-    "z": 128
+    "x": 38.5,
+    "z": 76.3
   },
   {
     "id": "wood-market-01",
     "type": "wood",
-    "x": 97,
-    "z": 134
+    "x": 57.2,
+    "z": 80.7
   },
   {
     "id": "iron-market-01",
     "type": "iron",
-    "x": -74,
-    "z": 154
+    "x": -43.3,
+    "z": 91.1
   },
   {
     "id": "wood-gate-01",
     "type": "wood",
-    "x": 3,
-    "z": 154
+    "x": 1.5,
+    "z": 91.2
   },
   {
     "id": "iron-gate-01",
     "type": "iron",
-    "x": 55,
-    "z": 173
+    "x": 32.7,
+    "z": 102.6
   },
   {
     "id": "iron-forge-01",
     "type": "iron",
-    "x": 105,
-    "z": 173
+    "x": 61.9,
+    "z": 102.6
   },
   {
     "id": "iron-forge-02",
     "type": "iron",
-    "x": 142,
-    "z": 166
+    "x": 84.0,
+    "z": 90.5
   },
   {
     "id": "iron-forge-03",
     "type": "iron",
-    "x": 140,
-    "z": 196
+    "x": 82.3,
+    "z": 116.0
   },
   {
     "id": "iron-forge-04",
     "type": "iron",
-    "x": -17,
-    "z": 216
+    "x": -10.5,
+    "z": 124.2
   },
   {
     "id": "iron-mines-01",
     "type": "iron",
-    "x": 34,
-    "z": 221
+    "x": 20.5,
+    "z": 130.6
   },
   {
     "id": "iron-mines-02",
     "type": "iron",
-    "x": 79,
-    "z": 198
+    "x": 47.4,
+    "z": 117.2
   },
   {
     "id": "iron-mines-03",
     "type": "iron",
-    "x": 135,
-    "z": 143
+    "x": 79.4,
+    "z": 85.4
   },
   {
     "id": "iron-mines-04",
     "type": "iron",
-    "x": 175,
-    "z": 154
+    "x": 102.7,
+    "z": 91.5
   },
   {
     "id": "iron-mines-05",
     "type": "iron",
-    "x": 25,
-    "z": 61
+    "x": 11.2,
+    "z": 40.2
   },
   {
     "id": "wood-forest-01",
     "type": "wood",
-    "x": 59,
-    "z": 25
+    "x": 36.7,
+    "z": 17.0
   },
   {
     "id": "wood-forest-02",
     "type": "wood",
-    "x": 106,
-    "z": 80
+    "x": 62.5,
+    "z": 48.3
   },
   {
     "id": "wood-forest-03",
     "type": "wood",
-    "x": 3,
-    "z": 132
+    "x": 2.0,
+    "z": 77.2
   },
   {
     "id": "wood-forest-04",
     "type": "wood",
-    "x": 110,
-    "z": 110
+    "x": 64.3,
+    "z": 65.8
   },
   {
     "id": "wood-forest-05",
     "type": "wood",
-    "x": 2,
-    "z": 184
+    "x": 1.8,
+    "z": 108.5
   },
   {
     "id": "wood-forest-06",
     "type": "wood",
-    "x": 151,
-    "z": 60
+    "x": 89.7,
+    "z": 36.7
   },
   {
     "id": "iron-ancient-forge-1",
     "type": "iron",
-    "x": 165.3,
-    "z": 94.6,
+    "x": 94.5,
+    "z": 56.9,
     "rewardMultiplier": 2
   },
   {
     "id": "iron-ancient-forge-2",
     "type": "iron",
-    "x": 171.3,
-    "z": 88.6,
+    "x": 99.5,
+    "z": 50.9,
     "rewardMultiplier": 2
   },
   {
     "id": "iron-ancient-forge-3",
     "type": "iron",
-    "x": 171.3,
-    "z": 100.6,
+    "x": 102.5,
+    "z": 62.9,
     "rewardMultiplier": 2
   },
   {
     "id": "iron-ancient-forge-4",
     "type": "iron",
-    "x": 177.3,
-    "z": 94.6,
+    "x": 95.5,
+    "z": 52.9,
     "rewardMultiplier": 2
   },
   {
     "id": "iron-ancient-forge-5",
     "type": "iron",
-    "x": 166.3,
-    "z": 89.6,
+    "x": 95.5,
+    "z": 60.9,
     "rewardMultiplier": 2
   },
   {
     "id": "iron-ancient-forge-6",
     "type": "iron",
-    "x": 166.3,
-    "z": 99.6,
+    "x": 104.5,
+    "z": 51.9,
     "rewardMultiplier": 2
   },
   {
     "id": "wood-outskirts-1",
     "type": "wood",
-    "x": -78.3,
-    "z": 124.6,
+    "x": -45.0,
+    "z": 71.8,
     "rewardMultiplier": 2
   },
   {
     "id": "wood-outskirts-2",
     "type": "wood",
-    "x": -78.3,
-    "z": 136.6,
+    "x": -46.0,
+    "z": 83.8,
     "rewardMultiplier": 2
   },
   {
     "id": "wood-outskirts-3",
     "type": "wood",
-    "x": -78.3,
-    "z": 119.6,
+    "x": -45.0,
+    "z": 67.8,
     "rewardMultiplier": 2
   },
   {
     "id": "wood-outskirts-4",
     "type": "wood",
-    "x": -78.3,
-    "z": 141.6,
+    "x": -45.0,
+    "z": 87.8,
     "rewardMultiplier": 2
   },
   {
     "id": "wood-outskirts-5",
     "type": "wood",
-    "x": -78.3,
-    "z": 114.6,
+    "x": -45.0,
+    "z": 63.8,
     "rewardMultiplier": 2
   },
   {
     "id": "wood-outskirts-6",
     "type": "wood",
-    "x": -78.3,
-    "z": 146.6,
+    "x": -37.0,
+    "z": 65.8,
     "rewardMultiplier": 2
   },
   {
     "id": "iron-catacombs-1",
     "type": "iron",
-    "x": -71,
-    "z": 79,
+    "x": -41.3,
+    "z": 47.1,
     "rewardMultiplier": 2
   },
   {
     "id": "iron-catacombs-2",
     "type": "iron",
-    "x": 71,
-    "z": 102,
+    "x": 42.4,
+    "z": 62.2,
     "rewardMultiplier": 2
   },
   {
     "id": "iron-east-1",
     "type": "iron",
-    "x": -41,
-    "z": 89,
+    "x": -23.8,
+    "z": 52.8,
     "rewardMultiplier": 2
   },
   {
     "id": "iron-east-2",
     "type": "iron",
-    "x": 25,
-    "z": 110,
+    "x": 11.2,
+    "z": 68.8,
     "rewardMultiplier": 2
   }
 ]

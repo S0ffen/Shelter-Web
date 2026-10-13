@@ -8,10 +8,11 @@ export type GameEvent =
   | { type: 'corruption-hit'; damage: number }
   | { type: 'night-warning'; seconds: number }
   | { type: 'building-hit'; buildingId: string; damage: number }
-  | { type: 'building-destroyed'; buildingId: string; kind: string; lostResources: ResourceCounts }
+  | { type: 'building-destroyed'; buildingId: string; kind: import('../building/Building').BuildingKind; lostResources: ResourceCounts }
   | { type: 'run-completed' }
   | { type: 'guardian-defeated' }
   | { type: 'boss-windup'; zombieId: string; position: Position }
+  | { type: 'boss-melee'; zombieId: string }
   | { type: 'boss-slam'; zombieId: string; position: Position }
   | { type: 'swing'; kind: AttackKind }
   | { type: 'shelter-repaired'; amount: number }
@@ -21,6 +22,8 @@ export type GameEvent =
   | { type: 'night-started'; day: number; waveSize: number }
   | { type: 'day-started'; day: number }
   | { type: 'player-hit'; damage: number }
+  | { type: 'player-died' }
+  | { type: 'player-respawned' }
   | { type: 'shelter-hit'; damage: number }
   | { type: 'resource-hit'; nodeId: string; damage: number }
   | { type: 'resource-gained'; kind: keyof ResourceCounts; amount: number }

@@ -1,0 +1,11 @@
+{
+  "respawnDelay": 5,
+  "respawnProtection": 3,
+  "respawnPosition": {
+    "x": 1.5,
+    "z": 1.5
+  },
+  "gravity": 18,
+  "jumpSpeed": 6.5,
+  "terminalVelocity": 20
+}

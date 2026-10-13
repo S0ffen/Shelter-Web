@@ -1,3 +1,4 @@
+import { GENERATOR_PADS } from '../src/world/ShelterLayout';
 import { describe, expect, it } from 'vitest';
 import { Simulation } from '../src/domain/Simulation';
 import { captureRun, parseRun, restoreRun } from '../src/persistence/RunSnapshot';
@@ -14,24 +15,25 @@ describe('backpack and Shelter economy', () => {
     sim.player.position = { x: 1.5, z: -7 }; sim.update(.01);
     expect(sim.resources.wood).toBe(0); expect(sim.carried.wood).toBe(3);
     sim.interact(SHELTER_DEPOSIT_ID);expect(sim.resources.wood).toBe(0);
-    sim.player.position={x:6,z:5};sim.interact(SHELTER_DEPOSIT_ID);
+    sim.player.position={x:6,z:5};sim.depositResources();
     expect(sim.resources.wood).toBe(3); expect(sim.carried.wood).toBe(0);
     sim.update(.01); expect(sim.resources.wood).toBe(3);
   });
   it('deposits only what fits, independently for each resource, and transfers the rest when space opens', () => {
     const sim = start(); sim.resources.wood = 95; sim.resources.iron = 50;
-    sim.carried.wood = 9; sim.carried.iron = 1; sim.player.position={x:6,z:5};sim.interact(SHELTER_DEPOSIT_ID);
+    sim.carried.wood = 9; sim.carried.iron = 1; sim.player.position={x:6,z:5};sim.depositResources();
     expect(sim.resources).toEqual({ wood: 100, iron: 50 }); expect(sim.carried).toEqual({ wood: 4, iron: 1 });
-    sim.resourceManager.spend({ wood: 10, iron: 2 }); sim.interact(SHELTER_DEPOSIT_ID);
+    sim.resourceManager.spend({ wood: 10, iron: 2 }); sim.depositResources();
     expect(sim.resources).toEqual({ wood: 94, iron: 49 }); expect(sim.carried).toEqual({ wood: 0, iron: 0 });
   });
-  it('cannot pay for building or repairs using carried materials and cannot deposit while paused', () => {
+  it('pays for building and repairs from the backpack and deposits through the paused warehouse menu', () => {
     const sim = start(); sim.carried.wood = 30; sim.carried.iron = 20;
-    sim.player.position = { x: -10, z: -13 };
-    expect(sim.placeBuilding('arcane-core', { x: -13, z: -13 }, 0).ok).toBe(false);
+    sim.player.position = { x: GENERATOR_PADS[0].x+3, z: GENERATOR_PADS[0].z };
+    expect(sim.placeBuilding('arcane-core', GENERATOR_PADS[0], 0).ok).toBe(true);
     sim.shelter.damage(30); sim.player.position = { x: 1.5, z: 1.5 };
-    expect(sim.repairShelter()).toContain('wymaga');
-    sim.pause(); sim.update(10); sim.depositResources(); expect(sim.resources.wood).toBe(0);
+    expect(sim.repairShelter()).toContain('Repaired');
+    expect(sim.carried).toEqual({wood:23,iron:14});
+    sim.player.position={x:6,z:5};sim.pause(); sim.update(10); sim.depositResources(); expect(sim.resources.wood).toBe(23);
   });
   it('checkpoints backpack and bank separately and rejects overfilled or invalid backpacks', () => {
     const sim = start(); sim.carried.wood = 9; sim.resources.wood = 45;

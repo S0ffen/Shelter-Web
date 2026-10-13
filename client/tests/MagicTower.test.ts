@@ -1,3 +1,4 @@
+import { GENERATOR_PADS } from '../src/world/ShelterLayout';
 import { describe, expect, it } from 'vitest';
 import { Simulation } from '../src/domain/Simulation';
 import { MagicTowerSystem } from '../src/building/MagicTowerSystem';
@@ -10,7 +11,8 @@ describe('milestone 6 Magic Tower', () => {
     sim.start();
     sim.resourceManager.add('wood', 100);
     sim.resourceManager.add('iron', 50);
-    (sim.player.position = { x: -10, z: -13 }, sim.placeBuilding('arcane-core', { x: -13, z: -13 }, 0));
+    (sim.player.position = { x: GENERATOR_PADS[0].x+3, z: GENERATOR_PADS[0].z }, sim.placeBuilding('arcane-core', GENERATOR_PADS[0], 0));
+    sim.player.position = { x: GENERATOR_PADS[1].x+3, z: GENERATOR_PADS[1].z }; sim.placeBuilding('arcane-core', GENERATOR_PADS[1], 0);
     sim.player.position = { x: -15, z: 3 };
     sim.placeBuilding('magic-tower', { x: -13, z: 6 }, 0);
     const enemy = new Zombie('tower-target', { x: -13, z: 3 });
@@ -23,7 +25,7 @@ describe('milestone 6 Magic Tower', () => {
     expect(enemy.hp).toBe(0);
     expect(sim.totalKills).toBe(1);
     expect(sim.drainEvents().some(event => event.type === 'zombie-hit' && event.source === 'tower')).toBe(true);
-    expect(sim.buildingSystem.power.available).toBe(30);
+    expect(sim.buildingSystem.power.available).toBe(8);
     sim.reset();
     expect(sim.towerSystem.towers.size).toBe(0);
     expect(sim.towerSystem.projectiles).toHaveLength(0);

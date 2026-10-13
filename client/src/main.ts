@@ -10,5 +10,5 @@ try {
   if (import.meta.hot) import.meta.hot.dispose(() => game.dispose());
 } catch (error) {
   console.error('Unable to start Fantasy Shelter:', error);
-  root.innerHTML = '<div class="startup-error"><h1>Nie udało się otworzyć ruin.</h1><p>Prototyp wymaga przeglądarki z WebGL i włączoną akceleracją sprzętową. Odśwież stronę lub sprawdź konsolę przeglądarki.</p></div>';
+  root.innerHTML = '<div class="startup-error"><h1>Unable to enter the ruins.</h1><p>This prototype requires WebGL and hardware acceleration. Refresh the page or check the browser console.</p></div>';
 }

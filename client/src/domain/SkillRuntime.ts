@@ -6,7 +6,7 @@ import { hasLineOfSight } from '../world/WorldLayout';
 export const CAMPFIRE_POSITION = { x: -2, z: 7 };
 export const freshAbilities = () => ({ cloak: 0, cloakCooldown: 0, barrageCooldown: 0, demolitionCooldown: 0, shield: 0, shieldCooldown: 0, sinceDamage: 0, idle: 0, lastPosition: { x: 1.5, z: -7 } });
 export function receivePlayerDamage(sim: Simulation, amount: number, psyche = false): number {
-  if (sim.abilities.shield > 0)
+  if (!sim.player.alive || sim.player.protectionRemaining > 0 || sim.abilities.shield > 0)
     return 0;
   sim.abilities.cloak = 0;
   sim.abilities.sinceDamage = 0;
@@ -16,7 +16,7 @@ export function receivePlayerDamage(sim: Simulation, amount: number, psyche = fa
   if (rank && sim.player.hp > 0 && sim.player.hp / sim.player.maxHp <= (rank === 1 ? .14 : .2) && sim.abilities.shieldCooldown === 0) {
     sim.abilities.shield = rank === 1 ? 4 : 5;
     sim.abilities.shieldCooldown = 90;
-    sim.emit({ type: 'action-blocked', message: 'COMBAT MASTER · osłona awaryjna' });
+    sim.emit({ type: 'action-blocked', message: 'COMBAT MASTER · emergency shield' });
   }
   return previousHp - sim.player.hp;
 }
@@ -27,6 +27,7 @@ export function updatePassives(sim: Simulation, dt: number): void {
   a.sinceDamage = Math.min(3600, a.sinceDamage + dt);
   a.idle = distance(sim.player.position, a.lastPosition) < .01 && sim.swordCooldown === 0 ? Math.min(3600, a.idle + dt) : 0;
   a.lastPosition = { ...sim.player.position };
+  if (!sim.player.alive) return;
   const campfire = b.campfire && inHall(sim.player.position) && distance(sim.player.position, CAMPFIRE_POSITION) < 3.5;
   if (campfire) {
     sim.player.hp = Math.min(sim.player.maxHp, sim.player.hp + 2 * dt);
@@ -39,30 +40,30 @@ export function updatePassives(sim: Simulation, dt: number): void {
     const core = sim.shelter.hp > 0 && sim.shelter.hp < sim.shelter.maxHp && sim.shelter.distanceFrom(sim.player.position) < 5 && hasLineOfSight(sim.player.position, sim.shelter.contactPoint(sim.player.position), sim.obstacles);
     // Repairs consume the same shared Wood/Iron as manual repairs, once per second.
     const previous = Math.floor(a.idle - dt), current = Math.floor(a.idle);
-    if (current > previous && (nearby.length || core) && sim.resourceManager.spend({ wood: 2, iron: 1 })) {
+    if (current > previous && (nearby.length || core) && sim.spendMaterials({ wood: 2, iron: 1 })) {
       if (core)
         sim.shelter.hp = Math.min(sim.shelter.maxHp, sim.shelter.hp + sim.shelter.maxHp * b.autoRepair);
       for (const building of nearby)
         building.hp = Math.min(building.maxHp, building.hp + building.maxHp * b.autoRepair);
-      sim.emit({ type: 'action-blocked', message: 'AUTO REPAIR · naprawa infrastruktury' });
+      sim.emit({ type: 'action-blocked', message: 'AUTO REPAIR · restoring structures' });
     }
   }
 }
 export function useAbility(sim: Simulation, kind: 'barrage' | 'cloak' | 'demolition', target: Position): string {
   if (sim.phase !== 'playing')
-    return 'Użyj podczas rozgrywki';
+    return 'Use during gameplay';
   if (!sim.skills.bonuses[kind])
-    return 'Najpierw odblokuj umiejętność w Skill Tree';
+    return 'Unlock the ability in the Skill Tree first';
   const cooldown = `${kind}Cooldown` as 'barrageCooldown' | 'cloakCooldown' | 'demolitionCooldown';
   if (sim.abilities[cooldown] > 0)
-    return `Odnowienie · ${Math.ceil(sim.abilities[cooldown])} s`;
+    return `Cooldown · ${Math.ceil(sim.abilities[cooldown])} s`;
   if (kind === 'cloak') {
     sim.abilities.cloak = 15;
     sim.abilities.cloakCooldown = 90;
-    return 'CLOAK · 15 s · pierwszy cios ×2';
+    return 'CLOAK · 15 s · first strike ×2';
   }
   if (!Number.isFinite(target.x) || !Number.isFinite(target.z) || distance(sim.player.position, target) > 20 || !hasLineOfSight(sim.player.position, target, sim.obstacles))
-    return 'Cel poza zasięgiem lub za przeszkodą';
+    return 'Target out of range or obstructed';
   sim.abilities[cooldown] = 90;
   const radius = kind === 'barrage' ? 7 : 5, damage = kind === 'barrage' ? 600 : 800;
   for (const zombie of sim.livingZombies)

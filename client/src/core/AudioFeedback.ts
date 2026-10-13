@@ -1,13 +1,18 @@
+import settings from '../../../shared/audio.json';
 import resourceSampleUrl from '../assets/audio/resource-get.wav?url';
+import sirenSampleUrl from '../assets/audio/shelter-siren.wav?url';
 
-export type SoundCue = 'flesh' | 'magic' | 'impact' | 'warning' | 'dawn' | 'repair' | 'resource';
-/** Original CSNZ resource acquisition cue and synthesized combat/UI effects. No background audio. */
+export type SoundCue = 'flesh' | 'magic' | 'impact' | 'warning' | 'dawn' | 'repair' | 'resource' | 'siren';
+/** Original CSNZ resource acquisition cue and synthesized combat/UI effects. */
 export class AudioFeedback {
   private context: AudioContext | null = null;
   private master: GainNode | null = null;
   private resourceSample: AudioBuffer | null = null;
+  private sirenSample: AudioBuffer | null = null;
   private sampleReady: Promise<void> | null = null;
   private disposed = false;
+  private pendingCue = new Map<SoundCue, number>();
+  private loading = false;
   private lastCue = new Map<SoundCue, number>();
   async unlock(): Promise<void> {
     if (this.disposed || typeof AudioContext === 'undefined')
@@ -16,29 +21,46 @@ export class AudioFeedback {
       if (!this.context) {
         this.context = new AudioContext();
         this.master = this.context.createGain();
-        this.master.gain.value = .22;
+        this.master.gain.value = settings.effectsVolume;
         this.master.connect(this.context.destination);
         const context = this.context;
-        this.sampleReady = fetch(resourceSampleUrl).then(r => {
+        this.loading = true;
+        const load = (url: string, assign: (buffer: AudioBuffer) => void) => fetch(url).then(r => {
           if (!r.ok) throw Error('Audio unavailable');
           return r.arrayBuffer();
         }).then(data => context.decodeAudioData(data)).then(buffer => {
-          if (!this.disposed) this.resourceSample = buffer;
+          if (!this.disposed) assign(buffer);
         }).catch(() => {});
+        this.sampleReady = Promise.all([
+          load(resourceSampleUrl, buffer => { this.resourceSample = buffer; }),
+          load(sirenSampleUrl, buffer => { this.sirenSample = buffer; }),
+        ]).then(() => {});
       }
       await Promise.all([this.context.resume(), this.sampleReady]);
+      this.loading = false;
+      for (const [cue, time] of this.pendingCue) {
+        if (this.context.currentTime - time < 1) this.play(cue);
+      }
+      this.pendingCue.clear();
     }
     catch { /* Audio is optional; gameplay remains available. */ }
   }
   play(cue: SoundCue): void {
     const context = this.context;
-    if (!context || !this.master || context.state !== 'running')
+    if (this.disposed || !context || !this.master) return;
+    if (context.state !== 'running') {
+      if (this.loading && (cue === 'resource' || cue === 'siren')) this.pendingCue.set(cue, context.currentTime);
       return;
+    }
     const now = context.currentTime;
-    if (now - (this.lastCue.get(cue) ?? -1) < .075)
+    const sample = cue === 'resource' ? this.resourceSample : cue === 'siren' ? this.sirenSample : null;
+    if (now - (this.lastCue.get(cue) ?? -Infinity) < (cue === 'siren' ? Math.max(3, sample?.duration ?? 3) : .075))
       return;
+    if ((cue === 'resource' || cue === 'siren') && !sample) {
+      if (this.loading) this.pendingCue.set(cue, now);
+      return;
+    }
     this.lastCue.set(cue, now);
-    const sample = cue === 'resource' ? this.resourceSample : null;
     if (sample) {
       const source = context.createBufferSource();
       source.buffer = sample;
@@ -51,7 +73,7 @@ export class AudioFeedback {
       return;
     }
     // A missing/loading acquisition sample must never be replaced with a different sound.
-    if (cue === 'resource')
+    if (cue === 'resource' || cue === 'siren')
       return;
     const duration = cue === 'warning' ? .65 : cue === 'dawn' ? .8 : .16;
     const noiseCue = cue === 'flesh';
@@ -90,7 +112,9 @@ export class AudioFeedback {
   }
   dispose(): void {
     this.disposed = true;
+    this.pendingCue.clear();
     this.resourceSample = null;
+    this.sirenSample = null;
     void this.context?.close();
   }
 }

@@ -2,7 +2,7 @@
   "nightSpeedMultiplier": 1.65,
   "types": {
     "normal": {
-      "label": "Nieumarły",
+      "label": "Hollow",
       "hp": 100,
       "speed": 1.65,
       "damage": 10,
@@ -10,7 +10,7 @@
       "attackCooldown": 1.2
     },
     "fast": {
-      "label": "Biegacz",
+      "label": "Feral",
       "hp": 70,
       "speed": 2.65,
       "damage": 8,
@@ -18,7 +18,7 @@
       "attackCooldown": 0.8
     },
     "tank": {
-      "label": "Pancerny",
+      "label": "Fallen Guard",
       "hp": 300,
       "speed": 1.15,
       "damage": 22,
@@ -26,7 +26,7 @@
       "attackCooldown": 1.6
     },
     "guardian": {
-      "label": "Strażnik Kuźni",
+      "label": "Forge Guardian",
       "hp": 1800,
       "speed": 2.8,
       "damage": 28,
@@ -34,7 +34,7 @@
       "attackCooldown": 2.6
     },
     "overlord": {
-      "label": "Władca Klątwy",
+      "label": "Curse Overlord",
       "hp": 16000,
       "speed": 5.2,
       "damage": 45,
@@ -42,7 +42,7 @@
       "attackCooldown": 1.9
     },
     "warden": {
-      "label": "Strażnik Katakumb",
+      "label": "Catacomb Warden",
       "hp": 2100,
       "speed": 2.6,
       "damage": 28,
@@ -55,7 +55,7 @@
       "damage": 32,
       "shelterDamage": 0,
       "attackCooldown": 1.25,
-      "label": "Rozszalały Kolos"
+      "label": "Ravaging Colossus"
     }
   }
 }

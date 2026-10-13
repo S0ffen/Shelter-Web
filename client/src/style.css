@@ -125,9 +125,9 @@ kbd { display: inline-block; font-family: inherit; font-size: 7px; padding: 4px 
 .milestone-note { position: absolute; right: 40px; bottom: 34px; color: #bac5b1; font-size: 7px; letter-spacing: 2px; }
 .milestone-note > span { display: block; margin-top: 8px; font-size: 6px; color: #8fa088; }
 body:not(.in-game) .objective, body:not(.in-game) .shelter-panel, body:not(.in-game) .resources, body:not(.in-game) .bottom-hud { opacity: 0; }
-#damage-flash { position: absolute; inset: 0; opacity: 0; box-shadow: inset 0 0 160px 30px #ab422b; }
+#damage-flash { position: absolute; inset: 0; opacity: 0; z-index: 3; pointer-events: none; background: radial-gradient(ellipse at center, #c5090918 25%, #b30c0c70 75%, #800000d9); box-shadow: inset 0 0 160px 30px #b21b1b; }
 #damage-flash.flash { animation: damage .6s ease-out; }
-@keyframes damage { 0% { opacity: .65; } 100% { opacity: 0; } }
+@keyframes damage { 0% { opacity: .85; } 100% { opacity: 0; } }
 .startup-error { pointer-events: auto; padding: 60px; max-width: 600px; }
 .startup-error h1 { font-family: Georgia, serif; font-size: 32px; }
 .startup-error p { color: #bdc2b1; font-size: 15px; line-height: 1.7; }
@@ -229,3 +229,46 @@ body:not(.in-game) #corruption-vignette{display:none;}
 @media(max-width:650px) { .skill-card{padding:12px;} .skill-row .skill-perk{padding:8px;} .skill-row .skill-perk b{font-size:11px;} }
 .skill-overlay { padding:12px; }
 .skill-card { max-height:calc(100vh - 32px); }
+
+.respawn-panel { position: fixed; z-index: 12; bottom: 18%; left: 50%; transform: translateX(-50%); width: min(440px, 85vw); padding: 14px; text-align: center; background: #111c19de; border: 1px solid #ad735455; box-shadow: 0 10px 50px #0009; pointer-events: none; }
+.respawn-panel[hidden] { display: none; }
+.respawn-panel small { color: #d4a087; letter-spacing: .18em; }
+.respawn-panel h2 { margin: 10px 0; font-size: 26px; }
+.respawn-panel p { margin: 0; color: #b3bcae; line-height: 1.6; font-size: 13px; }
+
+.deposit-overlay { position:absolute; inset:0; z-index:20; display:grid; place-items:center; padding:16px; background:#07100ebd; pointer-events:auto; }
+.deposit-overlay[hidden] { display:none; }
+.deposit-card { width:min(430px,94vw); max-height:calc(100vh - 32px); overflow:auto; padding:18px; color:#dedbc8; background:linear-gradient(135deg,#29332c,#131e19); border:1px solid #8a7951; box-shadow:0 16px 70px #000b; scrollbar-color:#8a7951 #131e19; }
+.deposit-card header { display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #93805c55; padding-bottom:12px; }
+.deposit-card header small { color:#c4ab6b; letter-spacing:.2em; font-size:10px; }
+.deposit-card h2 { margin:5px 0; font:26px Georgia,serif; }
+.deposit-card button { border:1px solid #98865877; background:linear-gradient(#465147,#27352d); color:#eee2bd; padding:6px 10px; font:inherit; font-size:12px; cursor:pointer; }
+.deposit-card button:hover:not(:disabled) { background:#586858; border-color:#cfb773; }
+.deposit-card button:disabled { opacity:.35; cursor:default; }
+.deposit-card button:focus-visible,.deposit-card input:focus-visible { outline:2px solid #e3c77c; outline-offset:2px; }
+.deposit-card h3 { font-size:10px; letter-spacing:.1em; color:#c0ad79; margin:0 0 10px; }
+.deposit-inventory { background:#0c171566; border:1px solid #64756366; padding:10px; margin-top:10px; }
+.deposit-row { display:grid; grid-template-columns:1fr 1fr auto; align-items:center; gap:10px; margin:6px 0; font-size:13px; }
+.deposit-row strong { font-variant-numeric:tabular-nums; font-size:19px; text-align:center; }
+.deposit-row div { display:flex; gap:5px; }
+.deposit-inventory p { margin:10px 0 0; color:#9ba995; font-size:10px; }
+.deposit-choice { margin:14px 0 10px; }
+.deposit-choice > div { display:flex; gap:12px; }
+.deposit-choice label { display:flex; flex:1; flex-direction:column; gap:5px; font-size:12px; }
+.deposit-choice input { width:100%; min-width:0; padding:8px; background:#0c1715; color:#eee2bd; border:1px solid #647563; font:inherit; }
+.deposit-choice nav { display:flex; gap:8px; margin-top:10px; }
+.deposit-choice nav button { flex:1; }
+.deposit-card .deposit-all { width:100%; background:#675c37; }
+.deposit-result { min-height:18px; margin:12px 0; font-size:12px; color:#dfca8c; }
+.deposit-card footer { font-size:10px; line-height:1.7; color:#9cac99; }
+#app:has(.deposit-overlay:not([hidden])) .menu-overlay { visibility:hidden; }
+
+/* Compact Shelter-style keyboard buttons, above the health display. */
+.shelter-shortcuts {position:absolute;left:40px;bottom:112px;display:flex;gap:16px;pointer-events:auto;z-index:4;}
+.shelter-shortcuts button {position:relative;display:grid;justify-items:center;gap:6px;padding:5px;border:0;background:none;color:#d3b66e;cursor:pointer;font:600 10px 'Manrope',sans-serif;text-shadow:0 2px 3px #000;}
+.shelter-shortcuts kbd {display:grid;place-items:center;width:36px;height:36px;padding:0;border:1px solid #92783d;border-radius:5px;background:linear-gradient(145deg,#28291c,#0d1714);box-shadow:inset 0 0 0 3px #151c17,inset 0 0 0 4px #655a36,0 2px 10px #0008;color:#e0c27c;font:700 24px 'Manrope',sans-serif;}
+.shelter-shortcuts button:hover kbd,.shelter-shortcuts button:focus-visible kbd,.shelter-shortcuts button[aria-pressed="true"] kbd {border-color:#f0d285;box-shadow:inset 0 0 0 3px #29291b,inset 0 0 0 4px #b79b58,0 0 16px #d9b55340;}
+.shelter-shortcuts button:disabled {opacity:.4;cursor:default;}
+.shelter-shortcuts b {position:absolute;right:-3px;top:0;min-width:17px;padding:2px;border-radius:9px;background:#d3b66e;color:#14201b;text-shadow:none;font-size:10px;}
+body:not(.in-game) .shelter-shortcuts {display:none;}
+@media(max-width:700px){.shelter-shortcuts{left:16px;bottom:165px;gap:10px;}.shelter-shortcuts kbd{width:32px;height:32px;}}

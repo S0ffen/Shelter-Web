@@ -22,7 +22,7 @@ function prepared() {
 }
 describe('Shelter defense expansion', () => {
   it('reserves stations for generators while allowing towers at different free courtyard positions', () => {
-    const sim = prepared(); sim.player.position = { x: -10, z: -13 };
+    const sim = prepared(); sim.player.position = { x: GENERATOR_PADS[0].x+3, z: GENERATOR_PADS[0].z };
     const funds = { ...sim.resources };
     expect(sim.placeBuilding('arcane-core', { x: -8, z: -13 }, 0).ok).toBe(false);
     expect(sim.placeBuilding('magic-tower', GENERATOR_PADS[0], 0).ok).toBe(false);
@@ -30,7 +30,8 @@ describe('Shelter defense expansion', () => {
     expect(sim.resources).toEqual(funds);
     expect(sim.placeBuilding('arcane-core', GENERATOR_PADS[0], 0).ok).toBe(true);
     expect(sim.placeBuilding('arcane-core', GENERATOR_PADS[0], 0).ok).toBe(false);
-    for (const point of [{ x: -7, z: -12 }, { x: 10, z: -12 }]) {
+    for (const pad of GENERATOR_PADS.slice(1,3)) { sim.player.position={x:pad.x+3,z:pad.z};expect(sim.placeBuilding('arcane-core',pad,0).ok).toBe(true); }
+    for (const point of [{ x: -7, z: -6.5 }, { x: 10, z: -6.5 }]) {
       sim.player.position = { x: point.x, z: point.z + 2.5 };
       expect(sim.placeBuilding('magic-tower', point, 0).ok).toBe(true);
     }
@@ -39,12 +40,12 @@ describe('Shelter defense expansion', () => {
     const engine = new NullEngine();
     try {
       const scene = new SceneManager(engine).scene, sim = prepared();
-      sim.player.position = { x: -10, z: -13 };
+      sim.player.position = { x: GENERATOR_PADS[0].x+3, z: GENERATOR_PADS[0].z };
       const player = new PlayerController(scene, { down: () => false, consumeLook: () => ({ x: 0, y: 0 }) });
-      player.restore(sim.player); player.camera.setTarget(new Vector3(-12.65, 0.07, -12.8)); scene.render();
+      player.restore(sim.player); player.camera.setTarget(new Vector3(GENERATOR_PADS[0].x, 0.07, GENERATOR_PADS[0].z)); scene.render();
       const build = new BuildingController(scene, player.camera); build.select('arcane-core'); build.update(sim);
       expect(build.position).toEqual(GENERATOR_PADS[0]); expect(build.reason).toBeNull();
-      expect(build.confirm(sim)).toBe('Zbudowano Generator Arcane');
+      expect(build.confirm(sim)).toBe('Built Arcane Generator');
     } finally { engine.dispose(); }
   });
   it('opens six actual windows for sight while keeping movement below their sills blocked', () => {
@@ -107,35 +108,45 @@ describe('Shelter defense expansion', () => {
       expect(scene.getMeshByName('fast-runner-rib')).not.toBeNull();
     } finally { engine.dispose(); }
   });
-  it('charges for day-only Shelter upgrades, preserves existing damage, and applies armor', () => {
+  it('charges for all four day-only core tiers, preserves damage, and applies armor', () => {
     const sim = prepared(); const funds = { ...sim.resources };
+    for (let index = 0; index < 3; index++)
+      sim.buildingSystem.buildings.push(new Building('generator-' + index, 'arcane-core', GENERATOR_PADS[index], 0));
     sim.improveShelter(); expect(sim.resources).toEqual(funds);
-    sim.player.position = { x: 1.5, z: 1.5 }; sim.shelter.hp = 250;
-    sim.improveShelter(); expect(sim.shelter.level).toBe(2); expect(sim.shelter.hp).toBe(450);
-    expect(sim.resources).toEqual({ wood: 50, iron: 25 });
+    sim.player.position = { x: 1.5, z: 1.5 }; sim.shelter.hp = 1200;
+    sim.improveShelter(); expect(sim.shelter.level).toBe(2); expect(sim.shelter.hp).toBe(2050);
+    expect(sim.shelter.maxHp).toBe(2100);
+    expect(sim.resources).toEqual({ wood: 60, iron: 15 });
     expect(sim.shelter.damage(20)).toBe(18);
-    sim.resourceManager.add('wood', 100); sim.resourceManager.add('iron', 50);
+    Object.assign(sim.resources, { wood: 200, iron: 200 });
     sim.cycle.state.period = 'night'; sim.improveShelter(); expect(sim.shelter.level).toBe(2);
-    sim.cycle.state.period = 'day'; sim.improveShelter(); expect(sim.shelter.maxHp).toBe(750);
-    expect(sim.shelter.damage(20)).toBe(16);
+    expect(sim.resources).toEqual({ wood: 200, iron: 200 });
+    sim.cycle.state.period = 'day'; sim.improveShelter(); expect(sim.shelter.maxHp).toBe(2750);
+    expect(sim.resources).toEqual({ wood: 130, iron: 130 });
+    expect(sim.shelter.hp).toBe(2682); expect(sim.shelter.damage(20)).toBe(16);
+    sim.improveShelter(); expect(sim.shelter.maxHp).toBe(3300); expect(sim.shelter.hp).toBe(3216);
+    expect(sim.resources).toEqual({ wood: 5, iron: 5 }); expect(sim.shelter.damage(20)).toBe(14);
+    expect(sim.buildingSystem.power).toEqual({ generated: 30, used: 30, available: 0 });
     const maxed = { ...sim.resources }; sim.improveShelter(); expect(sim.resources).toEqual(maxed);
   });
   it('repairs with finite materials and a paused cooldown, allowing repairs during siege', () => {
-    const sim = prepared(); sim.player.position = { x: 1.5, z: 1.5 }; sim.shelter.hp = 260; sim.cycle.state.period = 'night';
-    sim.repairShelter(); expect(sim.shelter.hp).toBe(285); expect(sim.resources).toEqual({ wood: 98, iron: 49 });
-    sim.repairShelter(); expect(sim.shelter.hp).toBe(285);
+    const sim = prepared(); sim.player.position = { x: 1.5, z: 1.5 }; sim.shelter.hp = 1150; sim.cycle.state.period = 'night';
+    sim.repairShelter(); expect(sim.shelter.hp).toBe(1210); expect(sim.resources).toEqual({ wood: 98, iron: 49 });
+    sim.repairShelter(); expect(sim.shelter.hp).toBe(1210);
     sim.pause(); sim.update(10); expect(sim.repairCooldown).toBe(1.5);
     sim.start(); sim.cycle.state.pendingSpawns = 0;
     for (let i = 0; i < 46; i++) sim.update(1 / 30);
-    sim.repairShelter(); expect(sim.shelter.hp).toBe(300);
+    sim.repairShelter(); expect(sim.shelter.hp).toBe(1250);
     const full = { ...sim.resources }; sim.repairShelter(); expect(sim.resources).toEqual(full);
     sim.reset(); expect(sim.shelter.level).toBe(1); expect(sim.repairCooldown).toBe(0);
   });
   it('roundtrips upgrades, repair timing and all kinds and rejects incompatible state', () => {
-    const sim = prepared(); sim.player.position = { x: 1.5, z: 1.5 }; sim.improveShelter(); sim.shelter.hp = 440; sim.repairShelter();
+    const sim = prepared();
+    for (let index = 0; index < 2; index++) sim.buildingSystem.buildings.push(new Building('generator-' + index, 'arcane-core', GENERATOR_PADS[index], 0));
+    sim.player.position = { x: 1.5, z: 1.5 }; sim.improveShelter(); sim.shelter.hp = 2040; sim.repairShelter();
     sim.zombies.push(new Zombie('tank', { x: -6, z: 16 }, 'tank'), new Zombie('runner', { x: 18, z: 20 }, 'fast'));
     const saved = captureRun(sim); const restored = prepared(); restoreRun(restored, saved);
-    expect(restored.shelter.level).toBe(2); expect(restored.shelter.hp).toBe(465); expect(restored.repairCooldown).toBe(1.5);
+    expect(restored.shelter.level).toBe(2); expect(restored.shelter.hp).toBe(2100); expect(restored.repairCooldown).toBe(1.5);
     expect(restored.zombies.map(z => [z.kind, z.maxHp])).toEqual([['tank', 300], ['fast', 70]]);
     const bad = structuredClone(saved); bad.zombies[1].hp = 100; expect(parseRun(bad)).toBeNull();
     const offPad = structuredClone(saved); offPad.buildings.push(new Building('bad-generator', 'arcane-core', { x: -4, z: -7 }, 0)); expect(parseRun(offPad)).toBeNull();

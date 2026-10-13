@@ -31,7 +31,7 @@ export class SurvivalCycle {
   get secondsRemaining(): number {
     return Math.max(0, (this.state.period === 'day' ? this.settings.dayDuration : this.settings.nightDuration) - this.state.periodElapsed);
   }
-  update(dt: number, alive: number): 'night-started' | 'day-started' | null {
+  update(dt: number, _alive: number): 'night-started' | 'day-started' | null {
     this.state.periodElapsed += dt;
     this.state.spawnCountdown = Math.max(0, this.state.spawnCountdown - dt);
     this.state.patrolCountdown = Math.max(0, this.state.patrolCountdown - dt);
@@ -39,7 +39,9 @@ export class SurvivalCycle {
       this.state.period = 'night';
       this.state.periodElapsed = 0;
       this.state.waveSize = Math.min(this.settings.maxWaveSize, Math.ceil((this.settings.baseWaveSize + (this.state.day - 1) * this.settings.waveGrowth) * (this.modifier?.waveMultiplier ?? 1)));
-      this.state.pendingSpawns = Math.max(0, this.state.waveSize - alive);
+      // Each night brings a new horde. Survivors still occupy the active-enemy cap,
+      // but do not consume the new night's first mini-wave quota.
+      this.state.pendingSpawns = this.state.waveSize;
       this.state.spawnCountdown = 0;
       return 'night-started';
     }
@@ -68,11 +70,14 @@ export class SurvivalCycle {
   }
   spawned(): void {
     if (this.state.period === 'night') {
+      if (this.state.pendingSpawns === 0) return;
       this.state.pendingSpawns--;
-      const weight = this.miniWaveIndex + 1;
-      const totalWeight = this.settings.miniWaveCount * (this.settings.miniWaveCount + 1) / 2;
-      const budget = Math.max(1, Math.ceil(this.state.waveSize * weight / totalWeight));
-      this.state.spawnCountdown = Math.min(this.settings.spawnInterval, this.settings.nightDuration / this.settings.miniWaveCount * this.settings.miniWaveSpawnFraction / budget);
+      const segment = this.settings.nightDuration / this.settings.miniWaveCount;
+      const remainingWindow = Math.max(0, segment * this.settings.miniWaveSpawnFraction - this.state.periodElapsed % segment);
+      const remainingQuota = Math.max(0, this.releasedQuota - (this.state.waveSize - this.state.pendingSpawns));
+      // Recalculate from time left rather than adding rounded frame delays: dense
+      // late-game bursts must still finish before their scheduled breathing gap.
+      this.state.spawnCountdown = Math.min(this.settings.spawnInterval, remainingWindow / (remainingQuota + 1));
     } else this.state.patrolCountdown = this.settings.patrolRespawnInterval;
   }
 }

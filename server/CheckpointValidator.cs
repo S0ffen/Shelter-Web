@@ -8,12 +8,16 @@ public static class CheckpointValidator
     public static readonly int Version = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "checkpoint.json"))).RootElement.GetProperty("version").GetInt32();
     private static readonly JsonElement WorldBounds = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "world.json"))).RootElement.GetProperty("bounds").Clone();
     private static readonly JsonElement FinalBoss = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "encounters.json"))).RootElement.GetProperty("finalBoss").Clone();
+    private static readonly JsonElement Ravager = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "encounters.json"))).RootElement.GetProperty("ravager").Clone();
+    private static readonly JsonElement Arena = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "encounters.json"))).RootElement.GetProperty("finalArena").Clone();
     private static readonly JsonElement ArenaBounds = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "encounters.json"))).RootElement.GetProperty("finalArena").GetProperty("bounds").Clone();
-    private static bool InArena(JsonElement p) => Position(p) && Field(p,"x").GetDouble()>ArenaBounds.GetProperty("minX").GetDouble()+.3 && Field(p,"x").GetDouble()<ArenaBounds.GetProperty("maxX").GetDouble()-.3 && Field(p,"z").GetDouble()>ArenaBounds.GetProperty("minZ").GetDouble()+.3 && Field(p,"z").GetDouble()<ArenaBounds.GetProperty("maxZ").GetDouble()-.3;
+    private static double JumpApex => Math.Pow(PlayerSettings.GetProperty("jumpSpeed").GetDouble(), 2) / (2 * PlayerSettings.GetProperty("gravity").GetDouble());
+    private static bool InArena(JsonElement p, double inset = .3) => Position(p) && Field(p,"x").GetDouble()>ArenaBounds.GetProperty("minX").GetDouble()+inset && Field(p,"x").GetDouble()<ArenaBounds.GetProperty("maxX").GetDouble()-inset && Field(p,"z").GetDouble()>ArenaBounds.GetProperty("minZ").GetDouble()+inset && Field(p,"z").GetDouble()<ArenaBounds.GetProperty("maxZ").GetDouble()-inset;
     private static readonly JsonElement Skills = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "skills.json"))).RootElement.Clone();
     private static readonly JsonElement Buildings = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "buildings.json"))).RootElement.Clone();
     private static readonly JsonElement Corruption = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "corruption.json"))).RootElement.Clone();
     private static readonly JsonElement Economy = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "economy.json"))).RootElement.Clone();
+    private static readonly JsonElement PlayerSettings = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "player.json"))).RootElement.Clone();
     private static readonly IReadOnlyDictionary<string, double> NodeHealth = LoadNodes();
     private static readonly JsonElement ShelterLayout = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "shelter.json"))).RootElement.Clone();
     private static readonly JsonElement Defense = JsonDocument.Parse(File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "defense.json"))).RootElement.Clone();
@@ -57,7 +61,7 @@ public static class CheckpointValidator
             !DateTimeOffset.TryParse(Field(value, "savedAt").ToString(), out _) || !N(value, "elapsed", 0, 1e9) ||
             !N(value, "totalKills", 0, 1e8, true) || !N(value, "swordCooldown", 0, 1.4) || !N(value, "swordCooldownDuration", .1, 1.4) ||
             Field(value, "swordCooldown").GetDouble() > Field(value, "swordCooldownDuration").GetDouble()) return "Invalid checkpoint header";
-        if (!N(value, "shelterLevel", 1, 3, true) || !N(value, "shelterHp", 0, Defense.GetProperty("levels")[Field(value, "shelterLevel").GetInt32() - 1].GetProperty("maxHp").GetDouble()) || !N(value, "repairCooldown", 0, 1.5)) return "Invalid Shelter";
+        if (!N(value, "shelterLevel", 1, Defense.GetProperty("levels").GetArrayLength(), true) || !N(value, "shelterHp", 0, Defense.GetProperty("levels")[Field(value, "shelterLevel").GetInt32() - 1].GetProperty("maxHp").GetDouble()) || !N(value, "repairCooldown", 0, 1.5)) return "Invalid Shelter";
         var encounters = Field(value, "encounters");
         if (!new[]{"forgeGuardianDefeated","graveGuardianDefeated","ravagerDefeated","finalBossDefeated"}.All(key=>Field(encounters,key).ValueKind is JsonValueKind.True or JsonValueKind.False) || Field(value,"finalArenaActive").ValueKind is not (JsonValueKind.True or JsonValueKind.False)) return "Invalid encounters";
         var corruption = Field(value, "corruption");
@@ -71,19 +75,22 @@ public static class CheckpointValidator
         var maxPlayerHp = Math.Round(100 * bonuses["maxHealth"]);
         var buildingHealth = bonuses["buildingHealth"];
         var player = Field(value, "player");
-        if (!N(player, "hp", 0, maxPlayerHp) || !Position(Field(player, "position")) || !N(player, "yaw", -1e6, 1e6)) return "Invalid player";
+        if (!N(player, "hp", 0, maxPlayerHp) || !N(player,"respawnRemaining",0,PlayerSettings.GetProperty("respawnDelay").GetDouble()) || !N(player,"protectionRemaining",0,PlayerSettings.GetProperty("respawnProtection").GetDouble()) || !Position(Field(player, "position")) || !N(player, "yaw", -1e6, 1e6) || !N(player, "height", Arena.GetProperty("floorY").GetDouble(), Arena.GetProperty("surfaceY").GetDouble() + JumpApex + .05) || !N(player, "verticalVelocity", -PlayerSettings.GetProperty("terminalVelocity").GetDouble(), PlayerSettings.GetProperty("jumpSpeed").GetDouble())) return "Invalid player";
         var outcome = Field(value, "outcome");
-        if (!Is(outcome, "active", "won", "lost") || (Is(outcome, "lost") ? Field(player, "hp").GetDouble() > 0 && Field(value, "shelterHp").GetDouble() > 0 : Field(player, "hp").GetDouble() <= 0 || Field(value, "shelterHp").GetDouble() <= 0) || Is(outcome, "won") != Field(encounters, "finalBossDefeated").GetBoolean()) return "Invalid outcome";
+        if (!Is(outcome, "active", "won", "lost") || (Is(outcome, "lost") ? Field(value, "shelterHp").GetDouble() != 0 : Field(value, "shelterHp").GetDouble() <= 0) || Is(outcome, "won") != Field(encounters, "finalBossDefeated").GetBoolean()) return "Invalid outcome";
+        var hp=Field(player,"hp").GetDouble(); var respawn=Field(player,"respawnRemaining").GetDouble();
+        if (Is(outcome,"active") ? hp>0 ? respawn!=0 : respawn<=0 : respawn!=0) return "Invalid respawn state";
+        if (hp==0 && (Field(player,"protectionRemaining").GetDouble()!=0 || Field(value,"finalArenaActive").GetBoolean())) return "Invalid dead player";
         var cycle = Field(value, "cycle");
         if (!N(cycle, "day", 1, 100000, true) || !Is(Field(cycle, "period"), "day", "night") ||
-            !N(cycle, "periodElapsed", 0, 1e9) || !N(cycle, "pendingSpawns", 0, 64, true) || !N(cycle, "waveSize", 0, 64, true) ||
+            !N(cycle, "periodElapsed", 0, 1e9) || !N(cycle, "pendingSpawns", 0, 128, true) || !N(cycle, "waveSize", 0, 128, true) ||
             !N(cycle, "spawnCountdown", 0, 64) || !N(cycle, "patrolCountdown", 0, 3600)) return "Invalid cycle";
         var spentPoints = levels.EnumerateObject().Sum(p=>p.Value.GetInt32());
         if (spentPoints + Field(skills, "points").GetInt32() > Skills.GetProperty("initialPoints").GetInt32() + (Field(cycle, "day").GetInt32() - 1) * Skills.GetProperty("pointsPerDay").GetInt32()) return "Invalid skill budget";
         var settings = Field(value, "settings");
         foreach (var name in new[] { "dayDuration", "nightDuration", "patrolRespawnInterval" }) if (!N(settings, name, .01, 3600)) return "Invalid settings";
-        foreach (var name in new[] { "baseWaveSize", "maxWaveSize", "maxAliveZombies" }) if (!N(settings, name, 1, 64, true)) return "Invalid settings";
-        foreach (var name in new[] { "waveGrowth", "dayPatrolCount" }) if (!N(settings, name, 0, 64, true)) return "Invalid settings";
+        foreach (var name in new[] { "baseWaveSize", "maxWaveSize" }) if (!N(settings, name, 1, 128, true)) return "Invalid settings";
+        if (!N(settings, "maxAliveZombies", 1, 64, true) || !N(settings, "waveGrowth", 0, 128, true) || !N(settings, "dayPatrolCount", 0, 64, true)) return "Invalid settings";
         if (!N(settings, "spawnInterval", .01, 64) || Field(settings, "baseWaveSize").GetInt32() > Field(settings, "maxWaveSize").GetInt32() ||
             Field(settings, "dayPatrolCount").GetInt32() > Field(settings, "maxAliveZombies").GetInt32()) return "Invalid settings";
         if (!N(settings, "miniWaveCount", 1, 8, true) || !N(settings, "miniWaveSpawnFraction", .1, .9)) return "Invalid mini-wave settings";
@@ -97,14 +104,23 @@ public static class CheckpointValidator
         var nodes = Field(value, "nodes"); var buildings = Field(value, "buildings"); var zombies = Field(value, "zombies");
         var towers = Field(value, "towers"); var shots = Field(value, "projectiles");
         if (!Array(nodes, NodeHealth.Count) || nodes.GetArrayLength() != NodeHealth.Count || !Unique(nodes) || !Array(buildings, 200) || !Unique(buildings) ||
-            !Array(zombies, 100) || !Unique(zombies) || !Array(towers, 200) || !Unique(towers, "buildingId") || !Array(shots, 400) || !Unique(shots)) return "Invalid collections";
+            !Array(zombies, 128) || !Unique(zombies) || !Array(towers, 200) || !Unique(towers, "buildingId") || !Array(shots, 400) || !Unique(shots)) return "Invalid collections";
         foreach (var node in nodes.EnumerateArray())
         {
             var name = Field(node, "id").ToString();
             if (!NodeHealth.TryGetValue(name, out var maximum) || !N(node, "health", 0, maximum)) return "Invalid resource node";
         }
-        foreach (var building in buildings.EnumerateArray()) if (!Text(Field(building, "id")) || !Is(Field(building, "kind"), "storehouse", "arcane-core", "magic-tower") ||
-            !Position(Field(building, "position")) || !N(building, "hp", 1, Buildings.GetProperty(Field(building, "kind").GetString()!).GetProperty("maxHp").GetDouble() * buildingHealth) || !N(building, "rotation", 0, Math.PI * 2) || !FitsBase(building)) return "Invalid building";
+        foreach (var building in buildings.EnumerateArray())
+        {
+            if (!Text(Field(building, "id")) || !Is(Field(building, "kind"), "storehouse", "arcane-core", "magic-tower")) return "Invalid building";
+            var kind = Field(building, "kind").GetString()!;
+            var definition = Buildings.GetProperty(kind);
+            var maximumLevel = kind == "arcane-core" ? Math.Min(definition.GetProperty("levels").GetArrayLength(), Field(value, "shelterLevel").GetInt32()) : 1;
+            if (!N(building, "level", 1, maximumLevel, true)) return "Invalid building level";
+            var maximumHp = kind == "arcane-core" ? definition.GetProperty("levels")[Field(building, "level").GetInt32() - 1].GetProperty("maxHp").GetDouble() : definition.GetProperty("maxHp").GetDouble();
+            maximumHp = Math.Round(maximumHp * buildingHealth, MidpointRounding.AwayFromZero);
+            if (!Position(Field(building, "position")) || !N(building, "hp", double.Epsilon, maximumHp) || !N(building, "rotation", 0, Math.PI * 2) || !FitsBase(building)) return "Invalid building";
+        }
         var stores = buildings.EnumerateArray().Count(building => Is(Field(building, "kind"), "storehouse"));
         var resources = Field(value, "resources");
         if (!Object(resources) || resources.EnumerateObject().Count() != 2 || !N(resources, "wood", 0, Economy.GetProperty("shelterCapacity").GetProperty("wood").GetDouble() + stores * Economy.GetProperty("storehouseBonus").GetProperty("wood").GetDouble(), true) || !N(resources, "iron", 0, Economy.GetProperty("shelterCapacity").GetProperty("iron").GetDouble() + stores * Economy.GetProperty("storehouseBonus").GetProperty("iron").GetDouble(), true)) return "Invalid resource counters";
@@ -116,14 +132,15 @@ public static class CheckpointValidator
             if (!N(zombie,"chargeCooldown",0,FinalBoss.GetProperty("chargeInterval").GetDouble()) || !N(zombie,"chargeRemaining",0,FinalBoss.GetProperty("chargeDuration").GetDouble()) || Field(zombie,"chargeHit").ValueKind is not (JsonValueKind.True or JsonValueKind.False) || (Field(zombie,"chargeTarget").ValueKind!=JsonValueKind.Null && !Position(Field(zombie,"chargeTarget"))) || (Field(zombie,"chargeRemaining").GetDouble()>0 && Field(zombie,"chargeTarget").ValueKind==JsonValueKind.Null) || (!Is(Field(zombie,"kind"),"overlord") && (Field(zombie,"chargeRemaining").GetDouble()>0 || Field(zombie,"chargeTarget").ValueKind!=JsonValueKind.Null))) return "Invalid charge";
             var stats = ZombieTypes.GetProperty(Field(zombie, "kind").GetString()!);
             if (!Text(Field(zombie, "id")) || !N(zombie, "hp", 0, stats.GetProperty("hp").GetDouble()) || !Position(Field(zombie, "position")) ||
-                !Position(Field(zombie, "origin")) || !Position(Field(zombie, "patrolTarget")) || !Is(Field(zombie, "mode"), "patrol", "siege", "guard") || !N(zombie,"specialCooldown",0,60) || !N(zombie,"summonCooldown",0,60) || !N(zombie,"retreatTimer",0,FinalBoss.GetProperty("resetAfter").GetDouble()) || !N(zombie,"slow",0,2) || !N(zombie, "windup", 0, 2) || (Field(zombie, "windupTarget").ValueKind != JsonValueKind.Null && !Position(Field(zombie, "windupTarget"))) || (Field(zombie, "windup").GetDouble() > 0 && Field(zombie, "windupTarget").ValueKind == JsonValueKind.Null) || (Is(Field(zombie, "kind"), "guardian", "warden", "ravager", "overlord") ? !Is(Field(zombie, "mode"), "guard") : Is(Field(zombie, "mode"), "guard")) ||
+                !Position(Field(zombie, "origin")) || !Position(Field(zombie, "patrolTarget")) || !Is(Field(zombie, "mode"), "patrol", "siege", "guard") || !N(zombie,"specialCooldown",0,60) || !N(zombie,"summonCooldown",0,60) || !N(zombie,"retreatTimer",0,FinalBoss.GetProperty("resetAfter").GetDouble()) || !N(zombie,"pursuitElapsed",0,Ravager.GetProperty("pursuitTimeout").GetDouble()) || Field(zombie,"returning").ValueKind is not (JsonValueKind.True or JsonValueKind.False) || !N(zombie,"slow",0,2) || !N(zombie, "windup", 0, 2) || (Field(zombie, "windupTarget").ValueKind != JsonValueKind.Null && !Position(Field(zombie, "windupTarget"))) || (Field(zombie, "windup").GetDouble() > 0 && Field(zombie, "windupTarget").ValueKind == JsonValueKind.Null) || (Is(Field(zombie, "kind"), "guardian", "warden", "ravager", "overlord") ? !Is(Field(zombie, "mode"), "guard") : Is(Field(zombie, "mode"), "guard")) ||
                 !Is(Field(zombie, "intent"), "patrol", "shelter", "player", "guard") || !N(zombie, "attackCooldown", 0, stats.GetProperty("attackCooldown").GetDouble()) || !N(zombie, "deathAge", 0, 3)) return "Invalid zombie";
         }
         if (zombies.EnumerateArray().Count(z => Is(Field(z, "kind"), "guardian")) > 1 || (Field(encounters, "forgeGuardianDefeated").GetBoolean() && zombies.EnumerateArray().Any(z => Is(Field(z, "kind"), "guardian") && Field(z, "hp").GetDouble() > 0))) return "Invalid Guardian state";
         if (zombies.EnumerateArray().Count(z => Is(Field(z, "kind"), "overlord")) > 1 || (Field(encounters, "finalBossDefeated").GetBoolean() && zombies.EnumerateArray().Any(z => Is(Field(z, "kind"), "overlord") && Field(z, "hp").GetDouble() > 0))) return "Invalid final boss state";
         foreach (var (kind,flag) in new[]{("warden","graveGuardianDefeated"),("ravager","ravagerDefeated")}) if (zombies.EnumerateArray().Count(z=>Is(Field(z,"kind"),kind))>1 || Field(encounters,flag).GetBoolean() && zombies.EnumerateArray().Any(z=>Is(Field(z,"kind"),kind)&&Field(z,"hp").GetDouble()>0)) return "Invalid boss state";
+        if (Field(player,"height").GetDouble() < Arena.GetProperty("surfaceY").GetDouble() && !InArena(Field(player,"position"),0)) return "Invalid underground player";
         var finalAlive=zombies.EnumerateArray().Any(z=>Is(Field(z,"kind"),"overlord")&&Field(z,"hp").GetDouble()>0);
-        if (Field(value,"finalArenaActive").GetBoolean()!=finalAlive || finalAlive && (!InArena(Field(player,"position")) || Field(encounters,"finalBossDefeated").GetBoolean() || zombies.EnumerateArray().Any(z=>Is(Field(z,"kind"),"overlord")&&!InArena(Field(z,"position"))))) return "Invalid closed arena";
+        if (Field(value,"finalArenaActive").GetBoolean()!=finalAlive || finalAlive && (!InArena(Field(player,"position"),.5) || Field(player,"height").GetDouble() > Arena.GetProperty("floorY").GetDouble() + JumpApex + .05 || Field(encounters,"finalBossDefeated").GetBoolean() || zombies.EnumerateArray().Any(z=>Is(Field(z,"kind"),"overlord")&&!InArena(Field(z,"position"))))) return "Invalid closed arena";
         var ids = buildings.EnumerateArray().Select(building => Field(building, "id").ToString()).ToHashSet();
         foreach (var tower in towers.EnumerateArray()) if (!ids.Contains(Field(tower, "buildingId").ToString()) ||
             (Field(tower, "targetId").ValueKind != JsonValueKind.Null && !Text(Field(tower, "targetId"))) || !N(tower, "yaw", -Math.PI, Math.PI) ||
@@ -146,9 +163,19 @@ public static class CheckpointValidator
         var angle = Field(building, "rotation").GetDouble();
         var halfW = (width * Math.Abs(Math.Cos(angle)) + depth * Math.Abs(Math.Sin(angle))) / 2;
         var halfD = (depth * Math.Abs(Math.Cos(angle)) + width * Math.Abs(Math.Sin(angle))) / 2;
-        var bounds = ShelterLayout.GetProperty("bounds"); var margin = ShelterLayout.GetProperty("wallThickness").GetDouble();
+        var margin = ShelterLayout.GetProperty("wallThickness").GetDouble();
         var position = Field(building, "position"); var x = Field(position, "x").GetDouble(); var z = Field(position, "z").GetDouble();
-        return x - halfW >= bounds.GetProperty("minX").GetDouble() + margin && x + halfW <= bounds.GetProperty("maxX").GetDouble() - margin &&
-            z - halfD >= bounds.GetProperty("minZ").GetDouble() + margin && z + halfD <= bounds.GetProperty("maxZ").GetDouble() - margin;
+        var left=x-halfW-margin; var right=x+halfW+margin; var bottom=z-halfD-margin; var top=z+halfD+margin;
+        var zones=ShelterLayout.GetProperty("buildZones").EnumerateArray().ToArray();
+        var cuts=zones.SelectMany(zone=>new[]{zone.GetProperty("minX").GetDouble(),zone.GetProperty("maxX").GetDouble()})
+            .Where(cut=>cut>left&&cut<right).Append(left).Append(right).Distinct().Order().ToArray();
+        for(var i=0;i<cuts.Length-1;i++) {
+            var sample=(cuts[i]+cuts[i+1])/2; var covered=bottom;
+            var spans=zones.Where(zone=>sample>=zone.GetProperty("minX").GetDouble()&&sample<=zone.GetProperty("maxX").GetDouble())
+                .Select(zone=>(Lo:zone.GetProperty("minZ").GetDouble(),Hi:zone.GetProperty("maxZ").GetDouble())).OrderBy(span=>span.Lo);
+            foreach(var span in spans) { if(span.Lo>covered+1e-8)break; covered=Math.Max(covered,span.Hi); }
+            if(covered<top-1e-8)return false;
+        }
+        return true;
     }
 }

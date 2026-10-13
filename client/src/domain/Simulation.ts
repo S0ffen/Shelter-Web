@@ -1,11 +1,11 @@
-import { ARENA_GATES, inFinalArena, FINAL_ARENA } from '../world/ArenaLayout';
+import { ARENA_WALLS, arenaEnemyHeight, inFinalArena, FINAL_ARENA } from '../world/ArenaLayout';
 import encounters from '../../../shared/encounters.json';
 import { PERKS, SkillTree } from './SkillTree';
 import { Corruption } from './Corruption';
 import { CONFIG } from './config';
 import { distance } from './types';
 import type { GameEvent, MatchPhase, ResourceCounts, Position, AttackKind } from './types';
-import { Player } from '../player/Player';
+import { Player, PLAYER_SETTINGS } from '../player/Player';
 import { Shelter, SHELTER_LEVELS, SHELTER_REPAIR } from '../shelter/Shelter';
 import { inHall, inBase, SHELTER_CORE_ID, SHELTER_DEPOSIT, SHELTER_DEPOSIT_ID } from '../world/ShelterLayout';
 import { freshAbilities, updatePassives, receivePlayerDamage, useAbility } from './SkillRuntime';
@@ -16,10 +16,11 @@ import type { Footprint } from '../world/WorldLayout';
 import { hasLineOfSight, isBlocked } from '../world/WorldLayout';
 import { NavigationGrid } from '../world/NavigationGrid';
 import { ResourceManager } from '../resources/ResourceManager';
+import { spendResources } from '../resources/ResourceBudget';
 import { createResourceNodes } from '../resources/ResourceNode';
 import { BuildingSystem } from '../building/BuildingSystem';
 import type { BuildContext, PlacementResult } from '../building/BuildingSystem';
-import { BUILDINGS } from '../building/Building';
+import { GENERATOR_LEVELS, buildingMaxHp } from '../building/Building';
 import type { BuildingKind } from '../building/Building';
 import { MagicTowerSystem } from '../building/MagicTowerSystem';
 import { SurvivalCycle, SURVIVAL_SETTINGS } from './SurvivalCycle';
@@ -76,10 +77,10 @@ export class Simulation {
   get livingZombies(): Zombie[] { return this.zombies.filter(zombie => zombie.alive); }
   get remainingZombies(): number { return this.livingZombies.length + this.cycle.state.pendingSpawns; }
   get buildContext(): BuildContext {
-    return { player: this.player.position, zombies: this.livingZombies.map(zombie => zombie.position), resources: this.resourceManager, nodes: this.resourceNodes };
+    return { player: this.player.position, zombies: this.livingZombies.map(zombie => zombie.position), resources: this.resourceManager, carried: this.carriedManager, nodes: this.resourceNodes };
   }
   get obstacles() {
-    return [...(this.finalArenaActive ? ARENA_GATES : []), ...this.buildingSystem.footprints, ...this.resourceNodes.filter(node => !node.isDestroyed).map(node => node.footprint)];
+    return [...ARENA_WALLS, ...this.buildingSystem.footprints, ...this.resourceNodes.filter(node => !node.isDestroyed).map(node => node.footprint)];
   }
   reset(): void {
     this.runId = crypto.randomUUID();
@@ -151,8 +152,8 @@ export class Simulation {
     return true;
   }
   placeBuilding(kind: BuildingKind, position: Position, rotation: number): PlacementResult {
-    if (this.phase !== 'playing')
-      return { ok: false, reason: 'Buduj podczas rozgrywki' };
+    if (this.phase !== 'playing' || !this.player.alive)
+      return { ok: false, reason: 'Build podczas rozgrywki' };
     const result = this.buildingSystem.place(kind, position, rotation, this.buildContext);
     if (result.ok) {
       this.resourceManager.setCapacity(this.buildingSystem.capacity);
@@ -162,27 +163,27 @@ export class Simulation {
   }
   demolitionTarget(id: string | null) {
     const building = this.buildingSystem.buildings.find(b => b.id === id && b.alive);
-    return building && this.phase === 'playing' && inBase(this.player.position) && building.distanceFrom(this.player.position) <= 3 && hasLineOfSight(this.player.position, building.contactPoint(this.player.position), this.obstacles.filter(a => a.x !== building.position.x || a.z !== building.position.z)) ? building : null;
+    return building && this.phase === 'playing' && this.player.alive && inBase(this.player.position) && building.distanceFrom(this.player.position) <= 3 && hasLineOfSight(this.player.position, building.contactPoint(this.player.position), this.obstacles.filter(a => a.x !== building.position.x || a.z !== building.position.z)) ? building : null;
   }
   demolishBuilding(id: string | null): string {
     if (!this.skills.bonuses.recycle)
-      return 'Odblokuj Recycle w Engineer';
+      return 'Unlock Recycle in Engineer';
     const building = this.demolitionTarget(id);
     if (!building)
-      return 'Podejdź do konstrukcji i wyceluj';
-    const cost = this.buildingSystem.costFor(building.kind);
+      return 'Approach and aim at a structure';
+    const cost = this.buildingSystem.costFor(building.kind, building.level);
     this.buildingSystem.buildings.splice(this.buildingSystem.buildings.indexOf(building), 1);
     this.towerSystem.towers.delete(building.id);
     this.towerSystem.projectiles.splice(0, this.towerSystem.projectiles.length, ...this.towerSystem.projectiles.filter(p => p.sourceId !== building.id));
     this.resourceManager.setCapacity(this.buildingSystem.capacity);
     const wood = this.resourceManager.add('wood', Math.floor(cost.wood * this.skills.bonuses.recycle)), iron = this.resourceManager.add('iron', Math.floor(cost.iron * this.skills.bonuses.recycle));
     this.refreshNavigation();
-    return 'RECYCLE · zwrot ' + wood + ' Wood / ' + iron + ' Iron';
+    return 'RECYCLE · refund ' + wood + ' Wood / ' + iron + ' Iron';
   }
   validateMoveTower(id: string, position: Position, rotation: number): string | null {
     const building = this.buildingSystem.buildings.find(b => b.id === id && b.kind === 'magic-tower' && b.alive);
     if (!building || !this.skills.bonuses.moveTower || this.phase !== 'playing')
-      return 'Przenoszenie wież jest niedostępne';
+      return 'Tower moving is unavailable';
     const index = this.buildingSystem.buildings.indexOf(building);
     this.buildingSystem.buildings.splice(index, 1);
     const resources = new ResourceManager();
@@ -202,38 +203,60 @@ export class Simulation {
     Object.assign(building.position, position);
     building.rotation = rotation;
     this.refreshNavigation();
-    return 'Wieża przeniesiona';
+    return 'Tower moved';
   }
   improveShelter(): string {
-    if (this.phase !== 'playing' || !inHall(this.player.position))
-      return 'Wejdź do Shelteru, aby go rozbudować';
+    if (this.phase !== 'playing' || !this.player.alive || !inHall(this.player.position))
+      return 'Enter the Shelter to upgrade it';
     if (this.cycle.state.period !== 'day')
-      return 'Rozbudowa Shelteru jest możliwa za dnia';
+      return 'Upgrade the Shelter during daytime';
     const next = SHELTER_LEVELS[this.shelter.level];
     if (!next)
-      return 'Shelter ma już najwyższy poziom';
-    if (!this.resourceManager.spend({ wood: Math.ceil(next.cost.wood * this.skills.bonuses.buildingCost), iron: Math.ceil(next.cost.iron * this.skills.bonuses.buildingCost) }))
-      return 'Za mało materiałów na rozbudowę Shelteru';
+      return 'Shelter is at maximum level';
+    const additionalPower = this.buildingSystem.coreDemand(this.shelter.level + 1) - this.buildingSystem.coreDemand(this.shelter.level);
+    if (this.buildingSystem.power.available < additionalPower)
+      return `Insufficient Arcane Power for upgrade · requires ${additionalPower} free power`;
+    if (!this.spendMaterials({ wood: Math.ceil(next.cost.wood * this.skills.bonuses.buildingCost), iron: Math.ceil(next.cost.iron * this.skills.bonuses.buildingCost) }))
+      return 'Not enough materials to upgrade the Shelter';
     this.shelter.upgrade();
-    return `Shelter · poziom ${this.shelter.level} · ${this.shelter.maxHp} HP`;
+    this.buildingSystem.generatorLevel = this.shelter.level;
+    return `Shelter · level ${this.shelter.level} · ${this.shelter.maxHp} HP`;
+  }
+  upgradeGenerator(id: string | null): string {
+    const generator = this.demolitionTarget(id);
+    if (!generator || generator.kind !== 'arcane-core')
+      return 'Approach and aim at an Arcane Generator';
+    const next = GENERATOR_LEVELS[generator.level];
+    if (!next)
+      return 'Arcane Generator is at maximum level';
+    if (generator.level + 1 > this.shelter.level)
+      return `First upgrade the Shelter to level ${generator.level + 1}`;
+    const cost = this.buildingSystem.costFor('arcane-core', generator.level + 1);
+    if (!this.spendMaterials(cost))
+      return 'Not enough materials to upgrade the Arcane Generator';
+    const oldMaximum = generator.maxHp;
+    generator.level++;
+    generator.maxHp = Math.round(buildingMaxHp(generator.kind, generator.level) * this.skills.bonuses.buildingHealth);
+    generator.hp += generator.maxHp - oldMaximum;
+    return `Arcane Generator · level ${generator.level} · ${this.buildingSystem.generatorOutputFor(generator.level)} power · ${generator.maxHp} HP`;
   }
   repairShelter(): string {
-    if (this.phase !== 'playing' || !inHall(this.player.position) || this.shelter.distanceFrom(this.player.position) > CONFIG.sword.range || !hasLineOfSight(this.player.position, this.shelter.contactPoint(this.player.position), this.obstacles))
-      return 'Podejdź do centralnego słupa i uderz LPM';
+    if (this.phase !== 'playing' || !this.player.alive || !inHall(this.player.position) || this.shelter.distanceFrom(this.player.position) > CONFIG.sword.range || !hasLineOfSight(this.player.position, this.shelter.contactPoint(this.player.position), this.obstacles))
+      return 'Approach the core and strike with LMB';
     if (this.shelter.hp >= this.shelter.maxHp)
-      return 'Rdzeń Shelteru nie wymaga naprawy';
+      return 'Shelter core needs no repairs';
     if (this.repairCooldown > 0)
-      return 'Zaczekaj na zakończenie naprawy';
-    if (!this.resourceManager.spend(SHELTER_REPAIR.cost))
-      return 'Naprawa wymaga 2 Wood i 1 Iron';
+      return 'Wait for the repair cooldown';
+    if (!this.spendMaterials(SHELTER_REPAIR.cost))
+      return 'Repairs require 2 Wood and 1 Iron';
     const amount = Math.min(Math.round(SHELTER_REPAIR.amount * this.repairMultiplier), this.shelter.maxHp - this.shelter.hp);
     this.shelter.hp += amount;
     this.repairCooldown = SHELTER_REPAIR.cooldown / this.skills.bonuses.repairSpeed;
     this.events.push({ type: 'shelter-repaired', amount });
-    return `Naprawiono rdzeń · +${amount} HP`;
+    return `Repaired core · +${amount} HP`;
   }
   attack(targetId: string | null, kind: AttackKind = 'quick'): boolean {
-    if (this.phase !== 'playing' || this.swordCooldown > 0)
+    if (this.phase !== 'playing' || !this.player.alive || this.swordCooldown > 0)
       return false;
     const strike = kind === 'heavy' ? CONFIG.sword.heavy : CONFIG.sword;
     const stealth = this.abilities.cloak > 0;
@@ -243,11 +266,11 @@ export class Simulation {
     if (targetId === SHELTER_CORE_ID) {
       if (kind === 'quick') {
         const message = this.repairShelter();
-        if (!message.startsWith('Naprawiono'))
+        if (!message.startsWith('Repaired'))
           this.events.push({ type: 'action-blocked', message });
       }
       else
-        this.events.push({ type: 'action-blocked', message: 'Naprawiaj rdzeń szybkim uderzeniem LPM' });
+        this.events.push({ type: 'action-blocked', message: 'Repair the core with a quick LMB strike' });
       return true;
     }
     const building = this.buildingSystem.buildings.find(candidate => candidate.id === targetId);
@@ -259,7 +282,7 @@ export class Simulation {
     const node = this.resourceNodes.find(candidate => candidate.id === targetId);
     if (node) {
       if (this.resourceGuard(node.id)) {
-        this.events.push({ type: 'action-blocked', message: 'Ancient Forge jest strzeżona · pokonaj Forge Guardiana' });
+        this.events.push({ type: 'action-blocked', message: 'Ancient Forge is guarded · defeat the Forge Guardian' });
         return true;
       }
       if (node.isDestroyed || node.distanceFrom(this.player.position) > strike.range + this.skills.bonuses.harvestRange)
@@ -285,7 +308,7 @@ export class Simulation {
       return true;
     }
     const zombie = this.zombies.find(enemy => enemy.id === targetId && enemy.alive);
-    if (!zombie || distance(this.player.position, zombie.position) > strike.range + this.skills.bonuses.meleeRange + 0.4)
+    if (!zombie || Math.abs(this.player.height - arenaEnemyHeight(zombie.id, zombie.kind)) > 1.8 || distance(this.player.position, zombie.position) > strike.range + this.skills.bonuses.meleeRange + 0.4)
       return true;
     if (!hasLineOfSight(this.player.position, zombie.position, this.obstacles))
       return true;
@@ -314,8 +337,9 @@ export class Simulation {
       if (zombie.kind === 'overlord') {
         this.encounters.finalBossDefeated = true;
         this.finalArenaActive = false;
-        if (this.player.hp > 0 && this.shelter.hp > 0) {
+        if (this.shelter.hp > 0) {
           this.phase = 'won';
+          this.player.respawnRemaining = 0;
           this.towerSystem.projectiles.length = 0;
           this.bossHazards = [];
           this.events.push({ type: 'run-completed' });
@@ -325,22 +349,39 @@ export class Simulation {
         this.encounters.forgeGuardianDefeated = true;
         this.events.push({ type: 'guardian-defeated' });
       }
-      if (zombie.kind === 'warden') { this.encounters.graveGuardianDefeated = true; this.events.push({ type: 'action-blocked', message: 'Strażnik Katakumb pokonany · zapasy drewna odblokowane' }); }
-      if (zombie.kind === 'ravager') { this.encounters.ravagerDefeated = true; this.events.push({ type: 'action-blocked', message: 'Kolos pokonany · środkowy plac jest wolny' }); }
+      if (zombie.kind === 'warden') { this.encounters.graveGuardianDefeated = true; this.events.push({ type: 'action-blocked', message: 'Catacomb Warden defeated · Wood reserves unlocked' }); }
+      if (zombie.kind === 'ravager') { this.encounters.ravagerDefeated = true; this.events.push({ type: 'action-blocked', message: 'Colossus defeated · central plaza cleared' }); }
       this.events.push({ type: 'zombie-dead', zombieId: id });
     }
   }
   update(dt: number): void {
     if (this.phase !== 'playing' || !Number.isFinite(dt) || dt <= 0)
       return;
-    if (!this.encounters.finalBossDefeated && !this.finalArenaActive && inFinalArena(this.player.position, FINAL_ARENA.entryInset)) {
-      this.finalArenaActive = true;
-      this.events.push({ type: 'action-blocked', message: 'ARENA ZAMKNIĘTA · pokonaj Władcę Klątwy. Pieczęć chroni Psyche.' });
+    this.player.protectionRemaining = Math.max(0, this.player.protectionRemaining - dt);
+    if (!this.player.alive) {
+      if (this.player.respawnRemaining === 0) this.beginPlayerRespawn();
+      else if (this.shelter.hp > 0) {
+        this.player.respawnRemaining = Math.max(0, this.player.respawnRemaining - dt);
+        if (this.player.respawnRemaining < 1e-8) this.player.respawnRemaining = 0;
+        if (this.player.respawnRemaining === 0) {
+          this.player.hp = this.player.maxHp;
+          this.player.position = { ...PLAYER_SETTINGS.respawnPosition };
+          this.player.yaw = 0;
+          this.player.height = this.player.verticalVelocity = 0;
+          this.player.protectionRemaining = PLAYER_SETTINGS.respawnProtection;
+          this.corruption.value = this.corruption.damageElapsed = 0;
+          this.abilities.lastPosition = { ...this.player.position };
+          this.events.push({ type: 'player-respawned' });
+        }
+      }
     }
-    this.ensureGuardian();
+    if (this.player.alive && !this.encounters.finalBossDefeated && !this.finalArenaActive && this.player.height <= FINAL_ARENA.floorY + .15 && this.player.verticalVelocity === 0 && inFinalArena(this.player.position, FINAL_ARENA.entryInset)) {
+      this.finalArenaActive = true;
+      this.events.push({ type: 'action-blocked', message: 'CITADEL PIT · defeat the Curse Overlord. The walls cut off your escape.' });
+    }
+    if (this.player.alive) this.ensureGuardian();
     updatePassives(this, dt);
-    this.updateBossHazards(dt);
-    const corruptionDamage = this.corruption.update(dt, inBase(this.player.position) || this.finalArenaActive && FINAL_ARENA.protectsPsyche, this.skills.bonuses.corruptionRate);
+    const corruptionDamage = this.player.alive ? this.corruption.update(dt, inBase(this.player.position) || this.finalArenaActive && FINAL_ARENA.protectsPsyche, this.skills.bonuses.corruptionRate) : 0;
     if (corruptionDamage > 0)
       this.hitPlayer(corruptionDamage, true);
     this.elapsed += dt;
@@ -363,8 +404,7 @@ export class Simulation {
     }
     else if (transition === 'day-started') {
       this.skills.nextDay();
-      // Siege enemies retreat at dawn; this grants no kills or rewards.
-      this.zombies = this.zombies.filter(zombie => zombie.mode !== 'siege');
+      // Dawn ends the spawn queue, not the lives of surviving attackers.
       for (const node of this.resourceNodes)
         node.respawn();
       this.refreshNavigation();
@@ -406,9 +446,9 @@ export class Simulation {
         continue;
       }
       if (this.finalArenaActive && zombie.id.startsWith('boss-minion-')) {
-        zombie.intent = this.abilities.cloak === 0 ? 'player' : 'patrol';
+        zombie.intent = this.player.alive && this.abilities.cloak === 0 ? 'player' : 'patrol';
         const target = zombie.intent === 'player' ? this.player.position : zombie.origin;
-        if (distance(zombie.position,this.player.position)<=CONFIG.zombie.attackRange && this.abilities.cloak===0 && hasLineOfSight(zombie.position,this.player.position,obstacles)) {
+        if (this.player.alive && distance(zombie.position,this.player.position)<=CONFIG.zombie.attackRange && this.abilities.cloak===0 && hasLineOfSight(zombie.position,this.player.position,obstacles)) {
           if(zombie.attackCooldown===0){zombie.attackCooldown=zombie.stats.attackCooldown;this.hitPlayer(zombie.stats.damage);}
         } else {
           if(decide || !zombie.route.length){zombie.route=this.refreshNavigation().routeTo(zombie.position,target);zombie.routeIndex=0;}
@@ -425,7 +465,7 @@ export class Simulation {
         if (this.abilities.cloak > 0 && zombie.intent === 'player')
           zombie.intent = zombie.mode === 'patrol' ? 'patrol' : 'shelter';
       }
-      const attackingPlayer = this.abilities.cloak === 0 && zombie.intent === 'player' &&
+      const attackingPlayer = this.player.alive && this.abilities.cloak === 0 && zombie.intent === 'player' &&
         distance(zombie.position, this.player.position) <= CONFIG.zombie.attackRange &&
         hasLineOfSight(zombie.position, this.player.position, obstacles);
       const attackingShelter = zombie.intent === 'shelter' && this.shelter.distanceFrom(zombie.position) <= CONFIG.shelter.attackRange &&
@@ -476,15 +516,30 @@ export class Simulation {
       }
     this.towerSystem.update(dt, this.buildingSystem.buildings, this.zombies, this.buildingSystem.towerPowerBudget, (id, amount) => this.damageZombie(id, amount, 'tower'), this.resourceNodes.filter(node => !node.isDestroyed).map(node => node.footprint));
     this.zombies = this.zombies.filter(zombie => zombie.alive || zombie.deathAge < 3);
-    if (this.player.hp === 0 || this.shelter.hp === 0) {
+    if (this.shelter.hp === 0) {
       this.phase = 'lost';
+      this.player.respawnRemaining = 0;
       this.towerSystem.projectiles.length = 0;
     }
+    else if (this.phase === 'playing' && !this.player.alive && this.player.respawnRemaining === 0) this.beginPlayerRespawn();
+  }
+  private beginPlayerRespawn(): void {
+    this.player.respawnRemaining = PLAYER_SETTINGS.respawnDelay;
+    this.player.protectionRemaining = 0;
+    this.carried.wood = this.carried.iron = 0;
+    this.abilities.cloak = this.abilities.shield = this.abilities.idle = 0;
+    // Death forfeits the arena attempt; re-entry starts a fresh boss at full health.
+    if (this.finalArenaActive) {
+      this.finalArenaActive = false;
+      this.zombies = this.zombies.filter(z => z.kind !== 'overlord' && !z.id.startsWith('boss-minion-'));
+      this.bossHazards = [];
+    }
+    this.events.push({ type: 'player-died' });
   }
   isForgeResource(id: string): boolean { return id.startsWith('iron-ancient-forge-'); }
   resourceGuard(id: string): string | null {
-    if (this.isForgeResource(id) && !this.encounters.forgeGuardianDefeated) return 'Ancient Forge · pokonaj Strażnika Kuźni';
-    if (id.startsWith('wood-outskirts-') && !this.encounters.graveGuardianDefeated) return 'Katakumby · pokonaj Strażnika Katakumb';
+    if (this.isForgeResource(id) && !this.encounters.forgeGuardianDefeated) return 'Ancient Forge · defeat the Forge Guardian';
+    if (id.startsWith('wood-outskirts-') && !this.encounters.graveGuardianDefeated) return 'Catacombs · defeat the Catacomb Warden';
     return null;
   }
   private ensureGuardian(): void {
@@ -507,24 +562,32 @@ export class Simulation {
     const damage = receivePlayerDamage(this, amount, psyche); if (damage > 0)
       this.events.push(psyche ? { type: 'corruption-hit', damage } : { type: 'player-hit', damage });
   }
-  private updateBossHazards(dt: number): void {
-    for (let i = this.bossHazards.length - 1;i >= 0;i--) {
-      const hazard = this.bossHazards[i];
-      hazard.remaining = Math.max(0, hazard.remaining - dt);
-      if (hazard.remaining > 0)
-        continue;
-      if (distance(this.player.position, hazard.position) <= hazard.radius) {
-        this.hitPlayer(hazard.damage);
-      }
-      this.events.push({ type: 'boss-slam', zombieId: 'curse-overlord', position: { ...hazard.position } });
-      this.bossHazards.splice(i, 1);
-    }
-  }
   private updateGuardian(zombie: Zombie, dt: number, decide: boolean, obstacles: readonly Footprint[]): void {
     const final = zombie.kind === 'overlord', ravager = zombie.kind === 'ravager';
     const spec = final ? encounters.finalBoss : ravager ? encounters.ravager : zombie.kind === 'warden' ? encounters.graveGuardian : encounters.forgeGuardian;
     const enraged = final && zombie.hp / zombie.maxHp <= encounters.finalBoss.enrageThreshold;
-    const chase = this.abilities.cloak === 0 && (final ? this.finalArenaActive : distance(this.player.position, zombie.origin) <= spec.leashRange && distance(zombie.position, this.player.position) <= spec.aggroRange);
+    let chase = this.player.alive && this.abilities.cloak === 0 && (final ? this.finalArenaActive :
+      distance(this.player.position, zombie.origin) <= spec.leashRange && distance(zombie.position, this.player.position) <= spec.aggroRange);
+    if (ravager) {
+      if (!zombie.returning && (chase || zombie.pursuitElapsed > 0)) {
+        if (chase) zombie.pursuitElapsed = Math.min(encounters.ravager.pursuitTimeout, zombie.pursuitElapsed + dt);
+        if (!chase || zombie.pursuitElapsed >= encounters.ravager.pursuitTimeout) {
+          zombie.returning = true; zombie.retreatTimer = 0;
+          zombie.windup = 0; zombie.windupTarget = null; zombie.route = [];
+        }
+      }
+      if (zombie.returning) {
+        chase = false;
+        if (distance(zombie.position, zombie.origin) < .35) {
+          zombie.position = { ...zombie.origin }; zombie.hp = zombie.maxHp;
+          zombie.retreatTimer = Math.min(encounters.ravager.rearmDelay, zombie.retreatTimer + dt);
+          if (zombie.retreatTimer >= encounters.ravager.rearmDelay &&
+            distance(this.player.position, zombie.origin) > encounters.ravager.aggroRange) {
+            zombie.returning = false; zombie.pursuitElapsed = zombie.retreatTimer = 0;
+          }
+        }
+      }
+    }
     zombie.intent = chase ? 'player' : 'guard';
     if (final && zombie.chargeRemaining > 0 && zombie.chargeTarget) {
       zombie.chargeRemaining = Math.max(0, zombie.chargeRemaining - dt);
@@ -539,9 +602,10 @@ export class Simulation {
         if (zombie.chargeTarget) { zombie.chargeRemaining = encounters.finalBoss.chargeDuration; zombie.windupTarget = null; return; }
         const target = zombie.windupTarget;
         if (target) {
-          if (!ravager && !final) this.events.push({ type: 'boss-slam', zombieId: zombie.id, position: target });
-          const range = ravager ? spec.attackRange + .2 : spec.slamRadius;
-          if (distance(this.player.position, target) <= range && distance(zombie.position, this.player.position) <= spec.attackRange + .4 && hasLineOfSight(zombie.position, this.player.position, obstacles)) this.hitPlayer(zombie.stats.damage);
+          if (this.player.alive && distance(zombie.position, this.player.position) <= spec.attackRange + .2 && hasLineOfSight(zombie.position, this.player.position, obstacles)) {
+            this.hitPlayer(zombie.stats.damage);
+            this.events.push({ type: 'boss-melee', zombieId: zombie.id });
+          }
         }
         zombie.windupTarget = null;
       }
@@ -554,7 +618,7 @@ export class Simulation {
         zombie.chargeCooldown = encounters.finalBoss.chargeInterval;
         zombie.chargeTarget = { ...this.player.position }; zombie.chargeHit = false;
         zombie.windup = encounters.finalBoss.chargeWindup; zombie.windupTarget = { ...this.player.position };
-        this.events.push({ type: 'action-blocked', message: 'SZARŻA · uskok w bok!' }); return;
+        this.events.push({ type: 'action-blocked', message: 'CHARGE · dodge sideways!' }); return;
       }
       if (zombie.summonCooldown === 0) {
         zombie.summonCooldown = encounters.finalBoss.summonInterval;
@@ -582,7 +646,7 @@ export class Simulation {
   }
   purchaseSkill(id: string): string {
     if (!['playing', 'paused'].includes(this.phase))
-      return 'Rozwijaj umiejętności podczas runu';
+      return 'Spend skills during a run';
     const reason = this.skills.reason(id);
     if (reason)
       return reason;
@@ -592,12 +656,13 @@ export class Simulation {
     this.swordCooldownDuration *= before.attackSpeed / this.skills.bonuses.attackSpeed;
     this.repairCooldown *= before.repairSpeed / this.skills.bonuses.repairSpeed;
     this.applySkillBonuses();
-    return `${PERKS.find(perk => perk.id === id)!.name} · ranga ${this.skills.levels[id]}`;
+    return `${PERKS.find(perk => perk.id === id)!.name} · rank ${this.skills.levels[id]}`;
   }
   applySkillBonuses(): void {
+    this.buildingSystem.generatorLevel = this.shelter.level;
     const oldHp = this.player.maxHp;
     this.player.healthMultiplier = this.skills.bonuses.maxHealth;
-    this.player.hp += this.player.maxHp - oldHp;
+    if (this.player.alive) this.player.hp += this.player.maxHp - oldHp;
     this.buildingSystem.costMultiplier = this.skills.bonuses.buildingCost;
     this.buildingSystem.healthMultiplier = this.skills.bonuses.buildingHealth;
     const bonuses = this.skills.bonuses;
@@ -608,36 +673,49 @@ export class Simulation {
     this.towerSystem.speedMultiplier = bonuses.towerSpeed;
     this.towerSystem.demand = this.buildingSystem.demand('magic-tower');
     for (const b of this.buildingSystem.buildings) {
-      const next = Math.round(BUILDINGS[b.kind].maxHp * this.skills.bonuses.buildingHealth);
+      const next = Math.round(buildingMaxHp(b.kind, b.level) * this.skills.bonuses.buildingHealth);
       b.hp += next - b.maxHp;
       b.maxHp = next;
     }
   }
   repairBuilding(id: string): string {
     const b = this.buildingSystem.buildings.find(value => value.id === id);
-    if (!b || !b.alive || this.phase !== 'playing' || !inBase(this.player.position) || b.distanceFrom(this.player.position) > CONFIG.sword.range || !hasLineOfSight(this.player.position, b.contactPoint(this.player.position), this.obstacles.filter(area => area.x !== b.position.x || area.z !== b.position.z)))
-      return 'Podejdź do konstrukcji';
+    if (!b || !b.alive || this.phase !== 'playing' || !this.player.alive || !inBase(this.player.position) || b.distanceFrom(this.player.position) > CONFIG.sword.range || !hasLineOfSight(this.player.position, b.contactPoint(this.player.position), this.obstacles.filter(area => area.x !== b.position.x || area.z !== b.position.z)))
+      return 'Approach a structure';
     if (b.hp >= b.maxHp)
-      return 'Konstrukcja nie wymaga naprawy';
+      return 'Structure needs no repairs';
     if (this.repairCooldown > 0)
-      return 'Zaczekaj na zakończenie naprawy';
-    if (!this.resourceManager.spend(SHELTER_REPAIR.cost))
-      return 'Naprawa wymaga 2 Wood i 1 Iron w Shelterze';
+      return 'Wait for the repair cooldown';
+    if (!this.spendMaterials(SHELTER_REPAIR.cost))
+      return 'Repairs require 2 Wood and 1 Iron';
     const amount = Math.min(Math.round(SHELTER_REPAIR.amount * this.repairMultiplier), b.maxHp - b.hp);
     b.hp += amount;
     this.repairCooldown = SHELTER_REPAIR.cooldown / this.skills.bonuses.repairSpeed;
-    return 'Naprawiono konstrukcję · +' + amount + ' HP';
+    return 'Repaired structure · +' + amount + ' HP';
   }
-  depositResources(): ResourceCounts {
-    const deposited = { wood: 0, iron: 0 };
-    if (this.phase !== 'playing' || !inHall(this.player.position) || distance(this.player.position, SHELTER_DEPOSIT) > SHELTER_DEPOSIT.range || !hasLineOfSight(this.player.position, { x: SHELTER_DEPOSIT.x, z: SHELTER_DEPOSIT.z - SHELTER_DEPOSIT.depth / 2 - .05 }, this.obstacles))
-      return deposited;
-    return this.transferResources();
+  spendMaterials(cost: ResourceCounts): boolean { return spendResources(cost, this.resourceManager, this.carriedManager); }
+  canUseDeposit(): boolean {
+    return ['playing', 'paused'].includes(this.phase) && this.player.alive && inHall(this.player.position) && distance(this.player.position, SHELTER_DEPOSIT) <= SHELTER_DEPOSIT.range && hasLineOfSight(this.player.position, { x: SHELTER_DEPOSIT.x, z: SHELTER_DEPOSIT.z - SHELTER_DEPOSIT.depth / 2 - .05 }, this.obstacles);
   }
-  private transferResources(): ResourceCounts {
-    const deposited = { wood: 0, iron: 0 };
+  depositResources(amount: ResourceCounts = { ...this.carried }): ResourceCounts {
+    if (!this.canUseDeposit()) return { wood: 0, iron: 0 };
+    return this.transferResources(amount);
+  }
+  withdrawResources(amount: ResourceCounts): ResourceCounts {
+    const transferred = { wood: 0, iron: 0 };
+    if (!this.canUseDeposit() || !this.validTransfer(amount)) return transferred;
     for (const kind of ['wood', 'iron'] as const) {
-      deposited[kind] = this.resourceManager.add(kind, this.carried[kind]);
+      transferred[kind] = this.carriedManager.add(kind, Math.min(amount[kind], this.resources[kind]));
+      this.resources[kind] -= transferred[kind];
+    }
+    return transferred;
+  }
+  private validTransfer(amount: ResourceCounts): boolean { return ['wood', 'iron'].every(kind => Number.isSafeInteger(amount[kind as keyof ResourceCounts]) && amount[kind as keyof ResourceCounts] >= 0); }
+  private transferResources(amount: ResourceCounts = { ...this.carried }): ResourceCounts {
+    const deposited = { wood: 0, iron: 0 };
+    if (!this.validTransfer(amount)) return deposited;
+    for (const kind of ['wood', 'iron'] as const) {
+      deposited[kind] = this.resourceManager.add(kind, Math.min(amount[kind], this.carried[kind]));
       this.carried[kind] -= deposited[kind];
     }
     if (deposited.wood || deposited.iron)
@@ -645,17 +723,17 @@ export class Simulation {
     return deposited;
   }
   interact(targetId: string | null): string {
+    if (!this.player.alive) return 'Wait to respawn';
     if (this.skills.bonuses.transport > 0 && (this.carried.wood >= this.carriedManager.capacity.wood || this.carried.iron >= this.carriedManager.capacity.iron) && this.phase === 'playing' && targetId !== SHELTER_DEPOSIT_ID) {
       const amount = this.transferResources();
-      return amount.wood || amount.iron ? 'Zdalny transport materiałów wykonany' : 'Magazyn pełny';
+      return amount.wood || amount.iron ? 'Materials remotely transported' : 'Storage full';
     }
     if (targetId !== SHELTER_DEPOSIT_ID)
-      return 'Podejdź do skrzyni DEPOSIT w Shelterze i naciśnij E';
-    const deposited = this.depositResources();
-    return deposited.wood || deposited.iron ? 'Zdeponowano materiały' : this.carried.wood || this.carried.iron ? 'Magazyn pełny albo punkt depozytu poza zasięgiem' : 'Plecak jest pusty';
+      return 'Approach DEPOSIT in the Shelter and press E';
+    return this.canUseDeposit() ? 'Open storage · choose an amount' : 'Approach DEPOSIT';
   }
   emit(event: GameEvent): void { this.events.push(event); }
-  useAbility(kind: 'barrage' | 'cloak' | 'demolition', target: Position): string { return useAbility(this, kind, target); }
+  useAbility(kind: 'barrage' | 'cloak' | 'demolition', target: Position): string { return this.player.alive ? useAbility(this, kind, target) : 'Wait to respawn'; }
   get repairMultiplier(): number { const rank = this.skills.levels['construction-master']; return this.skills.bonuses.repairAmount - (this.corruption.value >= 50 && rank ? [0, .1, .2, .3][rank] : 0); }
   drainEvents(): GameEvent[] { const events = this.events; this.events = []; return events; }
 }

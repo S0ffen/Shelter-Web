@@ -1,7 +1,8 @@
+import { GENERATOR_PADS } from '../src/world/ShelterLayout';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Simulation } from '../src/domain/Simulation';
 import { Zombie } from '../src/enemies/Zombie';
-import { captureRun, parseRun, restoreRun } from '../src/persistence/RunSnapshot';
+import { captureRun, parseRun, restoreRun, SAVE_VERSION } from '../src/persistence/RunSnapshot';
 import { SaveService } from '../src/persistence/SaveService';
 import { Building } from '../src/building/Building';
 
@@ -16,7 +17,7 @@ describe('complete run checkpoints', () => {
   it('roundtrips a live night without losing resources, depleted nodes, construction, health or RNG state', () => {
     const sim = prepared();
     sim.resourceManager.add('wood', 100); sim.resourceManager.add('iron', 50);
-    sim.buildingSystem.buildings.push(new Building('fixture-generator', 'arcane-core', { x: 16, z: 12 }, 0));
+    sim.buildingSystem.buildings.push(new Building('fixture-generator', 'arcane-core', GENERATOR_PADS[5], 0));
     expect(sim.placeBuilding('storehouse', { x: -4, z: -7 }, 0).ok).toBe(true);
     sim.player.position = { x: sim.resourceNodes[0].position.x, z: sim.resourceNodes[0].position.z - 1.4 };
     sim.attack('wood-01');
@@ -26,7 +27,7 @@ describe('complete run checkpoints', () => {
     sim.spawner.nextId = 2;
     const saved = captureRun(sim);
     sim.resources.wood = 0;
-    expect(saved.resources.wood).toBe(70);
+    expect(saved.resources.wood).toBe(88);
     expect(saved.carried.wood).toBe(3);
     const parsed = parseRun(JSON.parse(JSON.stringify(saved)))!;
     expect(parsed).not.toBeNull();
@@ -46,15 +47,16 @@ describe('complete run checkpoints', () => {
     expect(restored.elapsed).toBe(elapsed);
     restored.start();
     expect(restored.zombies).toHaveLength(1);
-    restored.player.position = { x: -10, z: 1 };
-    expect(restored.placeBuilding('arcane-core', { x: -13, z: 1 }, 0).ok).toBe(true);
+    restored.player.position = { x: GENERATOR_PADS[1].x+3, z: GENERATOR_PADS[1].z };
+    expect(restored.placeBuilding('arcane-core', GENERATOR_PADS[1], 0).ok).toBe(true);
     expect(restored.buildingSystem.buildings.at(-1)!.id).toBe('building-2');
   });
 
   it('restores projectiles and tower cooldowns without granting another immediate shot', () => {
     const sim = prepared();
     sim.resourceManager.add('wood', 100); sim.resourceManager.add('iron', 50);
-    (sim.player.position = { x: -10, z: -13 }, sim.placeBuilding('arcane-core', { x: -13, z: -13 }, 0));
+    (sim.player.position = { x: GENERATOR_PADS[0].x+3, z: GENERATOR_PADS[0].z }, sim.placeBuilding('arcane-core', GENERATOR_PADS[0], 0));
+    sim.player.position = { x: GENERATOR_PADS[1].x+3, z: GENERATOR_PADS[1].z }; sim.placeBuilding('arcane-core', GENERATOR_PADS[1], 0);
     sim.player.position = { x: -15, z: 3 };
     sim.placeBuilding('magic-tower', { x: -13, z: 6 }, 0);
     sim.zombies.push(new Zombie('zombie-1', { x: -13, z: 3 }));
@@ -67,7 +69,7 @@ describe('complete run checkpoints', () => {
     expect(restored.towerSystem.projectiles).toEqual(saved.projectiles);
     restored.start(); restored.update(1 / 30);
     expect(restored.towerSystem.projectiles).toHaveLength(1);
-    expect(restored.towerSystem.towers.get('building-2')!.cooldown).toBeGreaterThan(1);
+    expect(restored.towerSystem.towers.get('building-3')!.cooldown).toBeGreaterThan(1);
   });
 
   it.each(['version', 'node', 'capacity', 'duplicate', 'health', 'position', 'timer', 'arcane-currency', 'outside-base'] as const)
@@ -82,7 +84,7 @@ describe('complete run checkpoints', () => {
     if (field === 'position') saved.player.position.z = 1000;
     if (field === 'timer') saved.cycle.periodElapsed = NaN;
     if (field === 'arcane-currency') Object.assign(saved.resources, { arcane: 10 });
-    if (field === 'outside-base') saved.buildings.push({ id: 'building-1', kind: 'arcane-core', position: { x: 25, z: 20 }, rotation: 0, hp: 200 });
+    if (field === 'outside-base') saved.buildings.push({ id: 'building-1', kind: 'arcane-core', position: { x: 25, z: 20 }, rotation: 0, hp: 200, level: 1 });
     expect(parseRun(saved)).toBeNull();
     const runId = sim.runId;
     expect(() => restoreRun(sim, saved)).toThrow();
@@ -105,6 +107,27 @@ describe('SQLite connection and local fallback', () => {
     const reopened = new SaveService();
     expect(await reopened.initialize()).toEqual(saved);
     expect(reopened.online).toBe(false);
+  });
+  it.each([14, 15, 16])('loads a v%s browser save, preserves its original slot and writes migrated current version',async(version)=>{
+    memoryStorage();vi.stubGlobal('fetch',vi.fn().mockRejectedValue(new TypeError('offline')));
+    const old=captureRun(prepared());old.version=version;old.shelterHp=version===14?150:version===15?500:625;old.resources.wood=45;old.carried.iron=9;
+    const original=JSON.stringify(old);localStorage.setItem(`fantasy-shelter.run.v${version}`,original);
+    localStorage.setItem(`fantasy-shelter.run.v${SAVE_VERSION}`,'{corrupt');
+    const service=new SaveService(),migrated=await service.initialize();
+    expect(service.incompatibleSave).toBe(false);expect(migrated?.version).toBe(SAVE_VERSION);expect(migrated?.shelterHp).toBe(625);expect(migrated?.carried.iron).toBe(9);
+    expect(await service.save(migrated!)).toBe('local');expect(localStorage.getItem(`fantasy-shelter.run.v${version}`)).toBe(original);
+    expect(JSON.parse(localStorage.getItem(`fantasy-shelter.run.v${SAVE_VERSION}`)!).shelterHp).toBe(625);
+  });
+  it('chooses the newest local progress across supported versions even when the current slot is older', async () => {
+    memoryStorage(); vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new TypeError('offline')));
+    const older = captureRun(prepared()); older.savedAt = '2026-10-08T10:00:00.000Z';
+    const newer = captureRun(prepared()); newer.version = 15; newer.shelterHp = 500; newer.resources.wood = 41; newer.savedAt = '2026-10-08T11:00:00.000Z';
+    localStorage.setItem(`fantasy-shelter.run.v${SAVE_VERSION}`, JSON.stringify(older));
+    localStorage.setItem('fantasy-shelter.run.v15', JSON.stringify(newer));
+    const service = new SaveService(), restored = await service.initialize();
+    expect(restored?.runId).toBe(newer.runId); expect(restored?.resources.wood).toBe(41); expect(restored?.shelterHp).toBe(625);
+    expect(JSON.parse(localStorage.getItem(`fantasy-shelter.run.v${SAVE_VERSION}`)!).runId).toBe(older.runId);
+    expect(JSON.parse(localStorage.getItem('fantasy-shelter.run.v15')!).runId).toBe(newer.runId);
   });
   it('preserves an old layout save and reports that a fresh run is needed', async () => {
     memoryStorage();

@@ -16,7 +16,7 @@ export class ZombieAI {
   /** Decisions run at 5 Hz. Movement is stepped separately at 30 Hz. */
   decide(zombie: Zombie, player: Player, obstacles: readonly Footprint[] = []): void {
     const range = distance(zombie.position, player.position);
-    let chase = range <= CONFIG.zombie.aggroRange && hasLineOfSight(zombie.position, player.position, obstacles);
+    let chase = player.alive && range <= CONFIG.zombie.aggroRange && hasLineOfSight(zombie.position, player.position, obstacles);
     // Seeing through a window must not make a distant zombie run forever into its sill.
     if (chase && range > CONFIG.zombie.attackRange) {
       const steps = Math.max(1, Math.ceil(range / 0.25));

@@ -9,7 +9,7 @@ function approach() { const sim = new Simulation({ settings: { dayPatrolCount: 0
 function step(sim: Simulation, seconds: number) { for (let i = 0; i < Math.ceil(seconds * 30); i++) sim.update(1 / 30); }
 describe('Ancient Forge and territorial Guardian', () => {
   it('extends the connected city and doubles rewards of dangerous Forge sources', () => {
-    const sim = approach(); expect(WORLD_BOUNDS.maxX - WORLD_BOUNDS.minX).toBe(309); expect(RISK_AREAS.ancientForge.risk).toBe(3);
+    const sim = approach(); expect(WORLD_BOUNDS.maxX - WORLD_BOUNDS.minX).toBe(182); expect(RISK_AREAS.ancientForge.risk).toBe(3);
     const nodes = sim.resourceNodes.filter(node => sim.isForgeResource(node.id)); expect(nodes).toHaveLength(6); expect(nodes.every(node => node.previewDamage(160).reward === 16)).toBe(true);
   });
   it('spawns once near the Forge, telegraphs a heavy attack and gives time to dodge', () => {
@@ -39,7 +39,7 @@ describe('Ancient Forge and territorial Guardian', () => {
   it('returns home when the player leaves its territory and routes around solid scenery', () => {
     const sim = approach(), guardian = sim.zombies[0]; guardian.windup = 0; guardian.windupTarget = null; guardian.position = { x: encounters.forgeGuardian.position.x+4, z: encounters.forgeGuardian.position.z };
     sim.player.position = { x: 1.5, z: -7 }; step(sim, 7);
-    expect(guardian.intent).toBe('guard'); expect(guardian.position.x).toBeLessThan(encounters.forgeGuardian.position.x+1); expect(sim.shelter.hp).toBe(300);
+    expect(guardian.intent).toBe('guard'); expect(guardian.position.x).toBeLessThan(encounters.forgeGuardian.position.x+1); expect(sim.shelter.hp).toBe(1250);
     const nav = new NavigationGrid(sim.obstacles), from = { x: -7, z: 4 }, to = { x: 9, z: 4 }, route = nav.routeTo(from, to);
     expect(route.length).toBeGreaterThan(1); let previous = from;
     for (const point of route) { expect(nav.canWalk(previous, point)).toBe(true); expect(isBlocked(point, .35, sim.obstacles)).toBe(false); previous = point; }

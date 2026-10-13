@@ -1,4 +1,4 @@
-import { parseRun, SAVE_VERSION } from './RunSnapshot';
+import { parseRun, SAVE_VERSION, SUPPORTED_SAVE_VERSIONS } from './RunSnapshot';
 import type { RunSnapshot } from './RunSnapshot';
 
 const KEY = `fantasy-shelter.run.v${SAVE_VERSION}`;
@@ -12,7 +12,12 @@ export class SaveService {
   incompatibleSave = false;
   constructor() {
     try {
-      this.local = parseRun(JSON.parse(localStorage.getItem(KEY) ?? 'null'));
+      for (const version of SUPPORTED_SAVE_VERSIONS) {
+        try {
+          const candidate = parseRun(JSON.parse(localStorage.getItem(`fantasy-shelter.run.v${version}`) ?? 'null'));
+          if (candidate && (!this.local || Date.parse(candidate.savedAt) > Date.parse(this.local.savedAt))) this.local = candidate;
+        } catch { /* A corrupt slot does not hide an intact newer checkpoint. */ }
+      }
       this.incompatibleSave = !this.local && Array.from({ length: SAVE_VERSION - 1 }, (_, i) => `fantasy-shelter.run.v${i + 1}`).some(key => localStorage.getItem(key) !== null);
     } catch { /* Corrupt storage is ignored. */ }
   }
@@ -26,7 +31,7 @@ export class SaveService {
       if (response.status === 200) {
         const raw = await response.json();
         const remote = parseRun(raw);
-        if (Number.isInteger(raw?.version) && raw.version < SAVE_VERSION) this.incompatibleSave = true;
+        if (!remote && Number.isInteger(raw?.version) && raw.version < SAVE_VERSION) this.incompatibleSave = true;
         if (remote && (!this.local || Date.parse(remote.savedAt) > Date.parse(this.local.savedAt))) this.remember(remote);
       }
     } catch { this.online = false; }

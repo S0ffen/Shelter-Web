@@ -1,0 +1,86 @@
+{
+  "duskDuration": 60,
+  "dawnDuration": 12,
+  "nightTransitionDuration": 7,
+  "smoothingSeconds": 1.4,
+  "day": {
+    "ambient": 0.52,
+    "sun": 0.38,
+    "fog": 0.007,
+    "contrast": 1.04,
+    "shadowDarkness": 0.24,
+    "sky": "#56646d",
+    "ambientColor": "#a9bdd0",
+    "groundColor": "#29333c",
+    "sunColor": "#c2cbd1"
+  },
+  "dusk": {
+    "ambient": 0.28,
+    "sun": 0.17,
+    "fog": 0.018,
+    "contrast": 0.96,
+    "shadowDarkness": 0.18,
+    "sky": "#2b3949",
+    "ambientColor": "#8296ad",
+    "groundColor": "#202c39",
+    "sunColor": "#8da2ba"
+  },
+  "night": {
+    "ambient": 0.16,
+    "sun": 0.27,
+    "fog": 0.02,
+    "contrast": 1.1,
+    "shadowDarkness": 0.08,
+    "sky": "#101b2c",
+    "ambientColor": "#6484a8",
+    "groundColor": "#141f30",
+    "sunColor": "#739dd3"
+  },
+  "warmColor": "#ffd6a0",
+  "warmDayIntensity": 1.25,
+  "warmNightIntensity": 1.8,
+  "arcaneColor": "#65d5ed",
+  "arcaneDayIntensity": 0.18,
+  "arcaneNightIntensity": 1.0,
+  "warmLights": [
+    {
+      "x": -15,
+      "y": 4.8,
+      "z": 13,
+      "range": 23
+    },
+    {
+      "x": 19,
+      "y": 4.8,
+      "z": 11,
+      "range": 23
+    },
+    {
+      "x": -24,
+      "y": 4.8,
+      "z": -9,
+      "range": 19
+    },
+    {
+      "x": 1.5,
+      "y": 3.4,
+      "z": 4,
+      "range": 12
+    }
+  ],
+  "arcaneLights": [
+    {
+      "x": 7,
+      "y": 3.1,
+      "z": 29,
+      "range": 11
+    },
+    {
+      "x": 29,
+      "y": 3.1,
+      "z": 49,
+      "range": 12
+    }
+  ],
+  "maxLights": 8
+}

@@ -1,3 +1,4 @@
+import { GENERATOR_PADS } from '../src/world/ShelterLayout';
 import { describe, expect, it } from 'vitest';
 import { Simulation } from '../src/domain/Simulation';
 import { Building, footprint } from '../src/building/Building';
@@ -8,16 +9,16 @@ function prepared(): Simulation {
   const sim = new Simulation({ settings: { dayPatrolCount: 0 } });
   sim.resourceManager.add('wood', 100); sim.resourceManager.add('iron', 50);
   sim.resourceNodes.forEach(node => node.damage(node.maxHealth)); sim.start();
-  sim.buildingSystem.buildings.push(new Building('fixture-generator', 'arcane-core', { x: 16, z: 12 }, 0));
+  sim.buildingSystem.buildings.push(new Building('fixture-generator', 'arcane-core', GENERATOR_PADS[5], 0));
   return sim;
 }
 describe('construction confined to Shelter', () => {
   it('spends once on a valid base placement and rejects overlap without charging', () => {
     const sim = prepared();
     expect(sim.placeBuilding('storehouse', { x: -4, z: -7 }, 0).ok).toBe(true);
-    expect(sim.resources).toEqual({ wood: 70, iron: 40 });
+    expect(sim.resources).toEqual({ wood: 88, iron: 44 });
     expect(sim.placeBuilding('storehouse', { x: -4, z: -7 }, 0).ok).toBe(false);
-    expect(sim.resources.wood).toBe(70);
+    expect(sim.resources.wood).toBe(88);
     expect(sim.buildingSystem.buildings).toHaveLength(2);
   });
   it('rejects outside territory, footprint crossing its border, and a builder outside the base', () => {

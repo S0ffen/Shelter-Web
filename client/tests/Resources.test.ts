@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { Simulation } from '../src/domain/Simulation';
 import { ResourceNode } from '../src/resources/ResourceNode';
 import { ResourceType } from '../src/resources/ResourceType';
+import { SHELTER_HALL } from '../src/world/ShelterLayout';
 
 function advance(sim: Simulation): void { for (let i = 0; i < 22; i++) sim.update(1 / 30); }
 
@@ -67,9 +68,9 @@ describe('milestone 6.5 harvesting', () => {
     sim.pause();
     expect(sim.attack(node.id)).toBe(false);
     sim.start();
-    node.position.x = -18.5;
-    node.position.z = -12;
-    sim.player.position = { x: -16.5, z: -12 };
+    node.position.x = SHELTER_HALL.x-SHELTER_HALL.width/2-.8;
+    node.position.z = 4;
+    sim.player.position = { x: SHELTER_HALL.x-SHELTER_HALL.width/2+1.2, z: 4 };
     sim.attack(node.id);
     expect(node.health).toBe(100);
     expect(sim.resources.wood).toBe(0);

@@ -1,5 +1,5 @@
 import { Color3, CreateBox, CreateCylinder, CreateSphere, Scene, StandardMaterial, TransformNode } from '../rendering/babylon';
-import { surfaceMaterial } from '../rendering/SurfaceMaterials';
+import { surfaceMaterial, surfaceMaterialInstance } from '../rendering/SurfaceMaterials';
 import type { Mesh } from '../rendering/babylon';
 import type { ResourceNode } from './ResourceNode';
 import { ResourceType } from './ResourceType';
@@ -11,11 +11,9 @@ export class ResourceView {
 
   constructor(scene: Scene, nodes: readonly ResourceNode[]) {
     const wood = surfaceMaterial(scene, 'wood');
-    const iron = new StandardMaterial('resource-iron', scene);
-    iron.diffuseColor = Color3.FromHexString('#444946');
-    iron.specularColor = Color3.Black();
-    const ironVein = new StandardMaterial('resource-iron-veins', scene);
-    ironVein.diffuseColor = Color3.FromHexString('#8c6d55');
+    const iron = surfaceMaterial(scene, 'ore');
+    const ironVein = surfaceMaterialInstance(scene, 'metal', 'resource-iron-veins');
+    ironVein.diffuseColor = Color3.FromHexString('#a89a83');
     ironVein.specularColor = new Color3(0.12, 0.12, 0.12);
     const barkEnd = new StandardMaterial('resource-cut-wood', scene);
     barkEnd.diffuseColor = Color3.FromHexString('#baa474');
@@ -49,7 +47,7 @@ export class ResourceView {
           { x: -0.42, y: 0.24, z: -0.36, sx: 0.58, sy: 0.45, sz: 0.57 },
           { x: 0.06, y: 0.25, z: -0.4, sx: 0.66, sy: 0.47, sz: 0.54 },
         ].entries()) {
-          const ore = CreateSphere(`ore-rock-${node.id}-${index}`, { diameter: 1, segments: 3 }, scene);
+          const ore = CreateSphere(`ore-rock-${node.id}-${index}`, { diameter: 1, segments: 6 }, scene);
           const vertices = ore.getVerticesData('position')!;
           for (let vertex = 0; vertex < vertices.length; vertex += 3) {
             const roughness = 1 + 0.12 * Math.sin(vertices[vertex] * 19 + vertices[vertex + 1] * 23 + vertices[vertex + 2] * 17 + index);

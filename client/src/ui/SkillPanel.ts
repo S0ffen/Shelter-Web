@@ -14,7 +14,7 @@ export class SkillPanel {
     this.element.hidden = true;
     this.element.setAttribute('role', 'dialog');
     this.element.setAttribute('aria-modal', 'true');
-    this.element.setAttribute('aria-label', 'Umiejętności');
+    this.element.setAttribute('aria-label', 'Skills');
     root.appendChild(this.element);
     this.element.addEventListener('click', event => {
       const button = (event.target as HTMLElement).closest<HTMLButtonElement>('button');
@@ -51,10 +51,10 @@ export class SkillPanel {
       return;
     this.lastKey = key;
     const focused = (document.activeElement as HTMLElement)?.dataset.perk;
-    this.element.innerHTML = `<div class="skill-card"><header><div><small>SKILL TREE</small><h2>Rozwój strażnika</h2></div><button class="skill-close" aria-label="Zamknij umiejętności">✕</button></header><p class="skill-points">SKILL POINTS <b>${sim.skills.points}</b><span>3 na start · +1 każdego dnia</span></p><nav class="skill-tabs" aria-label="Ścieżka rozwoju">${SKILL_BRANCHES.map(branch => `<button data-tab="${branch}" aria-pressed="${branch === this.branch}">${branch.toUpperCase()} <small>${branchSpent(sim.skills.levels, branch)}</small></button>`).join('')}</nav><div class="skill-tiers">${[1, 2, 3, 4].map(tier => `<section><h3>TIER ${['I', 'II', 'III', 'IV'][tier - 1]} <small>${SKILL_SETTINGS.tierRequirements[tier - 1]} pkt w ścieżce</small></h3><div class="skill-row">${SKILL_SETTINGS.branches[this.branch].filter(perk => perk.tier === tier).map(perk => {
+    this.element.innerHTML = `<div class="skill-card"><header><div><small>SKILL TREE</small><h2>Guardian development</h2></div><button class="skill-close" aria-label="Close skills">✕</button></header><p class="skill-points">SKILL POINTS <b>${sim.skills.points}</b><span>3 at the start · +1 each day</span></p><nav class="skill-tabs" aria-label="Skill branch">${SKILL_BRANCHES.map(branch => `<button data-tab="${branch}" aria-pressed="${branch === this.branch}">${branch.toUpperCase()} <small>${branchSpent(sim.skills.levels, branch)}</small></button>`).join('')}</nav><div class="skill-tiers">${[1, 2, 3, 4].map(tier => `<section><h3>TIER ${['I', 'II', 'III', 'IV'][tier - 1]} <small>${SKILL_SETTINGS.tierRequirements[tier - 1]} points in branch</small></h3><div class="skill-row">${SKILL_SETTINGS.branches[this.branch].filter(perk => perk.tier === tier).map(perk => {
       const rank = sim.skills.levels[perk.id], reason = sim.skills.reason(perk.id);
-      return `<button data-perk="${perk.id}" ${!allowed || reason ? 'disabled' : ''} class="skill-perk ${rank ? 'owned' : !reason ? 'available' : 'locked'}"><small>${'●'.repeat(rank)}${'○'.repeat(perk.maxRank - rank)} · ${rank}/${perk.maxRank}</small><b>${perk.name}</b><span>${perk.effect}</span><em>${rank === perk.maxRank ? 'MAX' : reason ?? 'ULEPSZ · 1 PUNKT'}</em></button>`;
-    }).join('')}</div></section>`).join('')}</div><p class="skill-note">Punkty rozdajesz w dowolnym miejscu, w dzień i w nocy. Wyższe poziomy wymagają inwestycji w wybraną ścieżkę.</p><small>N / Escape · powrót do gry</small></div>`;
+      return `<button data-perk="${perk.id}" ${!allowed || reason ? 'disabled' : ''} class="skill-perk ${rank ? 'owned' : !reason ? 'available' : 'locked'}"><small>${'●'.repeat(rank)}${'○'.repeat(perk.maxRank - rank)} · ${rank}/${perk.maxRank}</small><b>${perk.name}</b><span>${perk.effect}</span><em>${rank === perk.maxRank ? 'MAX' : reason ?? 'UPGRADE · 1 POINT'}</em></button>`;
+    }).join('')}</div></section>`).join('')}</div><p class="skill-note">Spend points anywhere, by day or night. Higher tiers require investment in their branch.</p><small>N / Escape · return to game</small></div>`;
     if (focused)
       this.element.querySelector<HTMLButtonElement>(`button[data-perk="${focused}"]:not(:disabled)`)?.focus();
   }

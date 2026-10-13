@@ -1,7 +1,7 @@
 import { afterEach, expect, it, vi } from 'vitest';
 import { AudioFeedback } from '../src/core/AudioFeedback';
 
-const recordedBuffer = {} as AudioBuffer;
+const recordedBuffer = {duration:5} as AudioBuffer;
 class AudioContextFixture {
   static latest: AudioContextFixture;
   state = 'running';
@@ -21,6 +21,21 @@ function audioWithResponse(ok = true) {
   return new AudioFeedback();
 }
 afterEach(() => vi.unstubAllGlobals());
+
+it('plays the first resource cue once loading completes, without duplicating same-frame rewards', async () => {
+  const audio = audioWithResponse();
+  const ready = audio.unlock();
+  audio.play('resource'); audio.play('resource');
+  expect(AudioContextFixture.latest.createBufferSource).not.toHaveBeenCalled();
+  await ready;
+  expect(AudioContextFixture.latest.createBufferSource).toHaveBeenCalledTimes(1);
+  audio.play('resource');
+  expect(AudioContextFixture.latest.createBufferSource).toHaveBeenCalledTimes(1);
+  AudioContextFixture.latest.currentTime += .5;
+  audio.play('resource');
+  expect(AudioContextFixture.latest.createBufferSource).toHaveBeenCalledTimes(2);
+  audio.dispose();
+});
 
 it('keeps idle gameplay silent after audio is unlocked', async () => {
   const audio = audioWithResponse();
@@ -67,4 +82,10 @@ it('does not revive audio when an asset finishes loading after disposal', async 
   expect(context.createBufferSource).not.toHaveBeenCalled();
   expect(context.close).toHaveBeenCalledTimes(1);
   expect(context.resume).toHaveBeenCalledTimes(1);
+});
+
+it('throttles simultaneous core/building sirens for the full sample duration',async()=>{
+ const audio=audioWithResponse();await audio.unlock();const context=AudioContextFixture.latest;
+ audio.play('siren');audio.play('siren');context.currentTime+=4;audio.play('siren');expect(context.createBufferSource).toHaveBeenCalledTimes(1);
+ context.currentTime+=1;audio.play('siren');expect(context.createBufferSource).toHaveBeenCalledTimes(2);expect(context.createOscillator).not.toHaveBeenCalled();audio.dispose();
 });

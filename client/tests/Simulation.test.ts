@@ -36,14 +36,14 @@ describe('survival gameplay', () => {
     sim.player.position = { x: -40, z: -40 };
     const enemy = new Zombie('siege');
     sim.zombies.push(enemy);
-    advance(sim, 80);
+    advance(sim, 100);
     expect(sim.shelter.hp).toBe(0);
     expect(sim.player.hp).toBe(100);
     expect(sim.phase).toBe('lost');
     expect(isBlocked(enemy.position)).toBe(false);
   });
 
-  it('lets a daytime patrol chase and kill a nearby player without attacking Shelter', () => {
+  it('lets a patrol kill the player while the run continues and the player respawns', () => {
     const sim = isolated();
     sim.player.position = { x: -6, z: 14 };
     sim.start();
@@ -51,10 +51,10 @@ describe('survival gameplay', () => {
     enemy.mode = 'patrol';
     sim.zombies.push(enemy);
     advance(sim, 20);
-    expect(enemy.intent).toBe('player');
-    expect(sim.player.hp).toBe(0);
-    expect(sim.shelter.hp).toBe(300);
-    expect(sim.phase).toBe('lost');
+    expect(sim.drainEvents().some(event => event.type === 'player-died')).toBe(true);
+    expect(sim.player.hp).toBe(100);
+    expect(sim.shelter.hp).toBe(1250);
+    expect(sim.phase).toBe('playing');
   });
 
   it('damages the selected enemy, enforces cooldown, and keeps playing after a kill', () => {
@@ -101,11 +101,11 @@ describe('survival gameplay', () => {
     const sim = isolated();
     sim.start();
     sim.zombies.push(new Zombie('siege'));
-    advance(sim, 80);
+    advance(sim, 100);
     sim.reset();
     expect(sim.phase).toBe('ready');
     expect(sim.player.hp).toBe(100);
-    expect(sim.shelter.hp).toBe(300);
+    expect(sim.shelter.hp).toBe(1250);
     expect(sim.zombies).toHaveLength(0);
     expect(sim.cycle.state.day).toBe(1);
     expect(sim.cycle.state.period).toBe('day');

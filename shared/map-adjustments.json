@@ -1,0 +1,41 @@
+{
+  "source": "user screenshot codex-clipboard-aca0cb8e-5e27-4ff4-8e31-d04a9025eb51.png",
+  "westernCourt": {
+    "id": "catacomb-court-expansion",
+    "pixels": {
+      "left": 7,
+      "right": 18,
+      "top": 88,
+      "bottom": 160
+    },
+    "purpose": "7.7 m of extra fighting room along the marked western lane; no rescaling"
+  },
+  "barricades": [
+    {
+      "id": "central-north",
+      "referenceCenter": {
+        "x": 128.5,
+        "y": 94.5
+      },
+      "width": 6.3,
+      "depth": 2.1,
+      "height": 3.2,
+      "originalBrush": "*199",
+      "originalClass": "func_breakable",
+      "originalTarget": "c4_object_brk"
+    },
+    {
+      "id": "central-south",
+      "referenceCenter": {
+        "x": 128.5,
+        "y": 155.5
+      },
+      "width": 6.3,
+      "depth": 2.1,
+      "height": 3.2,
+      "originalBrush": "*212",
+      "originalClass": "func_breakable",
+      "originalTarget": "c4_object_brk"
+    }
+  ]
+}

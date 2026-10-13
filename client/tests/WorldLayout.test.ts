@@ -1,4 +1,5 @@
-import { MAP_REFERENCE, referenceToWorld, referenceFloorOpen } from '../src/world/WorldLayout';
+import { inBase } from '../src/world/ShelterLayout';
+import { MAP_REFERENCE, MAP_ADJUSTMENTS, referenceToWorld, referenceFloorOpen } from '../src/world/WorldLayout';
 import encounters from '../../shared/encounters.json';
 import { describe, expect, it } from 'vitest';
 import { CONFIG } from '../src/domain/config';
@@ -31,8 +32,13 @@ function reachablePositions(extra: Footprint[]): Position[] {
 }
 
 describe('authored exploration map', () => {
-  it('preserves every walkable pixel and building hole from the supplied image',()=>{
-    for(let y=0;y<MAP_REFERENCE.height;y++)for(let x=0;x<MAP_REFERENCE.width;x++) expect(referenceFloorOpen(referenceToWorld(x,y)),`${x},${y}`).toBe(MAP_REFERENCE.walkableRows[y].some(([a,b])=>x>=a&&x<b));
+  it('preserves every supplied map pixel outside the explicitly requested western expansion and Shelter zones',()=>{
+    const patch=MAP_ADJUSTMENTS.westernCourt.pixels;
+    expect(patch).toEqual({left:7,right:18,top:88,bottom:160});
+    for(let y=0;y<MAP_REFERENCE.height;y++)for(let x=0;x<MAP_REFERENCE.width;x++) {
+      const inPatch=x>=patch.left&&x<patch.right&&y>=patch.top&&y<patch.bottom;
+      expect(referenceFloorOpen(referenceToWorld(x,y)),`${x},${y}`).toBe(inPatch||inBase(referenceToWorld(x,y))||MAP_REFERENCE.walkableRows[y].some(([a,b])=>x>=a&&x<b));
+    }
   });
   it('places forty-eight wood/iron nodes outside ruins, base walls and other nodes', () => {
     const nodes = createResourceNodes();

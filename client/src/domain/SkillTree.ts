@@ -47,18 +47,18 @@ export class SkillTree {
   reason(id: string): string | null {
     const perk = PERKS.find(candidate => candidate.id === id);
     if (!perk)
-      return 'Nieznana umiejętność';
+      return 'Unknown skill';
     if (this.levels[id] >= perk.maxRank)
-      return 'Maksymalna ranga';
+      return 'Maximum rank';
     const branch = SKILL_BRANCHES.find(branch => settings.branches[branch].some(candidate => candidate.id === id))!;
     const threshold = settings.tierRequirements[perk.tier - 1];
     if (branchSpent(this.levels, branch) < threshold)
-      return `Wymaga ${threshold} punktów w ${branch.toUpperCase()}`;
+      return `Requires ${threshold} points in ${branch.toUpperCase()}`;
     for (const required of perk.requires)
       if (this.levels[required.id] < required.rank)
         return `${PERKS.find(candidate => candidate.id === required.id)!.name} ${required.rank}`;
     if (this.points < 1)
-      return 'Brak Skill Points';
+      return 'No Skill Points';
     return null;
   }
   buy(id: string): boolean {

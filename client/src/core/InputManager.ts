@@ -49,6 +49,7 @@ export class InputManager {
       this.lookY += event.movementY;
     }, options);
     document.addEventListener('mousedown', event => {
+      if ((event.target as HTMLElement | null)?.closest?.('button, input, [role="dialog"]')) return;
       if (this.locked && event.button === 0) this.onAttack('quick');
       if (this.locked && event.button === 2) this.onAttack('heavy');
     }, options);

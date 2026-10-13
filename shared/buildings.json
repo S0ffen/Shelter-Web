@@ -1,5 +1,65 @@
 {
-  "storehouse": { "label": "Storehouse", "cost": { "wood": 30, "iron": 10 }, "width": 2.8, "depth": 2.2, "height": 2.2, "maxHp": 160 },
-  "arcane-core": { "label": "Generator Arcane", "cost": { "wood": 20, "iron": 15 }, "width": 1.8, "depth": 1.8, "height": 2.4, "maxHp": 200 },
-  "magic-tower": { "label": "Magic Tower", "cost": { "wood": 20, "iron": 15 }, "width": 1.6, "depth": 1.6, "height": 3.2, "maxHp": 240 }
+  "storehouse": {
+    "label": "Storehouse",
+    "cost": {
+      "wood": 12,
+      "iron": 6
+    },
+    "width": 2.8,
+    "depth": 2.2,
+    "height": 2.2,
+    "maxHp": 1250
+  },
+  "arcane-core": {
+    "label": "Arcane Generator",
+    "cost": {
+      "wood": 5,
+      "iron": 5
+    },
+    "width": 1.8,
+    "depth": 1.8,
+    "height": 2.4,
+    "maxHp": 1000,
+    "levels": [
+      {
+        "maxHp": 1000,
+        "cost": {
+          "wood": 5,
+          "iron": 5
+        }
+      },
+      {
+        "maxHp": 1500,
+        "cost": {
+          "wood": 9,
+          "iron": 9
+        }
+      },
+      {
+        "maxHp": 2000,
+        "cost": {
+          "wood": 15,
+          "iron": 13
+        }
+      },
+      {
+        "maxHp": 2500,
+        "cost": {
+          "wood": 20,
+          "iron": 22
+        }
+      }
+    ]
+  },
+  "magic-tower": {
+    "label": "Magic Tower",
+    "cost": {
+      "wood": 6,
+      "iron": 6
+    },
+    "width": 1.6,
+    "depth": 1.6,
+    "height": 3.2,
+    "maxHp": 550
+  }
 }
